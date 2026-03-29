@@ -1,0 +1,59 @@
+---
+title: "Connections Overview"
+description: "The Connections page manages how CleanClicks authenticates with your ad platforms. This is separate from the vendor configuration (which controls *wha"
+---
+
+The Connections page manages how CleanClicks authenticates with your ad platforms. This is separate from the vendor configuration (which controls *what* data is sent). Connections handle the *credentials* that allow CleanClicks to send data on your behalf.
+
+## Accessing Connections
+
+Go to **Connections** in the sidebar. Select a domain from the domain picker if you have multiple.
+
+## Two Connection Methods
+
+CleanClicks supports two ways to connect ad platforms:
+
+### One-Click OAuth
+
+Available for **Google Ads**, **LinkedIn**, and **Microsoft Ads**. Click the Connect button, sign in with your ad platform account, and authorize CleanClicks. Credentials are managed automatically, including token refresh.
+
+### Manual Token Entry
+
+Required for **Meta (Facebook)** and **TikTok**. You generate an access token in the platform's interface and paste it into CleanClicks.
+
+## Connection Status
+
+Each connected platform shows:
+
+| Status | Meaning |
+|---|---|
+| **Connected** | Credentials are valid and working |
+| **Needs Reconnection** | Token expired or was revoked. Re-authenticate to restore. |
+| **Error** | Something went wrong. Check the error message for details. |
+
+## Platform Limits
+
+The number of platform connections is limited by your plan:
+
+| Plan | Max Connections |
+|---|---|
+| Pulse | 1 |
+| Signal | 2 |
+| Clarity | 7 |
+| Command | 7 |
+
+If you've reached your limit, additional platforms show as unavailable with an upgrade prompt.
+
+## Disconnecting a Platform
+
+Click **Disconnect** on any connected platform. This removes the stored credentials. CleanClicks will stop sending data to that platform immediately.
+
+You can reconnect at any time by going through the OAuth flow or re-entering your token.
+
+## Security
+
+All credentials are encrypted at rest using AES-256-GCM encryption with per-customer keys. Tokens are never logged, never exposed in API responses, and automatically refreshed (for OAuth platforms) to maintain connectivity.
+
+---
+
+**Next:** [Google Ads](/google-ads)

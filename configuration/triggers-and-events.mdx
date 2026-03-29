@@ -1,0 +1,88 @@
+---
+title: "Triggers and Events"
+description: "Triggers define what counts as a conversion on your website. When a visitor performs an action that matches a trigger rule, CleanClicks fires a conver"
+---
+
+Triggers define what counts as a conversion on your website. When a visitor performs an action that matches a trigger rule, CleanClicks fires a conversion event and relays it to your connected ad platforms.
+
+## Accessing Triggers
+
+1. Go to **Configuration** in the sidebar
+2. Select your domain
+3. Click the **Triggers** tab
+
+## Trigger Types
+
+| Type | What It Captures |
+|---|---|
+| **Form Submission** | Visitor submits a form on your site |
+| **Purchase** | Completed ecommerce transaction |
+| **Page Visit** | Visitor reaches a specific URL (e.g., a thank-you page) |
+| **Button Click** | Visitor clicks a specific button or link |
+| **Phone Call** | Visitor clicks a phone number link (tel: link) |
+
+## Creating a Trigger
+
+1. Click **Add Trigger** on the Triggers tab
+2. Choose a trigger type
+3. Configure the matching rules (URL patterns, CSS selectors, etc.)
+4. Name the event (this name appears in your ad platforms)
+5. Click **Save**
+
+### URL Matching
+
+For Page Visit and Form Submission triggers, you specify which URLs should fire the event:
+
+- **Exact match:** `https://yourdomain.com/thank-you` — fires only on that exact URL
+- **Contains:** `/thank-you` — fires on any URL containing that string
+- **Starts with:** `/checkout/` — fires on any URL starting with that path
+- **Regex:** `\/order\/[0-9]+` — fires on URLs matching the pattern
+
+### CSS Selectors (Button Click)
+
+For Button Click triggers, specify a CSS selector that identifies the element:
+
+- **By ID:** `#submit-button`
+- **By class:** `.cta-button`
+- **By data attribute:** `[data-action="signup"]`
+- **By element and class:** `button.primary-cta`
+
+### Event Naming
+
+The event name you choose is what your ad platforms will receive. Best practices:
+
+- Use clear, descriptive names: `lead_form_submit`, `purchase`, `schedule_demo`
+- Keep names consistent across platforms
+- Avoid spaces (use underscores)
+- Match your ad platform's expected conversion names when possible (e.g., `purchase` for ecommerce)
+
+## Editing Triggers
+
+Click on any existing trigger to modify its rules, URL patterns, or event name. Changes take effect immediately after saving.
+
+## Deleting Triggers
+
+Click the delete icon on a trigger card and confirm. Once deleted, that event will stop firing. This doesn't retroactively remove events already sent to ad platforms.
+
+## Multiple Triggers
+
+You can create as many triggers as you need. Common setups:
+
+- **Lead generation site:** Form Submission trigger on contact forms, Page Visit trigger on thank-you pages
+- **Ecommerce:** Purchase trigger (handled automatically with Shopify/WooCommerce integrations), plus add-to-cart or begin-checkout events
+- **Service business:** Phone Call trigger, Form Submission trigger, Page Visit trigger on booking confirmation
+
+## Testing Triggers
+
+After creating a trigger:
+
+1. Open your site in an Incognito window
+2. Perform the action that should trigger the event
+3. Check your CleanClicks dashboard for the event
+4. Verify the event appears in your connected ad platforms (allow 15-30 minutes)
+
+If the event doesn't fire, double-check your URL pattern or CSS selector. The most common issue is a pattern that doesn't quite match the actual URL or element.
+
+---
+
+**Next:** [Traffic Filters](/traffic-filters)

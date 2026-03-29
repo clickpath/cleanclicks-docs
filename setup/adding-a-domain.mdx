@@ -1,0 +1,68 @@
+---
+title: "Adding a Domain"
+description: "Your domain is the foundation of CleanClicks. Every tracking tag, conversion event, and platform connection is scoped to a specific domain."
+---
+
+Your domain is the foundation of CleanClicks. Every tracking tag, conversion event, and platform connection is scoped to a specific domain.
+
+## Adding Your First Domain
+
+If you're going through the onboarding wizard, Step 2 handles this automatically. Otherwise:
+
+1. Go to **Domains** in the sidebar
+2. Click **Add Domain**
+3. Enter your root domain (e.g., `yourdomain.com`)
+4. Click **Add**
+
+### Domain Format
+
+- Enter the **bare domain** without `https://` or `www`. Just `yourdomain.com`.
+- If your site runs on a subdomain (like `shop.yourdomain.com`), enter the full subdomain.
+- Domain names must contain only lowercase letters, numbers, hyphens, and dots.
+
+## Domain Statuses
+
+After adding a domain, it goes through these states:
+
+| Status | Meaning |
+|---|---|
+| **Pending Verification** | Domain added but CNAME not yet detected. Tracking won't work yet. |
+| **Active** | CNAME verified. Tracking is live. |
+| **Paused** | You've paused tracking for this domain. Configuration is read-only. |
+
+## Plan Limits
+
+Each plan limits the number of domains you can track:
+
+| Plan | Max Domains |
+|---|---|
+| Pulse | 1 |
+| Signal | 1 |
+| Clarity | 3 |
+| Command | Unlimited |
+
+If you've hit your limit, the **Add Domain** button will be disabled with a note to upgrade.
+
+## Pausing a Domain
+
+If you need to temporarily stop tracking on a domain without deleting it:
+
+1. Go to **Domains**
+2. Find the domain card
+3. Click **Pause**
+
+Paused domains retain all their configuration but stop processing traffic. Configuration pages become read-only. Resume anytime to restart tracking.
+
+## Deleting a Domain
+
+Deleting a domain removes it and all associated configuration permanently. This action cannot be undone.
+
+1. Go to **Domains**
+2. Find the domain card
+3. Click **Delete** and confirm
+
+> **Warning:** Deleting a domain also removes all connected platform tokens and API keys for that domain.
+
+---
+
+**Next:** [DNS Configuration](/dns-configuration)

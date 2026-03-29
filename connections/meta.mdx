@@ -1,0 +1,91 @@
+---
+title: "Connecting Meta (Facebook)"
+description: "CleanClicks sends conversion events to Meta via the Conversions API (CAPI). Meta requires a manually generated System User Access Token rather than OA"
+---
+
+CleanClicks sends conversion events to Meta via the Conversions API (CAPI). Meta requires a manually generated System User Access Token rather than OAuth.
+
+## Prerequisites
+
+- A Meta Business Manager account
+- A Meta Pixel created in Events Manager
+- Admin access to Business Manager
+
+## Generating a System User Access Token
+
+1. Go to [Meta Business Manager](https://business.facebook.com)
+2. Navigate to **Business Settings** > **Users** > **System Users**
+3. Click **Add** to create a new system user (or use an existing one)
+4. Set the role to **Admin**
+5. Click **Generate New Token**
+6. Select your app (or create one if needed)
+7. Grant these permissions:
+   - `ads_management`
+   - `ads_read`
+8. Set the token expiration to **Never** (recommended) or the longest available
+9. Copy the generated token
+
+> **Important:** System User Tokens are the recommended approach for server-to-server integrations. Personal access tokens expire and shouldn't be used.
+
+## Connecting in CleanClicks
+
+1. Go to **Connections** in your CleanClicks dashboard
+2. Select your domain
+3. Find **Meta** in the Token Entry section
+4. Click to expand
+5. Paste your **Access Token**
+6. Enter your **Pixel ID** (found in Meta Events Manager > your pixel > Settings)
+7. Click **Save**
+
+## Configuring the Vendor
+
+After connecting:
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **Meta (Facebook)**
+3. Verify the Pixel ID and Access Token are present
+4. Optionally add a **Test Event Code** for testing
+5. Save
+
+## Test Event Code
+
+Meta provides a Test Event Code in Events Manager > **Test Events** tab. Adding this code to your CleanClicks vendor configuration sends events in test mode so you can verify they arrive correctly before they count as real data.
+
+To use:
+1. Go to Meta Events Manager > your pixel > **Test Events**
+2. Copy the test code (e.g., `TEST12345`)
+3. Paste it into the **Test Event Code** field in Configuration > Vendors > Meta
+4. Save
+5. Trigger a test conversion
+6. Verify it appears in Meta's Test Events tab
+7. Remove the test code when you're ready to go live
+
+## How It Works
+
+When a visitor converts:
+1. CleanClicks captures the `fbclid` (Facebook Click ID) from the landing page URL
+2. The conversion event is sent server-side to Meta's Conversions API with the fbclid
+3. Meta matches the conversion to the original ad click
+4. Customer email is sent as a SHA-256 hash for Enhanced Matching
+
+Meta's Conversions API also receives:
+- Event name and value
+- User agent and IP information
+- Attribution parameters
+
+## CCPA / Limited Data Use
+
+For visitors in jurisdictions where Limited Data Use applies, CleanClicks automatically sends `data_processing_options: ["LDU"]` to Meta. This tells Meta to restrict how it processes that visitor's data, in compliance with CCPA regulations.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Token rejected | Verify the token has `ads_management` and `ads_read` permissions. Regenerate if needed. |
+| Events not in Events Manager | Check the Pixel ID is correct. Use a Test Event Code to verify delivery. |
+| "Invalid Pixel ID" error | The Pixel ID should be a numeric string (e.g., `123456789012345`). No letters or dashes. |
+| Events showing but no conversions | Make sure you have a matching conversion event configured in Meta Ads Manager. |
+
+---
+
+**Next:** [TikTok](/tiktok)

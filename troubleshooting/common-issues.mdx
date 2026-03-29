@@ -1,0 +1,99 @@
+---
+title: "Common Issues"
+description: "A quick-reference guide for the most frequent problems and their solutions."
+---
+
+A quick-reference guide for the most frequent problems and their solutions.
+
+## I Can't Sign In
+
+| Symptom | Fix |
+|---|---|
+| Magic link never arrives | Check your spam/junk folder. Try again. Links expire after 15 minutes. |
+| Magic link says "expired" | Request a new one. They're only valid for 15 minutes. |
+| Google sign-in fails | Make sure you're using the same Google account email you signed up with. |
+| "No account found" | If you signed up with a magic link and then try Google (or vice versa), use the same email address for both methods to access the same account. |
+
+## My Domain Is Stuck on "Pending Verification"
+
+Your CNAME record isn't resolving yet. See [DNS Problems](/dns-problems) for a detailed walkthrough.
+
+Quick checks:
+- Did you add a **CNAME** record (not an A record or TXT)?
+- Is the name `cleanclicks` (not the full `cleanclicks.yourdomain.com` unless your provider requires it)?
+- If using Cloudflare, is the record set to **DNS Only** (gray cloud)?
+- Have you waited at least 5 minutes for propagation?
+
+## The Tag Isn't Detected
+
+CleanClicks can't find the script on your website. See [Tag Not Detected](/tag-not-detected).
+
+Quick checks:
+- Is your domain Active (DNS verified)?
+- Is the script tag in your page's `<head>` section?
+- Does the script URL match `cleanclicks.yourdomain.com` (your actual domain)?
+- Can you see `cc.js` loading in browser DevTools > Network tab?
+
+## Conversions Aren't Appearing
+
+Events fire but nothing shows up in your ad platforms. See [Conversions Not Appearing](/conversions-not-appearing).
+
+Quick checks:
+- Is at least one trigger configured in Configuration > Triggers?
+- Is at least one platform connected and enabled?
+- Are platform credentials valid (check Connections page)?
+- Have you waited 15-30 minutes? Ad platforms aren't instant.
+
+## I Hit My Plan Limit
+
+| Limit Hit | What Happens | Fix |
+|---|---|---|
+| Domain limit | Can't add more domains | Upgrade plan or delete unused domains |
+| Platform limit | Can't enable more vendors | Upgrade plan or disable unused vendors |
+| Session limit | Tracking continues, overages billed | Monitor usage, upgrade if overages are recurring |
+| API key limit | Can't create more keys | Revoke unused keys or upgrade plan |
+
+## The Dashboard Shows No Data
+
+If your dashboard is empty after setup:
+
+1. Verify your domain is **Active**
+2. Verify the tag is loading (check browser DevTools)
+3. Visit your own website and trigger a test event
+4. Wait a few minutes and refresh the dashboard
+5. If still empty, check that you have at least one trigger configured
+
+## Traffic Analytics Shows Nothing
+
+- Traffic Analytics is only available on **Signal+** plans (or with the Analytics Add-On)
+- Data starts accumulating after the tag is installed and traffic flows through
+- Allow at least 24 hours of traffic for meaningful analytics data
+- If you just enabled the tag today, check back tomorrow
+
+## "Upgrade Required" Messages
+
+Some features are gated by plan tier:
+
+| Feature | Minimum Plan |
+|---|---|
+| Traffic Analytics (basic) | Signal |
+| Traffic Analytics (full) | Clarity (or Signal + Analytics Add-On) |
+| Geo/IP filtering | Signal |
+| Bot customization | Signal |
+| Ecommerce tracking | Clarity |
+| Analytics proxies | Clarity |
+| Health monitoring | Clarity |
+
+Visit **Billing** to view available plans and upgrade.
+
+## Need More Help?
+
+Contact [support@cleanclicks.io](mailto:support@cleanclicks.io) with:
+- Your account email
+- The domain experiencing the issue
+- What you expected to happen vs. what actually happened
+- Any error messages or screenshots
+
+---
+
+**Related:** [DNS Problems](/dns-problems) | [Tag Not Detected](/tag-not-detected) | [Conversions Not Appearing](/conversions-not-appearing) | [Billing Issues](/billing-issues)

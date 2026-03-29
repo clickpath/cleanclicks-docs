@@ -1,0 +1,81 @@
+---
+title: "Advanced Settings"
+description: "The Advanced tab contains settings for analytics proxying, UTM capture, and other options that don't fit neatly into the other configuration tabs."
+---
+
+The Advanced tab contains settings for analytics proxying, UTM capture, and other options that don't fit neatly into the other configuration tabs.
+
+## Accessing Advanced Settings
+
+1. Go to **Configuration** in the sidebar
+2. Select your domain
+3. Click the **Advanced** tab
+
+## Analytics Proxy
+
+Available on **Clarity** plans and above (or with the Analytics Add-On).
+
+Analytics proxying routes your third-party analytics scripts (GA4, Usermaven, Plerdy) through your first-party subdomain. This means:
+
+- **Ad blockers don't block your analytics.** The requests come from your own domain.
+- **Cookie lifetimes are respected.** No ITP/third-party cookie restrictions.
+- **Data stays first-party.** The browser sees it as your own site's traffic.
+
+### Enabling Proxies
+
+Each analytics platform can be proxied independently:
+
+- **GA4 Proxy** — routes Google Analytics 4 collection through your subdomain
+- **Usermaven Proxy** — routes Usermaven tracking through your subdomain
+- **Plerdy Proxy** — routes Plerdy analytics through your subdomain
+
+Toggle each one on and save. The proxy starts working immediately.
+
+> **Note:** You still need the analytics platform configured in the Vendors tab for server-side event dispatch. Proxying handles the client-side script loading; vendor configuration handles server-side conversion relay.
+
+### GA4 Demographics (allowSignals)
+
+When GA4 proxying is enabled, there's an option called **Allow Signals**. Enabling this preserves Google's demographic and interest signals (age, gender, interests) that would otherwise be stripped by the proxy.
+
+- **Enabled:** GA4 receives demographic signals. You'll see age/gender/interests in your GA4 reports.
+- **Disabled:** Maximum privacy. No demographic signals pass through.
+
+Default is disabled. Enable it if you rely on GA4 audience demographics for targeting.
+
+## UTM Attribution
+
+CleanClicks automatically captures UTM parameters from visitor URLs:
+
+- `utm_source`
+- `utm_medium`
+- `utm_campaign`
+- `utm_term`
+- `utm_content`
+
+These are stored in first-party cookies and attached to every conversion event. The Advanced tab lets you toggle UTM capture on or off (it's on by default).
+
+### Google Ads Final URL Suffix
+
+For best results with Google Ads attribution, we recommend setting a **Final URL suffix** at the account level in Google Ads:
+
+```
+utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&utm_content={creative}&matchtype={matchtype}&network={network}&device={device}&ad_id={creative}
+```
+
+Set this in Google Ads: **Admin** > **Account Settings** > **Tracking** > **Final URL suffix**.
+
+This ensures every ad click arrives with UTM parameters that CleanClicks, your analytics platforms, and your conversion tracking can all use for attribution.
+
+## Event Bridges
+
+CleanClicks can receive events from iframe-based platforms (like scheduling tools, booking widgets, or embedded forms) via the browser's `postMessage` API.
+
+If you use embedded third-party tools that fire events inside iframes, the event bridge captures those events and routes them through CleanClicks. Configure allowed origins and event name mappings in the Advanced tab.
+
+## Data Retention
+
+Conversion data is retained for **90 days** by default. Session identification data follows the same retention period. After expiry, data is automatically purged.
+
+---
+
+**Next:** [API Keys](/api-keys)

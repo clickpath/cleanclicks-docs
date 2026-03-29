@@ -1,0 +1,92 @@
+---
+title: "Shopify Setup"
+description: "CleanClicks integrates with Shopify through a **Custom Pixel**. This captures page views, product interactions, cart actions, and purchases, then rout"
+---
+
+CleanClicks integrates with Shopify through a **Custom Pixel**. This captures page views, product interactions, cart actions, and purchases, then routes them through your first-party subdomain.
+
+## Prerequisites
+
+Before setting up:
+- Your domain must be added and verified in CleanClicks (DNS active)
+- You need admin access to your Shopify store
+
+## Installing the Custom Pixel
+
+1. In your Shopify Admin, go to **Settings** > **Customer events**
+2. Click **Add custom pixel**
+3. Name it **CleanClicks**
+4. In the code editor, paste the pixel code provided in your CleanClicks onboarding wizard or Configuration > Ecommerce tab
+5. Click **Save**
+6. Click **Connect** to activate the pixel
+
+> **Important:** After clicking Save, you must also click **Connect**. A saved but unconnected pixel won't fire.
+
+## What the Pixel Tracks
+
+The CleanClicks Shopify pixel captures these events automatically:
+
+| Event | Trigger |
+|---|---|
+| `page_view` | Every page load |
+| `view_item` | Product page view |
+| `view_item_list` | Collection/category page view |
+| `add_to_cart` | Item added to cart |
+| `begin_checkout` | Checkout started |
+| `purchase` | Order completed |
+| `search` | Search performed |
+
+Each event includes relevant data like product names, prices, order values, and currency.
+
+## Server-Side Order Tracking
+
+In addition to the client-side pixel, CleanClicks can receive order data via Shopify webhooks for server-side tracking. This is available on **Clarity** plans and above.
+
+The webhook captures purchase events directly from Shopify's servers, ensuring order data is recorded even if the customer closes their browser before the thank-you page loads.
+
+To set up webhook tracking:
+1. Go to **Configuration** > **Ecommerce** tab in your CleanClicks dashboard
+2. Follow the Shopify webhook setup instructions provided there
+
+## Attribution and Click IDs
+
+The pixel automatically captures:
+- **Click IDs** from ad platforms (gclid, fbclid, ttclid, li_fat_id, msclkid)
+- **UTM parameters** for campaign attribution
+- **Session data** for cross-page tracking
+
+These are attached to every event, so your ad platforms receive proper attribution data with each conversion.
+
+## GA4 and Usermaven Session Stitching
+
+If you have GA4 or Usermaven connected, the Shopify pixel automatically stitches sessions between the CleanClicks tracking and your analytics platforms. This means conversions are attributed to the correct analytics session rather than appearing as a separate, unattributed event.
+
+## Testing
+
+After installing the pixel:
+
+1. Open your Shopify store in an Incognito window
+2. Browse to a product page (triggers `view_item`)
+3. Add to cart (triggers `add_to_cart`)
+4. If possible, complete a test order (triggers `purchase`)
+5. Check your CleanClicks dashboard for events within a few minutes
+
+### Shopify's Pixel Sandbox
+
+Shopify runs custom pixels in a sandboxed iframe. This means:
+- The pixel can't access the parent page's DOM directly
+- It uses Shopify's event subscription API instead
+- This is normal and expected. CleanClicks is designed for this sandbox environment.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Pixel not firing | Make sure you clicked both **Save** and **Connect** in Shopify |
+| Events missing | Check that your CleanClicks domain is Active |
+| Purchase events not appearing | Verify webhook setup for server-side tracking (Clarity+ only) |
+| Duplicate events | If you also have the CleanClicks tag installed via theme code, remove it. Use only the Custom Pixel for Shopify. |
+
+---
+
+**Next:** [WordPress Setup](/wordpress-setup)

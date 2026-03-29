@@ -1,0 +1,90 @@
+---
+title: "DNS Configuration"
+description: "DNS setup creates the first-party connection that makes CleanClicks work. You'll add one CNAME record to your DNS provider. This is the most important"
+---
+
+DNS setup creates the first-party connection that makes CleanClicks work. You'll add one CNAME record to your DNS provider. This is the most important setup step.
+
+## What You're Doing
+
+You're creating a subdomain (`cleanclicks.yourdomain.com`) and pointing it at CleanClicks infrastructure via a CNAME record. Once active, all tracking data flows through this subdomain, making it a first-party request from the browser's perspective.
+
+## The CNAME Record
+
+After adding your domain in CleanClicks, the platform shows you the exact record to create:
+
+- **Type:** CNAME
+- **Name/Host:** `cleanclicks` (or `cleanclicks.yourdomain.com` depending on your provider)
+- **Target/Value:** The address shown in your CleanClicks dashboard
+
+## Provider-Specific Instructions
+
+### Cloudflare
+1. Go to your domain's DNS settings
+2. Click **Add Record**
+3. Type: **CNAME**
+4. Name: `cleanclicks`
+5. Target: the value from CleanClicks
+6. **Important:** Set the proxy status to **DNS Only** (gray cloud, not orange). CleanClicks requires a direct CNAME, not a proxied one.
+7. Click **Save**
+
+### GoDaddy
+1. Go to **My Products** > your domain > **DNS**
+2. Click **Add** in the Records section
+3. Type: **CNAME**
+4. Name: `cleanclicks`
+5. Value: the target from CleanClicks
+6. TTL: leave as default
+7. Click **Save**
+
+### Namecheap
+1. Go to **Domain List** > your domain > **Advanced DNS**
+2. Click **Add New Record**
+3. Type: **CNAME Record**
+4. Host: `cleanclicks`
+5. Value: the target from CleanClicks
+6. TTL: Automatic
+7. Click the checkmark to save
+
+### AWS Route 53
+1. Go to **Hosted Zones** > your domain
+2. Click **Create Record**
+3. Record name: `cleanclicks`
+4. Record type: **CNAME**
+5. Value: the target from CleanClicks
+6. TTL: 300
+7. Click **Create Records**
+
+### Other Providers
+
+The process is similar for any DNS provider. You need:
+- A CNAME record type
+- `cleanclicks` as the hostname
+- The target value from your CleanClicks dashboard
+
+If your provider doesn't support CNAME records on subdomains, contact [support@cleanclicks.io](mailto:support@cleanclicks.io).
+
+## Verification
+
+After creating the record:
+
+1. Return to CleanClicks (the onboarding wizard or the Domains page)
+2. Click **Verify** to check immediately, or wait — the platform polls automatically every 30 seconds
+3. Once detected, your domain status changes to **Active**
+
+## How Long Does It Take?
+
+Most DNS changes propagate within 1-5 minutes. Some providers can take up to 24 hours, though this is rare with modern DNS infrastructure.
+
+If your CNAME isn't detected after 30 minutes, see [DNS Problems](/troubleshooting/dns-problems).
+
+## Common Mistakes
+
+- **Adding `https://` to the target.** CNAME targets are hostnames, not URLs. No protocol prefix.
+- **Using a proxied record (Cloudflare).** The record must be DNS Only (gray cloud). An orange-cloud proxied record will break the first-party routing.
+- **Entering the full domain as the name.** Most providers only want the subdomain part (`cleanclicks`), not `cleanclicks.yourdomain.com`. Some providers are exceptions. Check what your provider expects.
+- **TTL set too high.** If you need to make changes later, a high TTL means waiting longer for propagation. The default is usually fine.
+
+---
+
+**Next:** [Installing the Tag](/installing-the-tag)

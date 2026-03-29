@@ -1,0 +1,104 @@
+---
+title: "Guide: Complete Shopify Ecommerce Tracking"
+description: "This guide walks through setting up end-to-end ecommerce tracking for a Shopify store with CleanClicks. By the end, every product view, cart action, a"
+---
+
+This guide walks through setting up end-to-end ecommerce tracking for a Shopify store with CleanClicks. By the end, every product view, cart action, and purchase will be captured first-party and relayed to your ad platforms.
+
+## What You'll Set Up
+
+1. **Client-side pixel** — captures browsing events (page views, product views, add to cart, checkout, purchase)
+2. **Server-side webhook** — captures purchase events directly from Shopify's servers as a reliable backup
+3. **Ad platform connections** — routes conversion data to Google Ads, Meta, TikTok, etc.
+
+## Prerequisites
+
+- CleanClicks account on **Clarity** plan or higher (ecommerce requires Clarity+)
+- Domain added and DNS verified in CleanClicks
+- Shopify store with admin access
+
+## Step 1: Install the Custom Pixel
+
+1. In Shopify Admin, go to **Settings** > **Customer events**
+2. Click **Add custom pixel**
+3. Name it **CleanClicks**
+4. Paste the pixel code from your CleanClicks Configuration > Ecommerce tab
+5. Click **Save**, then **Connect**
+
+The pixel immediately starts capturing:
+
+| Event | When It Fires |
+|---|---|
+| `page_view` | Every page load |
+| `view_item` | Product page view |
+| `view_item_list` | Collection page view |
+| `add_to_cart` | Item added to cart |
+| `begin_checkout` | Checkout page load |
+| `purchase` | Order confirmation |
+| `search` | Search performed |
+
+## Step 2: Set Up the Server-Side Webhook
+
+The webhook provides a server-to-server backup for purchase events. If a customer closes their browser before the confirmation page loads, the webhook still captures the order.
+
+1. In CleanClicks, go to **Configuration** > **Ecommerce** tab
+2. Copy the **Webhook URL** and **Webhook Secret**
+3. In Shopify Admin, go to **Settings** > **Notifications** > **Webhooks**
+4. Click **Create Webhook**
+5. Event: **Order payment**
+6. Format: **JSON**
+7. URL: paste the webhook URL
+8. Click **Save**
+
+## Step 3: Connect Ad Platforms
+
+Go to **Connections** and connect the ad platforms you want to receive conversion data:
+
+- **Google Ads** — OAuth connection + Customer ID + Conversion Action ID
+- **Meta** — System User Token + Pixel ID
+- **TikTok** — Access Token + Pixel Code
+- **LinkedIn** — OAuth connection + Account ID + Conversion URN
+- **Microsoft Ads** — OAuth connection + Customer ID + Account ID
+
+See the individual [connection guides](/connections/overview) for step-by-step instructions per platform.
+
+## Step 4: Configure Vendors
+
+Go to **Configuration** > **Vendors** and enable each connected platform. Enter the required credentials.
+
+For ecommerce, the key conversion event is `purchase`. Most ad platforms automatically recognize this event name and match it to their purchase/conversion goals.
+
+## Step 5: Test the Flow
+
+1. Open your Shopify store in an **Incognito** browser window
+2. Browse to a product page
+3. Add to cart
+4. Complete a test checkout (use Shopify's test payment gateway or a small real order)
+5. Check CleanClicks dashboard for events within a few minutes
+6. Check each ad platform for the conversion (allow 15-30 minutes)
+
+## GA4 Integration Note
+
+If you have GA4 connected via CleanClicks, **keep Measurement Protocol enabled** for Shopify. Shopify's pixel sandbox prevents direct GA4 data layer access, so the Measurement Protocol is the only path from CleanClicks to GA4 for ecommerce events.
+
+## Attribution Flow
+
+Here's what happens when someone clicks your ad and buys:
+
+1. Visitor clicks ad → lands on your store with click ID in the URL (gclid, fbclid, etc.)
+2. CleanClicks tag captures the click ID and UTM parameters, stores them in a first-party cookie
+3. Visitor browses (CleanClicks tracks product views, cart adds)
+4. Visitor purchases → CleanClicks captures the event with the original click ID still attached
+5. CleanClicks relays the purchase server-side to each connected platform with full attribution
+6. Shopify webhook also fires as backup, and CleanClicks matches it to the same visitor session
+
+Result: Your ad platforms see the conversion attributed to the correct ad click, even if the visitor had an ad blocker.
+
+## Avoiding Duplicate Tracking
+
+- **Only use the CleanClicks Custom Pixel for Shopify.** Don't also paste the `cc.js` script tag into your theme.
+- If you have existing platform pixels (Meta Pixel, TikTok Pixel, etc.) installed in your Shopify theme, consider removing them. CleanClicks replaces them with more reliable server-side delivery.
+
+---
+
+**Related:** [Shopify Setup](/setup/shopify-setup) | [Ecommerce Configuration](/configuration/ecommerce)

@@ -1,0 +1,126 @@
+---
+title: "Guide: Complete WooCommerce Ecommerce Tracking"
+description: "This guide walks through setting up end-to-end ecommerce tracking for a WooCommerce store with CleanClicks. Every product view, cart action, and purch"
+---
+
+This guide walks through setting up end-to-end ecommerce tracking for a WooCommerce store with CleanClicks. Every product view, cart action, and purchase will be captured first-party and relayed to your ad platforms.
+
+## What You'll Set Up
+
+1. **WordPress plugin** — captures browsing events and injects tracking scripts
+2. **Server-side webhook** — captures order events directly from WooCommerce
+3. **Analytics proxies** — routes GA4, Usermaven, and Plerdy through your domain
+4. **Ad platform connections** — routes conversion data to your platforms
+
+## Prerequisites
+
+- CleanClicks account on **Clarity** plan or higher
+- Domain added and DNS verified in CleanClicks
+- WordPress site with WooCommerce active
+- Admin access to WordPress
+
+## Step 1: Install the WordPress Plugin
+
+1. In CleanClicks, go to **Configuration** > **Ecommerce** tab
+2. Download the plugin zip file
+3. In WordPress Admin, go to **Plugins** > **Add New** > **Upload Plugin**
+4. Upload the zip and click **Install Now**
+5. Click **Activate**
+6. Go to **Settings** > **CleanClicks** to confirm it's working
+
+The plugin automatically:
+- Loads the CleanClicks tracking tag on every page
+- Captures WooCommerce events (product views, cart actions, purchases)
+- Injects analytics proxy scripts (GA4, Usermaven, Plerdy) through your first-party subdomain
+- Handles GA4 and Usermaven session stitching
+
+### Events Tracked
+
+| Event | When It Fires |
+|---|---|
+| `view_item` | Product page view |
+| `view_item_list` | Shop/category page view |
+| `add_to_cart` | Item added to cart |
+| `remove_from_cart` | Item removed from cart |
+| `begin_checkout` | Checkout page load |
+| `purchase` | Order completed |
+
+## Step 2: Set Up the Server-Side Webhook
+
+The webhook provides reliable server-to-server order capture:
+
+1. In CleanClicks, go to **Configuration** > **Ecommerce** tab
+2. Copy the **Webhook URL** and **Webhook Secret**
+3. In WordPress Admin, go to **WooCommerce** > **Settings** > **Advanced** > **Webhooks**
+4. Click **Add Webhook**
+5. Configure:
+   - Name: `CleanClicks`
+   - Status: **Active**
+   - Topic: **Order updated**
+   - Delivery URL: paste the webhook URL
+   - Secret: paste the webhook secret
+6. Click **Save Webhook**
+
+## Step 3: Connect and Configure Platforms
+
+Same as any CleanClicks setup:
+
+1. Go to **Connections** and connect your ad platforms
+2. Go to **Configuration** > **Vendors** and enable + configure each platform
+
+## Step 4: Enable Analytics Proxies
+
+If you use GA4, Usermaven, or Plerdy:
+
+1. Go to **Configuration** > **Advanced** tab
+2. Enable the proxy toggle for each analytics platform you use
+3. Save
+
+The WordPress plugin detects these settings and automatically injects the proxied versions of your analytics scripts. No additional theme code changes needed.
+
+## Step 5: Test
+
+1. Open your WooCommerce store in an Incognito window
+2. Browse to a product page
+3. Add to cart
+4. Complete a test order
+5. Check CleanClicks dashboard for events
+6. Check each ad platform (allow 15-30 minutes)
+
+## Important: GA4 Measurement Protocol
+
+If you use the CleanClicks WordPress plugin with GA4, **disable GA4 Measurement Protocol** for this domain in Configuration > Vendors.
+
+Why? The plugin pushes GA4 ecommerce events to the data layer client-side. The GA4 proxy routes those events through your first-party subdomain. If Measurement Protocol is also enabled, GA4 receives every event twice: once client-side (properly attributed) and once server-side (attributed to "Unassigned"). This causes inflated event counts and broken attribution.
+
+The plugin + GA4 proxy gives you full ad-blocker bypass without needing Measurement Protocol.
+
+## Caching Considerations
+
+If your WordPress site uses a caching plugin (WP Rocket, W3 Total Cache, etc.):
+
+- The CleanClicks plugin handles most caching conflicts automatically
+- After installing or updating the plugin, clear all cache layers:
+  1. Your caching plugin's cache
+  2. Your hosting provider's CDN cache (if applicable)
+  3. Your browser cache
+- Verify by checking the page source for the correct plugin version in the `?ver=` parameter
+
+### WP Rocket Specific
+
+WP Rocket delays JavaScript execution until user interaction (scroll, click). The CleanClicks plugin is designed to work with this behavior. Analytics proxy scripts are injected via `wp_head` to bypass WP Rocket's lazy-loading.
+
+## Attribution Flow
+
+When someone clicks your ad and buys on WooCommerce:
+
+1. Visitor clicks ad → lands on your store with click ID + UTMs
+2. CleanClicks tag (via plugin) captures click IDs and UTMs in first-party cookies
+3. Plugin tracks browsing events (product views, cart adds)
+4. Visitor completes purchase → plugin fires the `purchase` event with original attribution
+5. WooCommerce webhook also fires, CleanClicks matches it to the visitor session
+6. Each connected platform receives the conversion with proper attribution
+
+---
+
+**Related:** [WordPress Setup](/setup/wordpress-setup) | [Ecommerce Configuration](/configuration/ecommerce)

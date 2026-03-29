@@ -1,0 +1,87 @@
+---
+title: "Billing Issues"
+description: "Payment and subscription problems and how to resolve them."
+---
+
+Payment and subscription problems and how to resolve them.
+
+## Payment Failed
+
+If a payment fails, your subscription enters a **past due** state. Tracking continues while Stripe retries the payment.
+
+**To fix:**
+1. Go to **Billing** in CleanClicks
+2. Click **Manage Billing** to open the Stripe portal
+3. Update your payment method
+4. Stripe will retry the charge automatically
+
+If all payment retries fail, your subscription may be suspended. Update your payment method to reactivate.
+
+## Can't Complete Checkout
+
+If the Stripe checkout page won't load or payment won't process:
+
+- **Browser issue:** Try a different browser or Incognito mode
+- **Ad blocker:** Some ad blockers interfere with Stripe's checkout. Disable it temporarily.
+- **Card declined:** Try a different payment method. Contact your bank if your card is being incorrectly declined.
+- **Still stuck:** Contact [support@cleanclicks.io](mailto:support@cleanclicks.io)
+
+## I Was Charged More Than Expected
+
+Extra charges may come from:
+
+- **Overages:** You exceeded your plan's monthly session limit. Check the overage rate for your plan.
+- **Add-on:** The Analytics Add-On ($299/mo) may have been added.
+- **Plan change:** Upgrading mid-cycle incurs a prorated charge.
+
+View your full invoice in **Billing** > **Manage Billing** to see the line-item breakdown.
+
+## I Want to Cancel
+
+1. Go to **Billing**
+2. Click **Manage Billing**
+3. Click **Cancel subscription** in the Stripe portal
+4. Your account stays active until the end of the billing period
+
+After cancellation:
+- Tracking stops at period end
+- Configuration is retained for 30 days
+- You can resubscribe anytime to pick up where you left off
+
+## I Canceled but Was Still Charged
+
+Cancellation takes effect at the end of the billing period, not immediately. If you canceled on the 5th and your period runs through the 28th, you'll have access (and won't be refunded for) the remaining time.
+
+If you believe a charge is incorrect, contact [support@cleanclicks.io](mailto:support@cleanclicks.io) with the invoice details.
+
+## Switching Between Monthly and Annual
+
+1. Go to **Billing** > **Manage Billing** (Stripe portal)
+2. Update your subscription's billing interval
+3. Annual billing saves approximately 17%
+
+## I Need an Invoice for Accounting
+
+All invoices are available in the Stripe billing portal:
+
+1. Go to **Billing** > **Manage Billing**
+2. Scroll to **Invoice history**
+3. Click any invoice to view or download a PDF
+
+Invoices include your company name, plan details, and all charges.
+
+## Session Overages
+
+If you're consistently exceeding your session limit:
+
+| Your Plan | Monthly Limit | Overage Rate | Consider Upgrading To |
+|---|---|---|---|
+| Pulse | 10,000 | $8/1K | Signal (50K) |
+| Signal | 50,000 | $6/1K | Clarity (250K) |
+| Clarity | 250,000 | $4/1K | Command (unlimited) |
+
+To check your current usage, look at the dashboard home page. If overages are a regular occurrence, upgrading is usually more cost-effective.
+
+---
+
+**Related:** [Billing and Plans](/features/billing-and-plans) | [Common Issues](/common-issues)

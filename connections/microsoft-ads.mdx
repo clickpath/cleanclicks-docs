@@ -1,0 +1,66 @@
+---
+title: "Connecting Microsoft Ads"
+description: "CleanClicks connects to Microsoft Ads (Bing) via OAuth for offline conversion uploads through the Microsoft Ads API."
+---
+
+CleanClicks connects to Microsoft Ads (Bing) via OAuth for offline conversion uploads through the Microsoft Ads API.
+
+## Prerequisites
+
+- A Microsoft Advertising account
+- Admin or Standard access to the account
+- At least one conversion goal set up in Microsoft Ads
+
+## Connecting
+
+1. Go to **Connections** in your CleanClicks dashboard
+2. Select your domain
+3. Find **Microsoft Ads** in the One-Click Connect section
+4. Click **Connect**
+5. Sign in with your Microsoft account (the one linked to your Microsoft Ads account)
+6. Authorize CleanClicks
+7. You'll be redirected back with a success message
+
+## Configuring the Vendor
+
+After connecting:
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **Microsoft Ads**
+3. Enter your **Customer ID** and **Account ID** (both visible in the top-right of the Microsoft Ads dashboard)
+4. Save
+
+### Finding Your IDs
+
+In the Microsoft Ads interface, look at the top-right corner:
+- **Customer ID** — the top-level account identifier
+- **Account ID** — the specific ad account (you may have multiple under one customer)
+
+## How It Works
+
+When a visitor converts:
+1. CleanClicks captures the `msclkid` (Microsoft Click ID) from the landing page URL
+2. The conversion event is sent server-side to Microsoft's Offline Conversions API
+3. Microsoft matches the conversion using the msclkid and/or hashed email
+4. The conversion is attributed to the correct ad click, keyword, and campaign
+
+### Auto-Tagging
+
+For msclkid capture to work, make sure **Auto-tagging** is enabled in Microsoft Ads:
+1. Go to Microsoft Ads > **Settings** > **Account Settings**
+2. Under **Auto-tagging**, ensure it's turned on
+
+Without auto-tagging, there's no msclkid to capture and conversions can only be matched via email.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| OAuth fails | Verify you're signing in with the Microsoft account that has access to your ad account |
+| "Needs Reconnection" | Disconnect and reconnect to refresh credentials |
+| Conversions not appearing | Verify Customer ID and Account ID. Check that auto-tagging is enabled. Allow 24-48 hours for processing. |
+| Wrong account connected | Disconnect, then reconnect and choose the correct Microsoft account during OAuth |
+
+---
+
+**Next:** [GA4](/ga4)

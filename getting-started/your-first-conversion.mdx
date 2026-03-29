@@ -1,0 +1,75 @@
+---
+title: "Your First Conversion"
+description: "You've completed onboarding. Your domain is verified, the tag is installed, and at least one ad platform is connected. Now let's make sure a conversio"
+---
+
+You've completed onboarding. Your domain is verified, the tag is installed, and at least one ad platform is connected. Now let's make sure a conversion actually flows through the system.
+
+## What Needs to Be True
+
+Before a conversion can be tracked, confirm:
+
+1. **DNS is verified** — your domain shows "Active" on the Domains page
+2. **Tag is installed** — the CleanClicks script is on your website
+3. **At least one trigger is configured** — a conversion event rule exists in Configuration > Triggers
+4. **At least one platform is connected** — with valid credentials on the Connections page
+
+## Testing a Conversion
+
+### Option A: Trigger It Yourself
+
+1. Open your website in a browser (use Incognito/Private mode for a clean session)
+2. Perform the action your trigger is set to capture (submit a form, visit a thank-you page, click a button, etc.)
+3. Check your CleanClicks dashboard within a few minutes
+
+### Option B: Use a Test Event Code (Meta)
+
+If you're connected to Meta, you can use a **Test Event Code** in Configuration > Vendors > Meta. Meta's Events Manager will show test events in real time before they count toward your actual data.
+
+### Option C: Use Google Ads Debug Mode (GA4)
+
+If GA4 is configured, enable debug mode in GA4's DebugView to watch events arrive in real time.
+
+## Where to See Results
+
+Conversions flow to two places:
+
+1. **Your CleanClicks dashboard** — the home page shows recent activity and basic metrics
+2. **Your ad platform** — each connected platform receives the conversion via server-side relay
+
+Allow a few minutes for data to appear. Ad platforms like Google Ads and Meta can take 15-30 minutes to reflect new conversions in their dashboards.
+
+## If It's Not Working
+
+Walk through this checklist:
+
+- **Is your domain active?** Check Domains page. If it says "Pending Verification," your DNS isn't set up yet. See [DNS Problems](/troubleshooting/dns-problems).
+- **Is the tag installed?** View your page source and search for `cc.js`. If it's not there, see [Tag Not Detected](/troubleshooting/tag-not-detected).
+- **Is a trigger configured?** Go to Configuration > Triggers. You need at least one active trigger.
+- **Are platform credentials valid?** Go to Connections and verify each platform shows "Connected." If a connection shows an error, re-authenticate or re-enter your token.
+- **Are you testing from a filtered location?** If you have geo or IP filters enabled, make sure your test traffic isn't being filtered out.
+
+For more detailed troubleshooting, see [Conversions Not Appearing](/troubleshooting/conversions-not-appearing).
+
+## What Happens Behind the Scenes
+
+When a visitor triggers a conversion event:
+
+1. The CleanClicks tag captures the event with all relevant data (click IDs, UTM parameters, session info)
+2. The event is sent to your first-party subdomain
+3. CleanClicks relays the conversion server-side to each connected ad platform
+4. The ad platform receives the conversion with proper attribution data
+
+The whole process takes seconds. Because it's server-side, it works even when:
+- The visitor has an ad blocker
+- The browser restricts third-party cookies
+- The visitor navigates away quickly after converting
+
+---
+
+**You're up and running.** From here, explore the setup guides for deeper configuration, or jump to the specific section you need:
+
+- [Configuration](/configuration/vendors) — fine-tune vendors, triggers, and filters
+- [Connections](/connections/overview) — manage ad platform connections
+- [Traffic Analytics](/features/traffic-analytics) — understand your traffic quality
+- [Troubleshooting](/troubleshooting/common-issues) — fix issues

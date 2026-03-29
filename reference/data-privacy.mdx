@@ -1,0 +1,99 @@
+---
+title: "Data and Privacy"
+description: "How CleanClicks handles your data, your visitors' data, and privacy compliance."
+---
+
+How CleanClicks handles your data, your visitors' data, and privacy compliance.
+
+## First-Party Data Architecture
+
+CleanClicks operates as a first-party data processor. All tracking data flows through your own subdomain (`cleanclicks.yourdomain.com`), which means:
+
+- **No third-party cookies.** CleanClicks uses first-party cookies only.
+- **No cross-site tracking.** Data is scoped to your domain.
+- **No data sharing.** Your conversion data is never shared with other CleanClicks customers or used for any purpose other than relaying it to your configured ad platforms.
+
+## What Data Is Collected
+
+### From Visitors
+
+| Data | Purpose | Storage |
+|---|---|---|
+| Session ID | Track visitor across pages | First-party cookie, 90-day retention |
+| Click IDs (gclid, fbclid, etc.) | Ad attribution | First-party cookie, 90-day retention |
+| UTM parameters | Campaign attribution | First-party cookie, 90-day retention |
+| IP address | Geographic classification | Used in real-time, not stored |
+| User agent | Device classification, bot detection | Used in real-time, not stored |
+| Page URL | Trigger matching | Processed, not stored separately |
+| Email (when provided) | Cross-platform matching | SHA-256 hashed before relay |
+
+### From Ecommerce
+
+| Data | Purpose |
+|---|---|
+| Order ID | Deduplication |
+| Order total / currency | Revenue reporting |
+| Product details | Product-level conversion tracking |
+| Customer email | Hashed for cross-platform matching |
+
+## Data Retention
+
+| Data Type | Retention Period |
+|---|---|
+| Conversion events | 90 days |
+| Session identification | 90 days |
+| Failed event retries | 90 days |
+| Traffic analytics | 90 days |
+
+After the retention period, data is automatically purged. There is no "keep forever" option.
+
+## Hashing and Encryption
+
+- **Customer emails** are SHA-256 hashed before being sent to any ad platform. The raw email is never shared with third parties.
+- **Ad platform credentials** (OAuth tokens, API keys) are encrypted at rest using AES-256-GCM with per-customer encryption keys.
+- **API keys** are stored as SHA-256 hashes. The raw key is shown once at creation and never stored.
+
+## CCPA Compliance
+
+CleanClicks includes built-in CCPA / Limited Data Use support:
+
+- **Meta:** Events include `data_processing_options: ["LDU"]` when applicable
+- **TikTok:** Events include `limited_data_use: true`
+- **Google:** Consent Mode v2 signals are respected in the tracking tag
+- **LinkedIn / Microsoft Ads:** Handled via the platform's own measurement restrictions
+
+These flags tell ad platforms to restrict how they process the visitor's data in accordance with California Consumer Privacy Act requirements.
+
+## GPC (Global Privacy Control)
+
+The CleanClicks WordPress plugin supports the WP Consent API, which detects GPC signals and consent management platforms. When a visitor signals a privacy preference, the plugin respects it.
+
+## GDPR
+
+GDPR-specific features (consent gates, TCF 2.2 integration, right-to-erasure) are on the roadmap but not yet available. For EU-focused businesses, consult your legal team about compliance requirements with the current feature set.
+
+## Data Residency
+
+Conversion data is processed globally across CleanClicks infrastructure. If your business requires data to remain in a specific geographic region, contact [support@cleanclicks.io](mailto:support@cleanclicks.io) to discuss options.
+
+## Your Obligations
+
+As a CleanClicks customer, you are responsible for:
+
+- **Disclosing tracking in your privacy policy.** Your site's privacy policy should mention the use of first-party tracking technology for conversion measurement.
+- **Respecting visitor consent.** If your jurisdiction requires consent for tracking (GDPR, ePrivacy), implement a consent mechanism on your site.
+- **Managing ad platform compliance.** Each ad platform has its own data processing terms. Ensure your use of those platforms complies with their policies.
+
+## Accessing or Deleting Your Data
+
+To request data export or deletion, contact [support@cleanclicks.io](mailto:support@cleanclicks.io). Account data (profile, configuration) can be exported or deleted on request.
+
+For visitor data: because visitor data is stored as hashed identifiers with 90-day retention, specific visitor records automatically expire. For urgent deletion requests, contact support.
+
+## CleanClicks Privacy Policy
+
+The full CleanClicks privacy policy is available at [cleanclicks.io/privacy-policy](https://cleanclicks.io/privacy-policy). The terms of service are at [cleanclicks.io/terms](https://cleanclicks.io/terms).
+
+---
+
+**Related:** [Plan Comparison](/plan-comparison) | [Traffic Filters](/configuration/traffic-filters)

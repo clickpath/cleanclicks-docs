@@ -1,0 +1,112 @@
+---
+title: "Traffic Filters"
+description: "Traffic filters control which visitors' data gets processed and sent to your ad platforms. Filter out bots, irrelevant geographies, and specific IP ad"
+---
+
+Traffic filters control which visitors' data gets processed and sent to your ad platforms. Filter out bots, irrelevant geographies, and specific IP addresses to keep your conversion data clean.
+
+## Accessing Traffic Filters
+
+1. Go to **Configuration** in the sidebar
+2. Select your domain
+3. Click the **Traffic Filters** tab
+
+## Plan Availability
+
+| Feature | Pulse | Signal | Clarity | Command |
+|---|---|---|---|---|
+| Bot filtering (basic) | Yes | Yes | Yes | Yes |
+| Bot score customization | -- | Yes | Yes | Yes |
+| Custom UA patterns | -- | Yes | Yes | Yes |
+| Geo filtering | -- | Yes | Yes | Yes |
+| IP filtering | -- | Yes | Yes | Yes |
+
+Features not available on your plan show an upgrade prompt.
+
+## Bot Filtering
+
+Bot filtering is enabled by default on all plans. It blocks known bots, crawlers, and automated traffic from being counted as conversions.
+
+### Basic Bot Filtering (All Plans)
+
+- **Known bot blocking:** Automatically filters traffic from recognized bots (Googlebot, Bingbot, etc.) using a database of 45+ known bot patterns
+- This runs silently, no configuration needed
+
+### Advanced Bot Filtering (Signal+)
+
+- **Bot score threshold:** Set a sensitivity level (0-100). Lower numbers block more aggressively. Default is 30, which is a good balance.
+- **Custom blocked UA patterns:** Add your own user-agent patterns to block. Useful for filtering proprietary crawlers or monitoring tools that your analytics shouldn't count.
+
+### Adding Custom UA Patterns
+
+1. In the Bot Filtering section, find **Custom Blocked User Agents**
+2. Enter a pattern (e.g., `SemrushBot` or `AhrefsBot`)
+3. Click **Add**
+4. Save your configuration
+
+Patterns are matched against the visitor's user-agent string. Partial matches work: `Semrush` will match `SemrushBot/7.0`.
+
+## Geographic Filtering
+
+Available on **Signal** plans and above. Filter traffic based on the visitor's country.
+
+### How It Works
+
+You choose a mode and a list of countries:
+
+- **Allowlist mode:** Only visitors from the listed countries are processed. Everyone else is filtered out.
+- **Blocklist mode:** Visitors from the listed countries are filtered out. Everyone else is processed.
+
+### Setting Up Geo Filtering
+
+1. Enable **Geo Filtering** toggle
+2. Choose **Allowlist** or **Blocklist** mode
+3. Add countries using their two-letter country codes (e.g., `US`, `CA`, `GB`, `AU`)
+4. Save
+
+### Common Configurations
+
+- **US-only business:** Allowlist with `US`
+- **North America:** Allowlist with `US`, `CA`
+- **Block known bot-farm countries:** Blocklist mode with specific countries
+
+Geographic filtering happens before conversion processing, so filtered traffic doesn't count toward your session limit or get sent to ad platforms.
+
+## IP Filtering
+
+Available on **Signal** plans and above. Filter specific IP addresses or ranges.
+
+### Modes
+
+- **Blocklist:** Block specific IPs (e.g., your office IP to exclude internal traffic)
+- **Allowlist:** Only allow specific IPs (rare, but useful for testing)
+
+### Adding IPs
+
+1. Enable **IP Filtering** toggle
+2. Choose **Blocklist** or **Allowlist** mode
+3. Enter IP addresses (one per line)
+4. Save
+
+Supports individual IPs (e.g., `203.0.113.50`). Useful for filtering your own office traffic, known spam sources, or competitor IPs.
+
+## Origin Filtering
+
+Control which referrer origins are allowed to send data. This prevents unauthorized domains from sending events through your CleanClicks subdomain.
+
+Add allowed origins as full domain names. If no origins are specified, all origins are accepted.
+
+## How Filters Stack
+
+Filters are applied in order. A request must pass all active filters to be processed:
+
+1. **Bot filter** — Is it a bot? If yes, blocked.
+2. **Geo filter** — Is the visitor's country allowed? If no, blocked.
+3. **IP filter** — Is the visitor's IP allowed? If no, blocked.
+4. **Origin filter** — Is the referrer origin allowed? If no, blocked.
+
+Traffic that's filtered out is not counted toward your session limit, not sent to ad platforms, and doesn't appear in your conversion data. Filtered requests are still logged in traffic analytics (on Signal+ plans) so you can see what's being blocked.
+
+---
+
+**Next:** [Ecommerce](/ecommerce)

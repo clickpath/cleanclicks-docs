@@ -1,0 +1,116 @@
+---
+title: "Conversions Not Appearing"
+description: "You've set everything up but conversions aren't showing in your ad platforms. Walk through this diagnostic checklist from most common to least common "
+---
+
+You've set everything up but conversions aren't showing in your ad platforms. Walk through this diagnostic checklist from most common to least common cause.
+
+## Diagnostic Checklist
+
+### 1. Is Your Domain Active?
+
+Go to **Domains** in CleanClicks. Your domain must show **Active** status. If it's Pending Verification, DNS isn't set up yet. See [DNS Problems](/dns-problems).
+
+### 2. Is the Tag Loading?
+
+Open your website in a browser, press F12, go to the **Network** tab, reload, and search for `cc.js`. You need a **200** response from `cleanclicks.yourdomain.com/__cc/cc.js`.
+
+### 3. Are Triggers Configured?
+
+Go to **Configuration** > **Triggers** tab. You need at least one trigger. If the list is empty, no events will fire.
+
+If you have triggers, verify:
+- The URL pattern matches your actual page URLs
+- The trigger type matches the action (e.g., form submission trigger for form pages)
+- For Button Click triggers, the CSS selector matches the actual button element
+
+**Test it:** Perform the trigger action on your site in an Incognito window and check the CleanClicks dashboard.
+
+### 4. Are Vendors Enabled?
+
+Go to **Configuration** > **Vendors** tab. At least one vendor must be toggled **on** with valid credentials.
+
+### 5. Are Connections Valid?
+
+Go to **Connections** page. Each connected platform should show **Connected** status.
+
+| Status | Action |
+|---|---|
+| Connected | Good. Move to next check. |
+| Needs Reconnection | Click Disconnect, then Connect again. |
+| Error | Check the error message. Re-enter credentials. |
+
+### 6. Are Credentials Correct?
+
+For each vendor in Configuration > Vendors:
+
+- **Google Ads:** Customer ID format `123-456-7890`, valid Conversion Action ID
+- **Meta:** Valid System User Token with `ads_management` + `ads_read` permissions, correct Pixel ID
+- **TikTok:** Valid access token, correct Pixel Code (starts with `C`)
+- **LinkedIn:** Valid account ID and Conversion Action URN
+- **Microsoft Ads:** Valid Customer ID and Account ID
+- **GA4:** Correct Measurement ID (`G-XXXXXXXXXX`) and API Secret
+- **Usermaven:** Valid workspace token
+
+### 7. Are You Waiting Long Enough?
+
+Ad platforms don't process conversions instantly:
+
+| Platform | Typical Delay |
+|---|---|
+| CleanClicks dashboard | 1-5 minutes |
+| GA4 Realtime | 30 seconds - 2 minutes |
+| Meta Events Manager | 5-15 minutes |
+| Google Ads | 1-24 hours (offline conversions) |
+| TikTok | 5-15 minutes |
+| LinkedIn | 6-24 hours |
+| Microsoft Ads | 4-24 hours |
+
+If you just triggered a test conversion, wait at least the time listed above before concluding it's not working.
+
+### 8. Are Filters Blocking Your Test?
+
+If you have traffic filters enabled:
+- **Geo filter:** Is your test from an allowed country?
+- **IP filter:** Is your IP on the blocklist? (Common if you added your office IP to exclude internal traffic)
+- **Bot filter:** Is your browser or VPN triggering bot detection?
+
+Temporarily disable filters for testing, or test from an unfiltered location.
+
+### 9. Platform-Specific Checks
+
+#### Google Ads
+- Go to **Goals** > **Conversions** in Google Ads
+- Check the "Recent conversions" or "All conversions" columns
+- Offline conversions can take up to 24 hours to process
+- The conversion action must be set to **Primary** to count in campaign reporting
+
+#### Meta
+- Go to **Events Manager** > your pixel
+- Check the **Overview** tab for recent events
+- Use a **Test Event Code** in CleanClicks (Configuration > Vendors > Meta) to see events in the Test Events tab in real time
+
+#### GA4
+- Go to **Realtime** report in GA4
+- Events should appear within 30 seconds
+- If using Measurement Protocol: session stitching means events need a matching prior GA4 session to avoid "Unassigned" attribution
+
+#### TikTok
+- Go to **Events Manager** in TikTok Ads
+- Check event activity for your pixel
+
+#### Microsoft Ads
+- Check **Conversion Goals** in Microsoft Ads
+- Ensure **auto-tagging** is enabled for msclkid capture
+
+## Still Not Working?
+
+If you've checked everything above:
+
+1. Check the CleanClicks dashboard for any error notifications
+2. Try a completely fresh test: new Incognito window, click an actual ad (or simulate with UTMs), complete a conversion
+3. Contact [support@cleanclicks.io](mailto:support@cleanclicks.io) with your domain name and the specific platform that's not receiving data
+
+---
+
+**Related:** [Verifying Installation](/setup/verifying-installation) | [Vendors](/configuration/vendors) | [Connections Overview](/connections/overview)

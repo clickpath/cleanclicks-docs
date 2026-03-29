@@ -1,0 +1,86 @@
+---
+title: "Supported Platforms"
+description: "Every ad platform, analytics tool, and ecommerce system CleanClicks integrates with."
+---
+
+Every ad platform, analytics tool, and ecommerce system CleanClicks integrates with.
+
+## Ad Platforms
+
+| Platform | Connection Method | Click ID | Server-Side Delivery | Minimum Plan |
+|---|---|---|---|---|
+| **Google Ads** | OAuth (one-click) | `gclid` | Enhanced Conversions via API | Pulse |
+| **Meta (Facebook)** | Manual token | `fbclid` | Conversions API (CAPI) | Pulse |
+| **TikTok** | Manual token | `ttclid` | Events API | Pulse |
+| **LinkedIn** | OAuth (one-click) | `li_fat_id` (cookie) | Conversions API | Pulse |
+| **Microsoft Ads (Bing)** | OAuth (one-click) | `msclkid` | Offline Conversions API | Pulse |
+
+## Analytics Platforms
+
+| Platform | Connection Method | Features | Minimum Plan |
+|---|---|---|---|
+| **GA4** | Measurement ID + API Secret | Measurement Protocol + first-party proxy | Clarity (or Analytics Add-On) |
+| **Usermaven** | Workspace token | Server-side events + first-party proxy | Clarity (or Analytics Add-On) |
+| **Plerdy** | Proxy only | First-party script proxying | Clarity (or Analytics Add-On) |
+
+Analytics platforms count against your ad platform connection limit.
+
+## Ecommerce Platforms
+
+| Platform | Client-Side | Server-Side | Plugin/Pixel | Minimum Plan |
+|---|---|---|---|---|
+| **Shopify** | Custom Pixel (7 events) | Webhook (purchase) | Shopify Custom Pixel | Clarity |
+| **WooCommerce** | WordPress plugin (6 events) | Webhook (order updated) | CleanClicks WP Plugin | Clarity |
+
+### Shopify Events
+
+| Event | Trigger |
+|---|---|
+| `page_view` | Every page load |
+| `view_item` | Product page |
+| `view_item_list` | Collection page |
+| `add_to_cart` | Add to cart action |
+| `begin_checkout` | Checkout started |
+| `purchase` | Order completed |
+| `search` | Site search |
+
+### WooCommerce Events
+
+| Event | Trigger |
+|---|---|
+| `view_item` | Product page |
+| `view_item_list` | Shop/category page |
+| `add_to_cart` | Add to cart action |
+| `remove_from_cart` | Remove from cart |
+| `begin_checkout` | Checkout page |
+| `purchase` | Order completed |
+
+## External Integrations (Inbound Webhook)
+
+CleanClicks accepts conversion data from any external system via the inbound webhook API:
+
+- **CRMs:** HubSpot, Salesforce, Pipedrive, etc.
+- **Automation tools:** Zapier, Make.com, n8n, ActivePieces
+- **Custom backends:** Any system that can make HTTP POST requests
+- **Call tracking:** CallRail, CallTrackingMetrics, etc.
+
+See [Inbound Webhooks](/guides/inbound-webhooks) for the API reference.
+
+## Client-Side Event Bridges
+
+For iframe-based platforms (booking widgets, scheduling tools, embedded forms), CleanClicks supports event capture via the browser's `postMessage` API. Configure allowed origins and event mappings in Configuration > Advanced.
+
+## Data Handling
+
+| Data Type | How It's Handled |
+|---|---|
+| Customer email | SHA-256 hashed before sending to ad platforms |
+| Click IDs | Stored in first-party cookies, attached to conversions |
+| UTM parameters | Stored in first-party cookies, included in all events |
+| IP addresses | Used for geo-enrichment, never stored long-term |
+| Conversion data | Retained for 90 days |
+| Session data | Retained for 90 days |
+
+---
+
+**Related:** [Plan Comparison](/plan-comparison) | [Vendors](/configuration/vendors) | [Connections Overview](/connections/overview)

@@ -1,0 +1,90 @@
+{
+  "tabs": [
+    {
+      "tab": "Documentation",
+      "groups": [
+        {
+          "group": "Getting Started",
+          "pages": [
+            { "title": "What Is CleanClicks?", "path": "getting-started/what-is-cleanclicks" },
+            { "title": "Creating Your Account", "path": "getting-started/creating-your-account" },
+            { "title": "Choosing a Plan", "path": "getting-started/choosing-a-plan" },
+            { "title": "Onboarding Walkthrough", "path": "getting-started/onboarding-walkthrough" },
+            { "title": "Your First Conversion", "path": "getting-started/your-first-conversion" }
+          ]
+        },
+        {
+          "group": "Setup",
+          "pages": [
+            { "title": "Adding a Domain", "path": "setup/adding-a-domain" },
+            { "title": "DNS Configuration", "path": "setup/dns-configuration" },
+            { "title": "Installing the Tag", "path": "setup/installing-the-tag" },
+            { "title": "Verifying Installation", "path": "setup/verifying-installation" },
+            { "title": "Shopify Setup", "path": "setup/shopify-setup" },
+            { "title": "WordPress Setup", "path": "setup/wordpress-setup" }
+          ]
+        },
+        {
+          "group": "Configuration",
+          "pages": [
+            { "title": "Vendors", "path": "configuration/vendors" },
+            { "title": "Triggers and Events", "path": "configuration/triggers-and-events" },
+            { "title": "Traffic Filters", "path": "configuration/traffic-filters" },
+            { "title": "Ecommerce", "path": "configuration/ecommerce" },
+            { "title": "Advanced Settings", "path": "configuration/advanced-settings" },
+            { "title": "API Keys", "path": "configuration/api-keys" }
+          ]
+        },
+        {
+          "group": "Platform Connections",
+          "pages": [
+            { "title": "Overview", "path": "connections/overview" },
+            { "title": "Google Ads", "path": "connections/google-ads" },
+            { "title": "Meta (Facebook)", "path": "connections/meta" },
+            { "title": "TikTok", "path": "connections/tiktok" },
+            { "title": "LinkedIn", "path": "connections/linkedin" },
+            { "title": "Microsoft Ads", "path": "connections/microsoft-ads" },
+            { "title": "GA4", "path": "connections/ga4" },
+            { "title": "Usermaven", "path": "connections/usermaven" }
+          ]
+        },
+        {
+          "group": "Features",
+          "pages": [
+            { "title": "Traffic Analytics", "path": "features/traffic-analytics" },
+            { "title": "Domain Management", "path": "features/domain-management" },
+            { "title": "Billing and Plans", "path": "features/billing-and-plans" },
+            { "title": "Analytics Add-On", "path": "features/analytics-addon" }
+          ]
+        },
+        {
+          "group": "Guides",
+          "pages": [
+            { "title": "Ecommerce: Shopify", "path": "guides/ecommerce-tracking-shopify" },
+            { "title": "Ecommerce: WooCommerce", "path": "guides/ecommerce-tracking-woocommerce" },
+            { "title": "Inbound Webhooks", "path": "guides/inbound-webhooks" },
+            { "title": "UTM Attribution Best Practices", "path": "guides/utm-attribution-best-practices" }
+          ]
+        },
+        {
+          "group": "Troubleshooting",
+          "pages": [
+            { "title": "Common Issues", "path": "troubleshooting/common-issues" },
+            { "title": "DNS Problems", "path": "troubleshooting/dns-problems" },
+            { "title": "Tag Not Detected", "path": "troubleshooting/tag-not-detected" },
+            { "title": "Conversions Not Appearing", "path": "troubleshooting/conversions-not-appearing" },
+            { "title": "Billing Issues", "path": "troubleshooting/billing-issues" }
+          ]
+        },
+        {
+          "group": "Reference",
+          "pages": [
+            { "title": "Plan Comparison", "path": "reference/plan-comparison" },
+            { "title": "Supported Platforms", "path": "reference/supported-platforms" },
+            { "title": "Data and Privacy", "path": "reference/data-privacy" }
+          ]
+        }
+      ]
+    }
+  ]
+}

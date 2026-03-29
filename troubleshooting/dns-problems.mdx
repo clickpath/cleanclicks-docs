@@ -1,0 +1,93 @@
+---
+title: "DNS Problems"
+description: "DNS configuration is the most common source of setup issues. This guide covers every DNS problem we've seen and how to fix it."
+---
+
+DNS configuration is the most common source of setup issues. This guide covers every DNS problem we've seen and how to fix it.
+
+## Symptom: Domain Stuck on "Pending Verification"
+
+### Step 1: Verify the Record Exists
+
+Use a DNS lookup tool to check:
+
+**Terminal:**
+```bash
+# Mac/Linux
+dig cleanclicks.yourdomain.com CNAME +short
+
+# Windows
+nslookup -type=CNAME cleanclicks.yourdomain.com
+```
+
+**Online tools:** [dnschecker.org](https://dnschecker.org), [mxtoolbox.com](https://mxtoolbox.com/SuperTool.aspx)
+
+If no CNAME is returned, the record hasn't been created or hasn't propagated yet.
+
+### Step 2: Check Common Mistakes
+
+| Mistake | Fix |
+|---|---|
+| Wrong record type (A instead of CNAME) | Delete the A record and create a CNAME |
+| Wrong hostname (`cleanclick` instead of `cleanclicks`) | Check spelling. It should be `cleanclicks` (with an S) |
+| Full domain in name field (`cleanclicks.yourdomain.com`) | Most providers only want `cleanclicks`. Some want the full domain. Check what your provider expects. |
+| `https://` in the target value | CNAME targets are hostnames, not URLs. Remove any protocol prefix. |
+| Extra space or period in the target | Copy-paste the target exactly from CleanClicks. Trailing dots are sometimes OK (DNS convention), but extra spaces will break it. |
+
+### Step 3: Provider-Specific Issues
+
+#### Cloudflare: Proxy Must Be Off
+If your DNS is managed by Cloudflare, the CNAME record **must** be set to **DNS Only** (gray cloud icon). If the orange cloud (Proxied) is active, Cloudflare intercepts the request and CleanClicks can't verify the CNAME.
+
+Click the cloud icon next to the record to toggle it to gray.
+
+#### GoDaddy: Slow Propagation
+GoDaddy sometimes takes 15-30 minutes for DNS changes. If you just created the record, wait and try again.
+
+#### Namecheap: Default Parking Records
+Namecheap may have default parking page records that conflict. Check for existing `cleanclicks` records and delete any old ones before creating the CNAME.
+
+### Step 4: Wait and Retry
+
+DNS propagation usually takes 1-5 minutes. In rare cases, it can take up to 24 hours. If you've verified the record is correct and it's been less than an hour, just wait.
+
+CleanClicks checks pending domains periodically. You can also click **Verify** on the Domains page to force an immediate check.
+
+## Symptom: CNAME Was Working, Now It's Not
+
+Possible causes:
+
+- **DNS record was deleted or modified.** Check your DNS provider.
+- **DNS provider changed proxy settings.** If using Cloudflare, verify the record is still DNS Only.
+- **Domain expired.** Check your domain registration status.
+
+## Symptom: cc.js Returns 404 Even Though Domain Shows Active
+
+If your domain is Active but the tag URL returns a 404:
+
+1. Verify the script URL matches exactly: `https://cleanclicks.yourdomain.com/__cc/cc.js`
+2. Check for typos in the subdomain (`cleanclicks`, not `clean-clicks` or `cleanclick`)
+3. Make sure you're using `https://`, not `http://`
+
+## Symptom: SSL/Certificate Error on the Subdomain
+
+After creating the CNAME, SSL certificates are provisioned automatically. This usually takes 1-5 minutes. If you see a certificate error:
+
+1. Wait 10 minutes and try again
+2. If it persists, verify the CNAME target is correct
+3. Contact [support@cleanclicks.io](mailto:support@cleanclicks.io) if the error continues after 30 minutes
+
+## Verifying DNS Is Working
+
+Once CleanClicks shows your domain as **Active**, verify the full chain:
+
+1. Visit `https://cleanclicks.yourdomain.com/__cc/cc.js` in your browser
+2. You should see JavaScript code (the tracking tag)
+3. No certificate warnings
+4. No redirect to a different domain
+
+If all three check out, DNS is working correctly.
+
+---
+
+**Related:** [DNS Configuration](/setup/dns-configuration) | [Common Issues](/common-issues)

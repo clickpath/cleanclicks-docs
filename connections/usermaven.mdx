@@ -1,0 +1,74 @@
+---
+title: "Connecting Usermaven"
+description: "CleanClicks sends conversion and ecommerce events to Usermaven via the server-side API and can proxy Usermaven's client-side tracking through your fir"
+---
+
+CleanClicks sends conversion and ecommerce events to Usermaven via the server-side API and can proxy Usermaven's client-side tracking through your first-party subdomain.
+
+## Plan Requirements
+
+Usermaven is available on:
+- **Clarity** and **Command** plans (included)
+- **Pulse** and **Signal** plans with the **Analytics Add-On** ($299/mo)
+
+Usermaven counts against your ad platform connection limit.
+
+## Configuration
+
+No OAuth or connection step needed. Configure directly in vendors.
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **Usermaven**
+3. Enter your **Workspace Token**
+4. Save
+
+### Finding Your Workspace Token
+
+1. Log in to [Usermaven](https://app.usermaven.com)
+2. Go to your workspace **Settings**
+3. Find the API/workspace token
+4. Copy it
+
+## Server-Side Events
+
+With Usermaven configured, CleanClicks sends ecommerce and conversion events server-side. This populates Usermaven's dashboards with revenue data, product analytics, and conversion metrics.
+
+### WooCommerce / Shopify Dashboards
+
+If you're tracking ecommerce events, Usermaven receives order data with:
+- Order totals and revenue
+- Product details
+- Customer information (hashed)
+
+> **Note:** Usermaven's WooCommerce dashboard widgets require manual setup inside Usermaven. Each widget needs to be configured with the event name, metric source, and aggregation. If you see $0 revenue in Usermaven but events are being sent, the issue is widget configuration, not CleanClicks.
+
+## Usermaven First-Party Proxy (Clarity+ or Analytics Add-On)
+
+CleanClicks can proxy Usermaven's client-side tracking script through your first-party subdomain.
+
+### Enabling the Proxy
+
+1. Go to **Configuration** > **Advanced** tab
+2. Enable **Usermaven Proxy**
+3. Save
+
+Benefits:
+- Usermaven tracking survives ad blockers
+- First-party cookie lifetime (no ITP restrictions)
+- Single tracking subdomain for all your analytics
+
+## Session Stitching
+
+CleanClicks automatically stitches sessions between its own tracking and Usermaven. When a server-side conversion event is sent to Usermaven, it includes the visitor's Usermaven anonymous ID so the event joins the correct analytics session.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Events not in Usermaven | Verify workspace token. Check that Usermaven is enabled in Configuration > Vendors. |
+| Revenue shows $0 | Usermaven dashboard widgets need manual configuration. Set up each widget to pull from the correct event and metric field. |
+| Proxy not working | Verify the proxy is enabled in Configuration > Advanced. Check browser DevTools for Usermaven requests routing through your subdomain. |
+
+---
+
+**Next:** [Traffic Analytics](/features/traffic-analytics)

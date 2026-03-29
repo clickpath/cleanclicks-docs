@@ -1,0 +1,121 @@
+---
+title: "WordPress Setup"
+description: "CleanClicks provides a dedicated WordPress plugin that handles tracking, ecommerce events (WooCommerce), and analytics proxy integration. The plugin i"
+---
+
+CleanClicks provides a dedicated WordPress plugin that handles tracking, ecommerce events (WooCommerce), and analytics proxy integration. The plugin is available on **Clarity** plans and above, though basic tag installation works on any plan.
+
+## Option A: Plugin Installation (Clarity+ Plans)
+
+The CleanClicks WordPress plugin provides the full integration, including WooCommerce event tracking and analytics proxy injection.
+
+### Download and Install
+
+1. In your CleanClicks dashboard, go to **Configuration** > **Ecommerce** tab
+2. Click **Download Plugin** to get the latest zip file
+3. In your WordPress Admin, go to **Plugins** > **Add New** > **Upload Plugin**
+4. Choose the downloaded zip file and click **Install Now**
+5. Click **Activate**
+
+### Configure the Plugin
+
+After activation:
+
+1. Go to **Settings** > **CleanClicks** in your WordPress Admin
+2. Confirm the Client Domain matches your CleanClicks domain
+3. The plugin auto-detects your setup and begins tracking
+
+### What the Plugin Does
+
+- **Pageview tracking** — Automatically loads the CleanClicks tag on every page
+- **WooCommerce events** — Tracks product views, add-to-cart, checkout, and purchase events
+- **Analytics proxy injection** — Loads GA4, Usermaven, and Plerdy scripts through your first-party subdomain (if configured)
+- **Session stitching** — Links CleanClicks sessions to GA4 and Usermaven sessions for accurate attribution
+- **WP Consent API** — Respects consent management plugins for GDPR/CCPA compliance
+- **Ad blocker bypass** — Analytics scripts loaded through your domain aren't blocked
+
+### WooCommerce Events
+
+If WooCommerce is active, the plugin automatically captures:
+
+| Event | Trigger |
+|---|---|
+| `view_item` | Product page view |
+| `add_to_cart` | Item added to cart |
+| `begin_checkout` | Checkout page loaded |
+| `purchase` | Order completed |
+| `view_item_list` | Shop/category page view |
+| `remove_from_cart` | Item removed from cart |
+
+Each event includes product details, quantities, prices, and order totals.
+
+### Server-Side Webhook
+
+For the most reliable order tracking, set up the WooCommerce webhook in addition to the plugin:
+
+1. In your CleanClicks dashboard, go to **Configuration** > **Ecommerce**
+2. Copy the webhook URL and secret
+3. In WordPress Admin, go to **WooCommerce** > **Settings** > **Advanced** > **Webhooks**
+4. Click **Add Webhook**
+5. Name: `CleanClicks`
+6. Status: **Active**
+7. Topic: **Order updated**
+8. Delivery URL: paste the webhook URL from CleanClicks
+9. Secret: paste the webhook secret
+10. Click **Save Webhook**
+
+This ensures orders are captured server-side even if the customer's browser session ends.
+
+## Option B: Manual Tag Installation (Any Plan)
+
+If you're on Pulse or Signal and just need the basic tracking tag:
+
+### Using a Theme Header
+
+1. In WordPress Admin, go to **Appearance** > **Theme File Editor**
+2. Open `header.php` (or your theme's equivalent head template)
+3. Add the script tag before `</head>`:
+
+```html
+<script src="https://cleanclicks.yourdomain.com/__cc/cc.js" defer></script>
+```
+
+4. Click **Update File**
+
+### Using a Plugin
+
+If you prefer not to edit theme files, use a "header scripts" plugin:
+
+1. Install a plugin like **Insert Headers and Footers** (by WPCode) or similar
+2. Add the CleanClicks script tag to the header section
+3. Save
+
+## Plugin Updates
+
+When updating the plugin:
+
+1. **Deactivate** the current version
+2. **Delete** it
+3. **Upload** the new version
+4. **Activate**
+
+Don't use WordPress's "Replace" feature for plugin updates, as it can be unreliable. Always delete and re-upload.
+
+After updating, clear any caching layers:
+- Your caching plugin (WP Rocket, W3 Total Cache, etc.)
+- Your hosting CDN cache
+- Your browser cache (hard refresh or Incognito test)
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Plugin won't activate | Check PHP version (requires 7.4+). Check error logs for conflicts. |
+| Events not firing | Verify your domain is Active in CleanClicks. Check browser DevTools for script loading. |
+| Stale JS after update | Clear all cache layers (plugin, hosting CDN, browser). Check the `?ver=` parameter in page source matches the new version. |
+| WooCommerce events missing | Confirm WooCommerce is active. Check that the plugin detects WooCommerce in Settings > CleanClicks. |
+| Analytics proxies not loading | Verify GA4/Usermaven are configured in CleanClicks Configuration > Vendors. Requires Clarity+ plan or Analytics Add-On. |
+
+---
+
+**Next:** [Configuration — Vendors](/configuration/vendors)

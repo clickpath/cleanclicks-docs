@@ -1,0 +1,92 @@
+---
+title: "Connecting GA4"
+description: "CleanClicks sends conversion events to Google Analytics 4 via the Measurement Protocol and can proxy your GA4 client-side scripts through your first-p"
+---
+
+CleanClicks sends conversion events to Google Analytics 4 via the Measurement Protocol and can proxy your GA4 client-side scripts through your first-party subdomain.
+
+## Plan Requirements
+
+GA4 is available on:
+- **Clarity** and **Command** plans (included)
+- **Pulse** and **Signal** plans with the **Analytics Add-On** ($299/mo)
+
+GA4 counts against your ad platform connection limit.
+
+## Configuration (No OAuth Required)
+
+GA4 uses an API key rather than OAuth. No connection step is needed on the Connections page.
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **GA4**
+3. Enter your **Measurement ID** (format: `G-XXXXXXXXXX`)
+4. Enter your **API Secret**
+5. Save
+
+### Finding Your Measurement ID
+
+1. Go to [Google Analytics](https://analytics.google.com)
+2. Navigate to **Admin** > **Data Streams**
+3. Click on your web stream
+4. The Measurement ID is displayed at the top (format: `G-XXXXXXXXXX`)
+
+### Creating a Measurement Protocol API Secret
+
+1. In the same Data Stream settings, scroll to **Measurement Protocol API secrets**
+2. Click **Create**
+3. Give it a name (e.g., "CleanClicks")
+4. Copy the generated secret value
+
+## Server-Side Events (Measurement Protocol)
+
+With GA4 configured, CleanClicks sends conversion events to GA4 via the Measurement Protocol. This means:
+
+- Conversions arrive in GA4 even if the visitor had an ad blocker
+- Events include proper session attribution (session stitching)
+- Geographic data from the visitor's original session is preserved
+
+### Session Stitching
+
+CleanClicks automatically links server-side events to existing GA4 sessions. When a visitor converts, the event is attributed to the GA4 session that started during the same visit, not a new orphaned session. This prevents the "Unassigned" traffic source problem common with basic Measurement Protocol implementations.
+
+## GA4 First-Party Proxy (Clarity+ or Analytics Add-On)
+
+Beyond server-side events, CleanClicks can proxy your entire GA4 client-side tracking through your first-party subdomain.
+
+### Enabling the Proxy
+
+1. Go to **Configuration** > **Advanced** tab
+2. Enable **GA4 Proxy**
+3. Save
+
+With the proxy enabled, your GA4 collection requests flow through `cleanclicks.yourdomain.com` instead of Google's domains. Benefits:
+
+- **Ad blockers bypass.** Requests to your own subdomain aren't blocked.
+- **Full cookie lifetime.** No ITP restrictions on first-party cookies.
+- **Demographic signals preserved** (if Allow Signals is enabled)
+
+### Allow Signals (Demographics)
+
+When using the GA4 proxy, an **Allow Signals** toggle controls whether Google's demographic data collection is preserved:
+
+- **On:** Age, gender, and interests data flows to GA4. You see demographics in reports.
+- **Off:** Maximum privacy. Demographics are stripped. Default.
+
+### Important: WordPress Sites
+
+If you use the CleanClicks WordPress plugin with GA4, the plugin handles GA4 integration client-side. **Do not** also enable Measurement Protocol for the same site, as this creates duplicate events in GA4. The plugin + proxy combination gives you both ad-blocker bypass and proper attribution without duplication.
+
+**Shopify is the exception.** Because Shopify's pixel runs in a sandbox that can't push to GA4's data layer, Measurement Protocol is the only way to get ecommerce events into GA4. Keep it enabled for Shopify.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Events not in GA4 Realtime | Verify Measurement ID and API Secret. Events should appear in Realtime within 30 seconds. |
+| Events show as "Unassigned" source | Session stitching may not have a matching GA4 session. This happens when the visitor had never loaded GA4 client-side. |
+| Demographics not showing | Enable "Allow Signals" in Advanced settings. Allow 48 hours for demographic data to populate. |
+| Duplicate events | If using WordPress plugin, disable Measurement Protocol for that domain. See note above. |
+
+---
+
+**Next:** [Usermaven](/usermaven)

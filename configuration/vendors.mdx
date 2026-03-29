@@ -1,0 +1,98 @@
+---
+title: "Vendors"
+description: "The Vendors tab in Configuration controls which ad and analytics platforms receive your conversion data. Each vendor can be enabled or disabled indepe"
+---
+
+The Vendors tab in Configuration controls which ad and analytics platforms receive your conversion data. Each vendor can be enabled or disabled independently, and most require platform-specific credentials.
+
+## Accessing Vendor Configuration
+
+1. Go to **Configuration** in the sidebar
+2. Select the domain from the domain picker (if you have multiple)
+3. Click the **Vendors** tab
+
+## Supported Vendors
+
+### Ad Platforms
+
+These count against your plan's ad platform limit.
+
+| Vendor | What It Does | Required Fields |
+|---|---|---|
+| **Google Ads** | Uploads offline conversions via the Google Ads API | Customer ID, Conversion Action ID |
+| **Meta (Facebook)** | Sends events via Meta Conversions API (CAPI) | Pixel ID, Access Token |
+| **TikTok** | Sends events via TikTok Events API | Pixel Code, Access Token |
+| **LinkedIn** | Sends conversions via LinkedIn Conversions API | Account ID, Conversion Action URN |
+| **Microsoft Ads** | Uploads offline conversions via Microsoft Ads | Customer ID, Account ID |
+
+### Analytics Platforms
+
+GA4 and Usermaven also count against your ad platform limit (not a separate analytics quota).
+
+| Vendor | What It Does | Required Fields |
+|---|---|---|
+| **GA4** | Sends events via GA4 Measurement Protocol | Measurement ID, API Secret |
+| **Usermaven** | Sends events via Usermaven server-side API | Workspace Token |
+
+> **Note:** GA4 and Usermaven are unlocked by the **Analytics Add-On** on Pulse and Signal plans. They're included on Clarity and Command.
+
+## Enabling a Vendor
+
+1. Find the vendor card on the Vendors tab
+2. Toggle the vendor **on**
+3. Fill in the required fields
+4. Click **Save**
+
+Sensitive fields (access tokens, API secrets) are masked after saving. You'll see `••••••••` instead of the actual value. To update a token, enter a new value and save again.
+
+## Platform Limits
+
+Your plan determines how many vendors you can enable simultaneously:
+
+| Plan | Max Platforms |
+|---|---|
+| Pulse | 1 |
+| Signal | 2 |
+| Clarity | 7 |
+| Command | 7 |
+
+If you try to enable more vendors than your plan allows, you'll see an upgrade prompt.
+
+## Disabling a Vendor
+
+Toggle a vendor **off** to stop sending it data. The credentials are retained, so you can re-enable later without re-entering them.
+
+## Vendor-Specific Notes
+
+### Google Ads
+- **Customer ID** should be in `123-456-7890` format
+- **Conversion Action ID** is the specific conversion you want to track (format: `AW-XXXXXXXXX/YYYYYYY`)
+- The Developer Token is managed by CleanClicks; you don't need to provide one
+
+### Meta (Facebook)
+- Use a **System User Access Token**, not a personal access token. Generate it in Meta Business Manager > Business Settings > System Users.
+- The token needs `ads_management` and `ads_read` permissions
+- Optionally set a **Test Event Code** to verify events in Meta's Events Manager before going live
+
+### TikTok
+- Get your **Access Token** from TikTok Events Manager > Settings > Generate Access Token
+- The **Pixel Code** is on the same page (format: `CXXXXXXXXXXXXXXXXX`)
+
+### LinkedIn
+- Requires your **LinkedIn Ad Account ID** and a **Conversion Action URN**
+- Create conversion actions in LinkedIn Campaign Manager first
+
+### Microsoft Ads
+- Requires your **Customer ID** and **Account ID** from the Microsoft Ads dashboard
+- Both are visible in the top-right of your Microsoft Ads interface
+
+### GA4
+- **Measurement ID** is in `G-XXXXXXXXXX` format (found in GA4 Admin > Data Streams)
+- **API Secret** is generated in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets
+
+### Usermaven
+- **Workspace Token** is available in your Usermaven workspace settings
+
+---
+
+**Next:** [Triggers and Events](/triggers-and-events)

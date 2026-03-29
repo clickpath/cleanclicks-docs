@@ -1,0 +1,59 @@
+---
+title: "Connecting LinkedIn"
+description: "CleanClicks connects to LinkedIn via OAuth for automatic conversion uploads through the LinkedIn Conversions API."
+---
+
+CleanClicks connects to LinkedIn via OAuth for automatic conversion uploads through the LinkedIn Conversions API.
+
+## Prerequisites
+
+- A LinkedIn Campaign Manager account
+- At least one conversion action created in Campaign Manager
+- Admin access to the LinkedIn ad account
+
+## Connecting
+
+1. Go to **Connections** in your CleanClicks dashboard
+2. Select your domain
+3. Find **LinkedIn** in the One-Click Connect section
+4. Click **Connect**
+5. Sign in with your LinkedIn account
+6. Authorize CleanClicks
+7. You'll be redirected back with a success message
+
+## Configuring the Vendor
+
+After connecting:
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **LinkedIn**
+3. Enter your **Ad Account ID** (visible in Campaign Manager URL or account settings)
+4. Enter your **Conversion Action URN** (from Campaign Manager > Analyze > Conversions)
+5. Save
+
+### Finding Your Conversion Action URN
+
+1. In LinkedIn Campaign Manager, go to **Analyze** > **Conversion tracking**
+2. Click on the conversion action you want CleanClicks to report to
+3. The URN is in the URL or details panel (format: `urn:li:lyndaConversionAction:XXXXXXXXXX` or similar)
+
+## How It Works
+
+When a visitor converts:
+1. CleanClicks captures the `li_fat_id` (LinkedIn First-Party Ad Tracking ID) from cookies
+2. The conversion event is sent server-side to LinkedIn's Conversions API
+3. LinkedIn matches the conversion to the original ad interaction
+4. Customer email is sent as a SHA-256 hash for matching
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| OAuth fails | Ensure you have admin access to the LinkedIn ad account |
+| "Needs Reconnection" | Token may have expired. Disconnect and reconnect. |
+| Conversions not appearing | Verify Ad Account ID and Conversion Action URN. LinkedIn can take 24-48 hours to reflect offline conversions. |
+| Permission denied | Your LinkedIn account needs Marketing API access on the associated company page |
+
+---
+
+**Next:** [Microsoft Ads](/microsoft-ads)

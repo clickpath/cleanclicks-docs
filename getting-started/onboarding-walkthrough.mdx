@@ -1,0 +1,121 @@
+---
+title: "Onboarding Walkthrough"
+description: "After creating your account, CleanClicks launches a 7-step setup wizard. You can complete it all at once (about 15 minutes) or come back to it later. "
+---
+
+After creating your account, CleanClicks launches a 7-step setup wizard. You can complete it all at once (about 15 minutes) or come back to it later. Your progress is saved automatically.
+
+## Step 1: Company Information
+
+Enter your name and company name. This is used for your account profile and appears in billing communications.
+
+## Step 2: Add Your Domain
+
+Enter the domain you want to track (e.g., `yourdomain.com`). This is the website where you'll install the CleanClicks tag.
+
+A few things to keep in mind:
+
+- Enter the **root domain** without `www` or `https://`. Just `yourdomain.com`.
+- If your site uses a subdomain (like `shop.yourdomain.com`), enter that specific subdomain.
+- You can add more domains later from the Domains page (subject to your plan's limit).
+
+## Step 3: DNS Setup
+
+This step creates the first-party connection between your domain and CleanClicks. You'll add a **CNAME record** in your DNS provider.
+
+The wizard shows you:
+- **The subdomain to create:** `cleanclicks.yourdomain.com`
+- **The CNAME target:** where to point the record
+
+### How to Add a CNAME Record
+
+The exact steps vary by DNS provider, but the general process:
+
+1. Log in to your DNS provider (GoDaddy, Namecheap, Cloudflare, Route 53, etc.)
+2. Navigate to DNS settings for your domain
+3. Add a new **CNAME** record
+4. Set the **Name/Host** to `cleanclicks` (some providers want the full `cleanclicks.yourdomain.com`)
+5. Set the **Value/Target** to the address shown in the wizard
+6. Save the record
+
+DNS changes typically propagate within a few minutes, though some providers take up to 24 hours.
+
+The wizard polls automatically and will detect when your CNAME is active. You can also click **Verify** to check manually.
+
+> **Can I skip this step?** Yes, but tracking won't work until DNS is configured. You can move forward in the wizard and come back to DNS later.
+
+## Step 4: Install the Tracking Tag
+
+Add the CleanClicks script to your website. The wizard provides the exact snippet and platform-specific instructions.
+
+### Custom Site / HTML
+Paste the script tag into the `<head>` section of every page:
+
+```html
+<script src="https://cleanclicks.yourdomain.com/__cc/cc.js" defer></script>
+```
+
+### Shopify
+1. Go to your Shopify Admin > **Settings** > **Customer events**
+2. Click **Add custom pixel**
+3. Name it "CleanClicks"
+4. Paste the pixel code shown in the wizard
+5. Click **Save** and then **Connect**
+
+### WordPress
+1. Download the CleanClicks WordPress plugin from the Configuration > Ecommerce tab (available on Clarity+ plans) or install it manually
+2. Upload and activate the plugin in WordPress Admin > **Plugins** > **Add New** > **Upload Plugin**
+3. Go to **Settings** > **CleanClicks** to confirm it's active
+
+Once installed, click **Detect Tag** in the wizard to verify CleanClicks can see the script running on your site.
+
+> **Can I skip this step?** Yes. You can install the tag later and the wizard will still advance. But conversions won't be tracked until the tag is live.
+
+## Step 5: Connect Ad Platforms
+
+Choose which ad platforms should receive your conversion data. The number of platforms you can connect depends on your plan:
+
+- Pulse: 1 platform
+- Signal: 2 platforms
+- Clarity / Command: up to 7 platforms
+
+The wizard shows toggles for each supported platform. Enable the ones you use. You'll configure the connection details (account IDs, tokens) after completing the wizard, on the **Connections** page.
+
+## Step 6: Configure Your First Event
+
+Pick a conversion event template to get started:
+
+- **Form Submission** — track when a visitor submits a form
+- **Purchase** — track completed orders (ecommerce)
+- **Page Visit** — track visits to a specific URL (like a thank-you page)
+- **Button Click** — track clicks on a specific element
+- **Phone Call** — track clicks on phone number links
+
+This sets a starting point. You can fully customize triggers, URL matching rules, and event naming in **Configuration** > **Triggers** after the wizard.
+
+> **Can I skip this step?** Yes. You can set up triggers anytime from the Configuration page.
+
+## Step 7: Complete
+
+The wizard shows a summary of what you've set up:
+- Domain status (verified or pending)
+- Tag detection status
+- Number of platforms enabled
+
+Click **Finish Setup** to complete onboarding and land on your dashboard.
+
+## After Onboarding
+
+The onboarding wizard disappears once completed. Everything it configured is accessible from the main navigation:
+
+- **Domains** — manage and add domains
+- **Configuration** — vendors, triggers, traffic filters, ecommerce, advanced settings, API keys
+- **Connections** — ad platform OAuth and token management
+- **Traffic** — traffic quality analytics (Signal+ plans)
+- **Billing** — plan management and invoices
+
+If you need to change anything the wizard set up, head to the relevant section in the sidebar.
+
+---
+
+**Next:** [Your First Conversion](/your-first-conversion)

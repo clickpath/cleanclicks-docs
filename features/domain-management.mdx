@@ -1,0 +1,87 @@
+---
+title: "Domain Management"
+description: "The Domains page is your central hub for managing which websites CleanClicks tracks. Each domain gets its own configuration, connections, triggers, an"
+---
+
+The Domains page is your central hub for managing which websites CleanClicks tracks. Each domain gets its own configuration, connections, triggers, and API keys.
+
+## Accessing Domains
+
+Go to **Domains** in the sidebar.
+
+## Domain Cards
+
+Each domain appears as a card showing:
+
+- **Domain name** (e.g., `yourdomain.com`)
+- **Status** — Active, Pending Verification, or Paused
+- **Actions** — Pause, Resume, Delete
+
+## Adding a Domain
+
+1. Click **Add Domain**
+2. Enter the domain (bare domain, no `https://` or `www`)
+3. Click **Add**
+
+The domain starts in **Pending Verification** status. Complete the DNS setup (CNAME record) to activate it.
+
+### Plan Limits
+
+| Plan | Max Domains |
+|---|---|
+| Pulse | 1 |
+| Signal | 1 |
+| Clarity | 3 |
+| Command | Unlimited |
+
+The Add Domain button is disabled when you've reached your limit.
+
+## Domain Lifecycle
+
+```
+Added → Pending Verification → Active ↔ Paused
+                                  ↓
+                               Deleted
+```
+
+### Pending Verification
+CNAME not yet detected. Tracking doesn't work. The platform checks periodically, or you can manually verify.
+
+### Active
+DNS verified. Tracking is live. All configuration is editable.
+
+### Paused
+You've manually paused tracking. Configuration becomes read-only. Traffic is not processed. Useful for seasonal businesses, temporary pauses, or during major site rebuilds.
+
+To resume: click **Resume** on the domain card.
+
+### Deleted
+Permanently removed. All associated configuration, connections, API keys, and data references are removed. This cannot be undone.
+
+## Multi-Domain Setup
+
+If your plan supports multiple domains (Clarity: 3, Command: unlimited):
+
+- Each domain has completely independent configuration
+- Vendor credentials, triggers, and filters are set per domain
+- The domain picker appears on Configuration, Connections, and Traffic pages
+- API keys are scoped to individual domains
+
+Common multi-domain scenarios:
+- **Main site + blog on different domains**
+- **Multiple brand websites** under one company
+- **Agency managing client domains** (consider Command plan)
+
+## DNS Verification
+
+If your domain shows Pending Verification:
+
+1. Check the Domains page for the CNAME target
+2. Add the CNAME record in your DNS provider (see [DNS Configuration](/setup/dns-configuration))
+3. Click **Verify** or wait for automatic detection
+
+The platform checks pending domains periodically. Most CNAME records propagate within minutes.
+
+---
+
+**Next:** [Billing and Plans](/billing-and-plans)

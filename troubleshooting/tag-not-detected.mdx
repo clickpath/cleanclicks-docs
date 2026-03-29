@@ -1,0 +1,106 @@
+---
+title: "Tag Not Detected"
+description: "CleanClicks can't verify the tracking tag is installed on your website. Here's how to diagnose and fix it."
+---
+
+CleanClicks can't verify the tracking tag is installed on your website. Here's how to diagnose and fix it.
+
+## Automatic Detection vs. Manual Verification
+
+CleanClicks' tag detection works by fetching your homepage and scanning for the `cc.js` script. This can fail even when the tag is correctly installed if:
+
+- Your site is behind a login or password protection
+- Your site blocks automated requests
+- Your homepage redirects before CleanClicks can scan it
+- The tag is loaded conditionally (only on certain pages)
+
+**If auto-detection fails but you can see the tag loading in your browser's DevTools, the tag is working.** The auto-detection is a convenience check, not the definitive test.
+
+## Manual Verification
+
+### Method 1: Browser DevTools
+
+1. Open your website in a browser
+2. Press F12 to open Developer Tools
+3. Go to the **Network** tab
+4. Reload the page
+5. Type `cc.js` in the filter/search box
+6. You should see a request to `cleanclicks.yourdomain.com/__cc/cc.js` with a **200** status
+
+If you see the request with a 200 status, the tag is working. Ignore the auto-detection result.
+
+### Method 2: Page Source
+
+1. Right-click on your page > **View Page Source**
+2. Press Ctrl+F (or Cmd+F) and search for `cc.js`
+3. You should find the `<script>` tag in the `<head>` section
+
+### Method 3: Direct URL
+
+Visit `https://cleanclicks.yourdomain.com/__cc/cc.js` directly in your browser. If you see JavaScript code, the tag is accessible.
+
+## Common Problems
+
+### Tag Not in Page Source
+
+The script tag hasn't been added to your site's HTML.
+
+**Fix:** Follow the installation instructions for your platform:
+- [Custom site](/setup/installing-the-tag)
+- [Shopify](/setup/shopify-setup)
+- [WordPress](/setup/wordpress-setup)
+
+### Tag Returns 404
+
+The tag URL isn't resolving correctly.
+
+**Possible causes:**
+- Domain DNS not verified yet → check Domains page, complete DNS setup
+- Typo in the script URL → verify it matches `https://cleanclicks.yourdomain.com/__cc/cc.js` exactly
+- Wrong subdomain → it should be `cleanclicks.yourdomain.com`, not something else
+
+### Tag Returns 403
+
+The domain in the script URL doesn't match a domain in your CleanClicks account.
+
+**Fix:** Verify the domain in the script URL matches the domain you added in CleanClicks. Check for `www` vs non-`www` mismatches.
+
+### Tag Loads But Events Don't Fire
+
+The script loads successfully but no conversion events are being captured.
+
+**Possible causes:**
+- No triggers configured → go to Configuration > Triggers and create at least one
+- Trigger URL pattern doesn't match → verify the pattern matches your actual page URLs
+- JavaScript error → check browser DevTools Console tab for errors
+
+### Shopify: Pixel Not Connected
+
+Shopify requires both **Save** and **Connect** for a custom pixel. If you only saved without connecting, the pixel won't execute.
+
+**Fix:** Go to Shopify Admin > Settings > Customer events > CleanClicks pixel, and click **Connect**.
+
+### WordPress: Plugin Not Activated
+
+The CleanClicks plugin may be installed but not activated.
+
+**Fix:** Go to WordPress Admin > Plugins, find CleanClicks, and click **Activate**.
+
+### Caching Issues
+
+Your site's cache may be serving a version of the page that doesn't include the tag.
+
+**Fix:** Clear all cache layers:
+1. Your caching plugin (WP Rocket, W3 Total Cache, etc.)
+2. Your hosting CDN cache
+3. Your browser cache (hard refresh with Ctrl+Shift+R or test in Incognito)
+
+### Tag Manager Blocking
+
+If you installed the tag via Google Tag Manager, some ad blockers specifically target GTM-injected scripts.
+
+**Better approach:** Install the tag directly in your site's `<head>` instead of through GTM. Direct installation is more reliable for first-party tracking.
+
+---
+
+**Related:** [Installing the Tag](/setup/installing-the-tag) | [Verifying Installation](/setup/verifying-installation)

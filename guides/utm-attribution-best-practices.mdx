@@ -1,0 +1,143 @@
+---
+title: "Guide: UTM Attribution Best Practices"
+description: "CleanClicks automatically captures UTM parameters from every visitor's landing page URL. This guide covers how to structure your UTMs for the best att"
+---
+
+CleanClicks automatically captures UTM parameters from every visitor's landing page URL. This guide covers how to structure your UTMs for the best attribution data across all platforms.
+
+## What CleanClicks Captures
+
+The tag automatically reads these parameters from the URL:
+
+- `utm_source` — where the traffic came from (google, facebook, linkedin, etc.)
+- `utm_medium` — the marketing channel (cpc, social, email, etc.)
+- `utm_campaign` — the specific campaign name
+- `utm_term` — the keyword (primarily for search ads)
+- `utm_content` — the specific ad creative or variant
+
+These are stored in first-party cookies and attached to every conversion event sent to your ad platforms.
+
+## Click IDs vs. UTMs
+
+Ad platforms also append their own click IDs to URLs:
+
+| Platform | Click ID | Auto-Appended |
+|---|---|---|
+| Google Ads | `gclid` | Yes (auto-tagging) |
+| Meta | `fbclid` | Yes |
+| TikTok | `ttclid` | Yes |
+| LinkedIn | `li_fat_id` | Via cookie |
+| Microsoft Ads | `msclkid` | Yes (auto-tagging) |
+
+CleanClicks captures **both** click IDs and UTMs. Click IDs provide precise ad-level attribution within each platform. UTMs provide cross-platform attribution and are readable by your analytics tools.
+
+**Use both.** Click IDs and UTMs serve different purposes and don't conflict.
+
+## Google Ads: Final URL Suffix
+
+The most impactful UTM setup for CleanClicks users. Set this once at the account level and every ad automatically includes UTMs:
+
+**Location:** Google Ads > **Admin** > **Account Settings** > **Tracking** > **Final URL suffix**
+
+```
+utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&utm_content={creative}&matchtype={matchtype}&network={network}&device={device}&ad_id={creative}
+```
+
+### What the Dynamic Parameters Do
+
+| Parameter | Expands To |
+|---|---|
+| `{campaignname}` | Your campaign name |
+| `{keyword}` | The keyword that triggered the ad |
+| `{creative}` | The ad creative ID |
+| `{matchtype}` | Broad, phrase, or exact match |
+| `{network}` | Search, Display, or Partners |
+| `{device}` | Desktop, mobile, or tablet |
+
+This gives CleanClicks (and your analytics platforms) detailed campaign-level attribution on every Google Ads click.
+
+## Meta (Facebook) Ads
+
+Meta automatically appends `fbclid` to all ad clicks. For UTM data, add URL parameters in your ad setup:
+
+1. When creating an ad in Ads Manager, go to the **Tracking** section
+2. Add **URL Parameters:**
+
+```
+utm_source=facebook&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}
+```
+
+Meta's dynamic parameters use double curly braces `{{}}`.
+
+## TikTok Ads
+
+Add UTM parameters in your TikTok ad's tracking settings:
+
+```
+utm_source=tiktok&utm_medium=paid_social&utm_campaign=__CAMPAIGN_NAME__&utm_content=__AID_NAME__
+```
+
+TikTok uses `__PARAMETER__` format for dynamic values.
+
+## LinkedIn Ads
+
+Add UTM parameters to your destination URL in Campaign Manager:
+
+```
+utm_source=linkedin&utm_medium=paid_social&utm_campaign={campaign_name}&utm_content={creative_name}
+```
+
+LinkedIn's dynamic parameters use single curly braces `{}`.
+
+## Microsoft Ads (Bing)
+
+Similar to Google Ads, set a Final URL suffix:
+
+**Location:** Microsoft Ads > **Settings** > **Account Settings** > **Tracking**
+
+```
+utm_source=bing&utm_medium=cpc&utm_campaign={CampaignName}&utm_term={Keyword}&utm_content={AdId}&matchtype={MatchType}&device={Device}
+```
+
+## Naming Conventions
+
+Consistent naming is the single most important thing for clean attribution data. Pick a convention and stick with it across all platforms.
+
+### Recommended Format
+
+| Parameter | Convention | Example |
+|---|---|---|
+| `utm_source` | Platform name, lowercase | `google`, `facebook`, `tiktok` |
+| `utm_medium` | Channel type | `cpc`, `paid_social`, `email`, `organic_social` |
+| `utm_campaign` | Campaign name, hyphens not spaces | `spring-sale-2026`, `brand-awareness-q1` |
+| `utm_term` | Keyword or audience | Dynamic from platform |
+| `utm_content` | Ad variant identifier | Dynamic from platform or `version-a`, `version-b` |
+
+### Rules
+
+- **Lowercase everything.** `Google` and `google` are different values in analytics.
+- **No spaces.** Use hyphens or underscores.
+- **Be consistent across platforms.** If Google is `cpc`, don't use `ppc` for Microsoft.
+- **Don't put PII in UTMs.** No email addresses, names, or phone numbers.
+
+## How CleanClicks Uses UTMs
+
+1. Visitor lands on your site with UTMs in the URL
+2. CleanClicks tag captures and stores them in first-party cookies
+3. Cookies persist across the session (and revisits)
+4. When a conversion fires, UTMs are included in the event data
+5. Each connected platform receives the UTMs alongside click IDs
+6. Your analytics platforms (GA4, Usermaven) use UTMs for source/medium/campaign reporting
+
+UTMs flow through to all connected platforms, so proper tagging benefits every system simultaneously.
+
+## Common Mistakes
+
+- **Missing UTMs on ads.** Click IDs alone don't populate your analytics with campaign names. Always add UTMs.
+- **Inconsistent source names.** `google` vs. `Google` vs. `google-ads` fractures your data.
+- **Overwriting UTMs on redirects.** If your site has redirect chains, make sure they preserve query parameters.
+- **UTMs on internal links.** Only use UTMs on external links pointing to your site. Internal links with UTMs create false "new sessions" in analytics.
+
+---
+
+**Related:** [Triggers and Events](/configuration/triggers-and-events) | [Connecting Google Ads](/connections/google-ads)

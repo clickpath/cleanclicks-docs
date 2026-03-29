@@ -1,0 +1,71 @@
+---
+title: "Connecting Google Ads"
+description: "CleanClicks connects to Google Ads via OAuth for automatic offline conversion uploads. When a visitor clicks your ad and later converts, CleanClicks s"
+---
+
+CleanClicks connects to Google Ads via OAuth for automatic offline conversion uploads. When a visitor clicks your ad and later converts, CleanClicks sends that conversion back to Google Ads with the original click attribution.
+
+## Prerequisites
+
+- A Google Ads account with admin access
+- At least one conversion action created in Google Ads
+- CleanClicks domain verified and tag installed
+
+## Connecting
+
+1. Go to **Connections** in your CleanClicks dashboard
+2. Select your domain
+3. Find **Google Ads** in the One-Click Connect section
+4. Click **Connect**
+5. Sign in with the Google account that has admin access to your Google Ads account
+6. Authorize CleanClicks to manage your conversions
+7. You'll be redirected back to CleanClicks with a success message
+
+## After Connecting
+
+Once connected, you also need to configure the vendor settings:
+
+1. Go to **Configuration** > **Vendors** tab
+2. Enable **Google Ads**
+3. Enter your **Customer ID** (format: `123-456-7890`)
+4. Enter your **Conversion Action ID** (format: `AW-XXXXXXXXX/YYYYYYY`)
+5. Save
+
+The Customer ID is visible in the top-right corner of Google Ads. The Conversion Action ID is in Google Ads > **Goals** > **Conversions** > click a conversion action > look for the tag snippet or conversion action details.
+
+## How It Works
+
+When a visitor clicks your Google Ad:
+1. Google appends a `gclid` (Google Click ID) to the landing page URL
+2. The CleanClicks tag captures this gclid and stores it in a first-party cookie
+3. When the visitor later converts, CleanClicks sends the conversion back to Google Ads with the gclid attached
+4. Google Ads matches the conversion to the exact click, keyword, and campaign
+
+This is **enhanced conversions** via first-party data. Because it's server-side, it works even when the visitor has an ad blocker or restrictive browser settings.
+
+## Recommended: Final URL Suffix
+
+For best attribution, set a Final URL suffix in Google Ads that includes UTM parameters:
+
+```
+utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&utm_content={creative}&matchtype={matchtype}&network={network}&device={device}&ad_id={creative}
+```
+
+Set this in Google Ads: **Admin** > **Account Settings** > **Tracking** > **Final URL suffix**.
+
+## Token Refresh
+
+OAuth tokens are refreshed automatically. You shouldn't need to reconnect unless you revoke CleanClicks access in your Google account or change Google Ads admin permissions.
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| Connection fails during OAuth | Make sure you're signing in with an account that has admin access to the Google Ads account |
+| "Needs Reconnection" status | Click Disconnect, then Connect again to re-authorize |
+| Conversions not appearing in Google Ads | Verify Customer ID and Conversion Action ID in Configuration > Vendors. Allow 24-48 hours for Google Ads to process offline conversions. |
+| Wrong Google Ads account | Disconnect and reconnect. During OAuth, make sure to select the correct Google account. |
+
+---
+
+**Next:** [Meta (Facebook)](/meta)

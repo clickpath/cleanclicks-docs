@@ -1,0 +1,93 @@
+---
+title: "Ecommerce Configuration"
+description: "Ecommerce tracking enables server-side order capture from Shopify and WooCommerce. Available on **Clarity** plans and above."
+---
+
+Ecommerce tracking enables server-side order capture from Shopify and WooCommerce. Available on **Clarity** plans and above.
+
+## Accessing Ecommerce Settings
+
+1. Go to **Configuration** in the sidebar
+2. Select your domain
+3. Click the **Ecommerce** tab
+
+If you're on a Pulse or Signal plan, you'll see an upgrade prompt instead of the settings.
+
+## Shopify Integration
+
+### Webhook Setup
+
+CleanClicks uses a Shopify webhook to receive order data server-side. This ensures conversions are captured even if the customer's browser closes before the confirmation page loads.
+
+The Ecommerce tab provides:
+- **Webhook URL** — copy this into Shopify
+- **Webhook Secret** — used for secure verification
+
+To configure in Shopify:
+1. Go to Shopify Admin > **Settings** > **Notifications** > **Webhooks**
+2. Click **Create Webhook**
+3. Event: **Order payment**
+4. Format: **JSON**
+5. URL: paste the webhook URL from CleanClicks
+6. Click **Save**
+
+### Custom Pixel
+
+Shopify also needs the client-side Custom Pixel for capturing browsing events (page views, product views, cart actions). See [Shopify Setup](/setup/shopify-setup) for pixel installation.
+
+The webhook and pixel work together: the pixel captures the browsing journey, and the webhook ensures the purchase is always recorded.
+
+## WooCommerce Integration
+
+### WordPress Plugin
+
+The CleanClicks WordPress plugin handles WooCommerce event tracking automatically. See [WordPress Setup](/setup/wordpress-setup) for plugin installation.
+
+### Webhook Setup
+
+For additional server-side reliability:
+
+1. Copy the **Webhook URL** and **Secret** from the Ecommerce tab
+2. In WordPress Admin, go to **WooCommerce** > **Settings** > **Advanced** > **Webhooks**
+3. Click **Add Webhook**
+4. Name: `CleanClicks`
+5. Status: **Active**
+6. Topic: **Order updated**
+7. Delivery URL: paste the webhook URL
+8. Secret: paste the webhook secret
+9. Click **Save Webhook**
+
+## Plugin Download
+
+The Ecommerce tab includes a download link for the CleanClicks WordPress plugin. This is the same plugin described in [WordPress Setup](/setup/wordpress-setup).
+
+## What Gets Tracked
+
+Both Shopify and WooCommerce integrations capture:
+
+| Data Point | Description |
+|---|---|
+| Order ID | Your store's order identifier |
+| Order total | Revenue amount |
+| Currency | Transaction currency |
+| Products | Product names, IDs, quantities, prices |
+| Customer email | Hashed for privacy, used for cross-platform matching |
+| Click IDs | gclid, fbclid, etc. for attribution |
+| UTM parameters | Campaign attribution data |
+
+Customer emails are SHA-256 hashed before being sent to ad platforms. The raw email is never shared with third parties.
+
+## Attribution
+
+When a webhook or server-side event arrives, CleanClicks looks up the associated visitor session to recover:
+
+- Original click IDs from ad platforms
+- UTM parameters
+- Geographic data from the original visit
+- Analytics session IDs (GA4, Usermaven)
+
+This means server-side conversions get the same attribution quality as client-side events. Even if the visitor used an ad blocker or closed their browser, the conversion is attributed to the correct campaign and ad click.
+
+---
+
+**Next:** [Advanced Settings](/advanced-settings)
