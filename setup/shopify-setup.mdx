@@ -1,92 +1,137 @@
 ---
 title: "Shopify Setup"
-description: "Set up the CleanClicks Custom Pixel in Shopify to capture page views, cart actions, and purchases through your first-party subdomain."
+description: "Set up CleanClicks for Shopify with GA4 first-party analytics, the ecommerce pixel, and server-side order webhooks."
 ---
 
-CleanClicks integrates with Shopify through a **Custom Pixel**. This captures page views, product interactions, cart actions, and purchases, then routes them through your first-party subdomain.
+CleanClicks integrates with Shopify through three components: a **GA4 first-party proxy** (theme snippet), a **Custom Pixel** (ecommerce events), and a **server-side webhook** (order backup). Which components you use depends on your plan.
+
+| Component | Plan Required | What It Does |
+|---|---|---|
+| GA4 First-Party Analytics | Signal+ | Routes all GA4 tracking through your domain |
+| Custom Pixel (v2.1.0) | Clarity+ | Tracks 7 ecommerce events in the pixel sandbox |
+| Server-Side Webhook | Clarity+ | Captures orders directly from Shopify servers |
 
 ## Prerequisites
 
-Before setting up:
-- Your domain must be added and verified in CleanClicks (DNS active)
+- Your domain must be added and verified in CleanClicks (CNAME active)
 - You need admin access to your Shopify store
+- For GA4 proxy: a Google Analytics 4 property
 
-## Installing the Custom Pixel
+## Step 1: GA4 First-Party Analytics (Signal+)
 
-1. In your Shopify Admin, go to **Settings** > **Customer events**
-2. Click **Add custom pixel**
-3. Name it **CleanClicks**
-4. In the code editor, paste the pixel code provided in your CleanClicks onboarding wizard or Configuration > Ecommerce tab
+The theme snippet routes all GA4 traffic through your first-party domain, bypassing ad blockers and improving data quality. It fires storefront ecommerce events (view_item, add_to_cart, begin_checkout, search) directly to GA4.
+
+### Configure in CleanClicks
+
+1. In the cc-admin dashboard, go to the **Shopify** tab
+2. Enter your **GA4 Measurement ID** (starts with `G-`, found in GA4 Admin > Data Streams)
+3. Toggle **Allow Signals** if you want demographics data (age, gender, interests)
+4. Click **Save GA4 Proxy Settings**
+5. Copy the generated **Theme Snippet**
+
+### Install the Theme Snippet
+
+1. In Shopify Admin, go to **Online Store** > **Themes**
+2. Click **...** on your active theme, then **Edit code**
+3. Open `theme.liquid`
+4. Paste the snippet just before the closing `</head>` tag
 5. Click **Save**
-6. Click **Connect** to activate the pixel
 
-> **Important:** After clicking Save, you must also click **Connect**. A saved but unconnected pixel won't fire.
+### Disable Existing GA4
 
-## What the Pixel Tracks
+If you have an existing GA4 setup (gtag.js script, Google & YouTube channel app, or a GA4 theme snippet), you must disable it to avoid duplicate tracking:
 
-The CleanClicks Shopify pixel captures these events automatically:
+- **Theme script:** Remove or comment out any `gtag.js` or `googletagmanager.com/gtag/js` script tags in your theme
+- **Google & YouTube app:** Go to the app settings and disable the GA4 tracking (CleanClicks replaces it)
+- **Google Tag Manager:** If using GTM with GA4, remove the GA4 tags from your GTM container
+
+> **Why?** CleanClicks loads its own proxied version of gtag.js. Running two copies sends every event twice.
+
+### Configure API Secret for Purchase Events
+
+The Custom Pixel (Step 2) sends GA4 purchase events through the Measurement Protocol. This requires an API Secret:
+
+1. In the cc-admin dashboard, go to the **GA4** vendor tab
+2. Enter your GA4 **API Secret** (found in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets)
+3. **Turn off** the GA4 Measurement Protocol toggle (the pixel handles purchase events client-side now)
+
+### GA4 Signals / Demographics
+
+If you enabled **Allow Signals**, GA4 demographics data (age, gender, interests) will populate within 24-48 hours. This works by allowing DoubleClick requests to go directly to Google rather than through the proxy.
+
+## Step 2: Install the Custom Pixel (Clarity+)
+
+The Custom Pixel v2.1.0 runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
+
+1. In the cc-admin dashboard, go to the **Shopify** tab
+2. Copy the **Pixel Code** (it's generated per-domain with your configuration baked in)
+3. In Shopify Admin, go to **Settings** > **Customer events**
+4. Click **Add custom pixel**
+5. Name it **CleanClicks**
+6. In the **Customer privacy** section, set Data sale to **Does not qualify as data sale** and Data collection to **Collected from this website or app**
+7. Paste the pixel code into the code editor
+8. Click **Save**, then click **Connect**
+
+> **Important:** You must click both **Save** and **Connect**. A saved but unconnected pixel won't fire.
+
+> **Note:** If you've already installed an older version of the pixel, delete it and create a fresh one. Always use the latest code from the dashboard.
+
+### What the Pixel Tracks
 
 | Event | Trigger |
 |---|---|
 | `page_view` | Every page load |
 | `view_item` | Product page view |
-| `view_item_list` | Collection/category page view |
+| `view_item_list` | Collection page view |
 | `add_to_cart` | Item added to cart |
 | `begin_checkout` | Checkout started |
-| `purchase` | Order completed |
+| `purchase` | Order completed (also sends GA4 MP if configured) |
 | `search` | Search performed |
 
-Each event includes relevant data like product names, prices, order values, and currency.
+## Step 3: Server-Side Webhook (Clarity+)
 
-## Server-Side Order Tracking
+The webhook captures purchase events directly from Shopify's servers. Even if a customer closes their browser before the confirmation page, the order is still captured.
 
-In addition to the client-side pixel, CleanClicks can receive order data via Shopify webhooks for server-side tracking. This is available on **Clarity** plans and above.
-
-The webhook captures purchase events directly from Shopify's servers, ensuring order data is recorded even if the customer closes their browser before the thank-you page loads.
-
-To set up webhook tracking:
-1. Go to **Configuration** > **Ecommerce** tab in your CleanClicks dashboard
-2. Follow the Shopify webhook setup instructions provided there
-
-## Attribution and Click IDs
-
-The pixel automatically captures:
-- **Click IDs** from ad platforms (gclid, fbclid, ttclid, li_fat_id, msclkid)
-- **UTM parameters** for campaign attribution
-- **Session data** for cross-page tracking
-
-These are attached to every event, so your ad platforms receive proper attribution data with each conversion.
-
-## GA4 and Usermaven Session Stitching
-
-If you have GA4 or Usermaven connected, the Shopify pixel automatically stitches sessions between the CleanClicks tracking and your analytics platforms. This means conversions are attributed to the correct analytics session rather than appearing as a separate, unattributed event.
+1. In the cc-admin dashboard, go to the **Shopify** tab and copy the **Webhook URL**
+2. In Shopify Admin, go to **Settings** > **Notifications** > scroll to **Webhooks**
+3. Click **Create webhook**
+4. Event: **Order payment**
+5. Format: **JSON**
+6. URL: paste the webhook URL
+7. Click **Save**
+8. Copy the **signing secret** that Shopify generates
+9. In the cc-admin Shopify tab, paste the signing secret and save
 
 ## Testing
 
-After installing the pixel:
+After setup, verify each component:
 
-1. Open your Shopify store in an Incognito window
-2. Browse to a product page (triggers `view_item`)
-3. Add to cart (triggers `add_to_cart`)
-4. If possible, complete a test order (triggers `purchase`)
-5. Check your CleanClicks dashboard for events within a few minutes
+### GA4 Theme Snippet
+1. Visit your store in an Incognito window
+2. Open GA4 **Realtime** report
+3. You should see events flowing through your first-party domain (check the traffic source)
+4. Browse a product page — look for `view_item`
 
-### Shopify's Pixel Sandbox
+### Custom Pixel
+1. Browse products, add to cart, search
+2. Check your CleanClicks dashboard Audit tab for all 7 event types
+3. Complete a test checkout — verify `purchase` appears
 
-Shopify runs custom pixels in a sandboxed iframe. This means:
-- The pixel can't access the parent page's DOM directly
-- It uses Shopify's event subscription API instead
-- This is normal and expected. CleanClicks is designed for this sandbox environment.
+### Webhook
+1. Complete a test order
+2. Check the CleanClicks Audit tab for a server-side purchase event (source: `shopify_webhook`)
+3. Verify the event has vendor dispatch results (Google Ads, Meta, etc.)
 
 ## Troubleshooting
 
 | Issue | Solution |
 |---|---|
-| Pixel not firing | Make sure you clicked both **Save** and **Connect** in Shopify |
-| Events missing | Check that your CleanClicks domain is Active |
-| Purchase events not appearing | Verify webhook setup for server-side tracking (Clarity+ only) |
-| Duplicate events | If you also have the CleanClicks tag installed via theme code, remove it. Use only the Custom Pixel for Shopify. |
+| GA4 events not appearing | Verify the theme snippet is before `</head>` in theme.liquid. Check that no other GA4 script is running. |
+| Pixel not firing | Make sure you clicked both **Save** and **Connect** in Shopify Customer events |
+| Purchase not in GA4 | Check that the API Secret is configured in the GA4 vendor tab |
+| Duplicate GA4 events | Remove your existing GA4 setup (see "Disable Existing GA4" above) |
+| Webhook events missing | Verify the signing secret matches between Shopify and CleanClicks |
 
 ---
 
-**Next:** [WordPress Setup](/wordpress-setup)
+**Next:** [WordPress Setup](/setup/wordpress-setup)

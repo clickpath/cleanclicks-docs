@@ -7,9 +7,10 @@ This guide walks through setting up end-to-end ecommerce tracking for a Shopify 
 
 ## What You'll Set Up
 
-1. **Client-side pixel** — captures browsing events (page views, product views, add to cart, checkout, purchase)
-2. **Server-side webhook** — captures purchase events directly from Shopify's servers as a reliable backup
-3. **Ad platform connections** — routes conversion data to Google Ads, Meta, TikTok, etc.
+1. **Client-side pixel** — captures browsing events and GA4 purchase via Measurement Protocol
+2. **GA4 first-party proxy** — routes all GA4 tracking through your domain (Signal+)
+3. **Server-side webhook** — captures purchase events directly from Shopify servers
+4. **Ad platform connections** — routes conversion data to your platforms
 
 ## Prerequisites
 
@@ -77,9 +78,16 @@ For ecommerce, the key conversion event is `purchase`. Most ad platforms automat
 5. Check CleanClicks dashboard for events within a few minutes
 6. Check each ad platform for the conversion (allow 15-30 minutes)
 
-## GA4 Integration Note
+## GA4 First-Party Analytics
 
-If you have GA4 connected via CleanClicks, **keep Measurement Protocol enabled** for Shopify. Shopify's pixel sandbox prevents direct GA4 data layer access, so the Measurement Protocol is the only path from CleanClicks to GA4 for ecommerce events.
+CleanClicks v2.1.0 introduces first-party GA4 tracking for Shopify. Instead of relying solely on server-side Measurement Protocol (which creates "Unassigned" attribution in GA4), the new approach uses:
+
+- **Theme snippet** — loads proxied gtag.js and fires storefront events (view_item, add_to_cart, begin_checkout, search) through your first-party domain. These events get proper traffic source attribution.
+- **Custom Pixel v2.1.0** — sends GA4 purchase events via client-side Measurement Protocol through the `/__cc/g/mp` proxy endpoint, using the visitor's real `_ga` cookie for session stitching.
+
+**If you were previously using server-side GA4 MP:** Turn it off in the GA4 vendor tab. The pixel now handles purchase events client-side with proper attribution. Keeping server-side MP on will create duplicate events.
+
+See [Shopify Setup](/setup/shopify-setup) for full installation instructions.
 
 ## Attribution Flow
 
@@ -88,9 +96,10 @@ Here's what happens when someone clicks your ad and buys:
 1. Visitor clicks ad → lands on your store with click ID in the URL (gclid, fbclid, etc.)
 2. CleanClicks tag captures the click ID and UTM parameters, stores them in a first-party cookie
 3. Visitor browses (CleanClicks tracks product views, cart adds)
-4. Visitor purchases → CleanClicks captures the event with the original click ID still attached
-5. CleanClicks relays the purchase server-side to each connected platform with full attribution
-6. Shopify webhook also fires as backup, and CleanClicks matches it to the same visitor session
+4. GA4 theme snippet fires view_item, add_to_cart, begin_checkout to GA4 through your first-party domain (proper attribution)
+5. Visitor purchases → Pixel sends purchase to CleanClicks AND to GA4 via Measurement Protocol (with session stitching)
+6. CleanClicks relays the purchase server-side to each connected platform with full attribution
+7. Shopify webhook also fires as backup, and CleanClicks matches it to the same visitor session
 
 Result: Your ad platforms see the conversion attributed to the correct ad click, even if the visitor had an ad blocker.
 
@@ -98,6 +107,8 @@ Result: Your ad platforms see the conversion attributed to the correct ad click,
 
 - **Only use the CleanClicks Custom Pixel for Shopify.** Don't also paste the `cc.js` script tag into your theme.
 - If you have existing platform pixels (Meta Pixel, TikTok Pixel, etc.) installed in your Shopify theme, consider removing them. CleanClicks replaces them with more reliable server-side delivery.
+- **Disable existing GA4 scripts** if you're using the GA4 theme snippet. Running two gtag.js copies sends every event twice.
+- **Turn off GA4 server-side Measurement Protocol** if the pixel is sending GA4 purchase events. Check the GA4 vendor tab.
 
 ---
 
