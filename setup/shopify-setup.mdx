@@ -17,6 +17,8 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 - You need admin access to your Shopify store
 - For GA4 proxy: a Google Analytics 4 property
 
+> **Heads up for anyone editing theme code:** Shopify's theme code editor uses a Monaco-based editor that can break silently under strict privacy settings. Firefox with ad-blockers, Enhanced Tracking Protection in "Strict" mode, or similar privacy extensions can prevent the editor from loading, loading save buttons, or rendering the file tree. If the editor looks broken or unresponsive, try Chrome or Edge, or temporarily allow `shopify.com` and `cdn.shopify.com` in your privacy extensions. The same applies to installing the Custom Pixel in Step 2.
+
 ## Step 1: GA4 First-Party Analytics (Signal+)
 
 The theme snippet routes all GA4 traffic through your first-party domain, bypassing ad blockers and improving data quality. It fires storefront ecommerce events (view_item, add_to_cart, begin_checkout, search) directly to GA4.
@@ -121,6 +123,14 @@ After setup, verify each component:
 1. Complete a test order
 2. Check the CleanClicks Audit tab for a server-side purchase event (source: `shopify_webhook`)
 3. Verify the event has vendor dispatch results (Google Ads, Meta, etc.)
+
+## Testing with a Shopify Dev Store (optional)
+
+If you want to test CleanClicks on a sandbox store before installing on your live store, use a Shopify dev store. Two gotchas that cost real time:
+
+**Use the Dev Dashboard, not the Partner Dashboard.** Shopify deprecated Partner Dashboard store creation during the 2025/2026 Dev Dashboard migration. If you click "Add store" in your old Partner Dashboard you'll create a dev store that has restrictions you can't lift later. Create stores at <https://dev.shopify.com> instead.
+
+**Pick the right dev store tier when you create it.** The Dev Dashboard offers multiple dev store variants. The default "Basic App Development" tier strips theme editing — the Online Store channel looks installed but the theme editor returns "This feature is unavailable on your plan." You cannot upgrade or transfer a Basic App Development store to lift this, and Shopify support will confirm. Pick a tier that includes full theme editing (the "Advanced"-equivalent option in the current Dev Dashboard flow) before you do anything else. If you're already stuck on a Basic store, create a new one at the right tier — the old store is unrecoverable for theme-based testing.
 
 ## Troubleshooting
 
