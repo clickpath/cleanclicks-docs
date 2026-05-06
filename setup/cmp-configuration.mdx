@@ -1,0 +1,352 @@
+---
+title: "Configure your Consent Management Platform"
+description: "How to configure CookieYes, Cookiebot, OneTrust, Complianz, or Iubenda so CleanClicks captures conversions correctly when visitors reject cookies."
+icon: "shield-check"
+---
+
+import { Card, CardGroup, Steps, Step, Tabs, Tab, Note, Warning, Info, Check } from "@mintlify/components";
+
+## Why this matters
+
+CleanClicks recovers ad-attribution data even when visitors reject your cookie banner — but only if your CMP (Consent Management Platform) doesn't accidentally block CleanClicks's first-party endpoints or cookies.
+
+The good news: across every CMP we've tested, **none intercept CleanClicks's `/__cc/*` endpoints by default** and URL-based ad click IDs (gclid, fbclid, etc.) survive consent reject. The thing you might lose is GA4 session continuity — CleanClicks handles that via [GA4 Session Recovery](/configuration/ecommerce#ga4-session-recovery).
+
+What you DO need: a small amount of CMP-side configuration so your CMP knows CleanClicks's cookies are functional, not analytics.
+
+## The universal fix — WP Consent API integrated CMPs (18 supported)
+
+If you're on WordPress, the [WP Consent API](https://wordpress.org/plugins/wp-consent-api/) is the standardized way for plugins (CleanClicks) and CMPs (your cookie banner) to talk to each other about consent. **CleanClicks integrates with WP Consent API natively.** That means the following 18 CMPs work correctly with CleanClicks under consent reject WITHOUT any code-side changes from you:
+
+> Abconsent Sirdata · Beautiful Cookie Consent Banner · Clickio Consent · **Complianz** · Consent Studio · consentmanager · Conzent · **Cookiebot** · CookieFirst · CookieHub · **CookieYes** · CookieTractor · GDPR Cookie Compliance · GDPR Cookie Consent (WebToffee) · GetTerms · **iubenda** · Pressidium Cookie Consent · TrustArc
+
+**If your CMP is on this list, the only customer-side configuration that matters is making sure your CMP classifies CleanClicks's cookies as Functional (or Strictly Necessary), not Statistics or Marketing.** Most of the 18 CMPs do this automatically. A few require a quick manual classification step. The "Per-CMP verification" section below covers each.
+
+<Info>**Why this matters at the architecture level:** WP Consent API is how WordPress agreed (industry-wide, ~2024) that plugins and CMPs should coordinate consent state. CleanClicks declares itself as a WP-Consent-API-compliant plugin AND uses service-level consent (so customers can grant/deny CleanClicks individually within CMP banners). One integration surface, 18 CMPs covered.</Info>
+
+### The OneTrust exception
+
+OneTrust is the largest enterprise CMP that does NOT integrate with the WP Consent API. CleanClicks's WordPress plugin includes a **built-in OneTrust bridge** that maps `OnetrustActiveGroups` → WP Consent API automatically. **You don't need to install anything extra or copy any JavaScript snippets.** Verification: once OneTrust banner loads on your site, run `wp_get_consent('statistics')` in DevTools console — it returns `'allow'` or `'deny'` matching your OneTrust banner choice.
+
+### The Complianz priority callout
+
+<Warning>**Complianz is the highest-priority verification step in this doc — please complete it before going live.** Complianz is unique among CMPs in that it can block scripts at the WordPress PHP enqueue layer (before they ever render in the browser). If Complianz's scanner misclassifies CleanClicks's `cleanclicks-wp` script handle as "Marketing" or "Statistics," cc-wp.js won't load under consent reject and CleanClicks's attribution recovery cannot run for that visitor. Verification is one click — see the Complianz tab below.</Warning>
+
+## Identify your CMP
+
+If you're not sure which CMP your site uses, check one of these:
+
+- WordPress admin → **Plugins** → look for any of the 18 CMP names listed above.
+- View page source on your homepage → search for `cookieyes`, `Cookiebot`, `OneTrust`, `complianz`, `iubenda`, etc.
+- Ask the person who set up your cookie banner.
+
+If you use a CMP not on the WP-Consent-API-integrated list AND not OneTrust, [contact support](mailto:support@cleanclicks.io) — most CMPs follow the same pattern, and we'll get you a config sheet.
+
+## Per-CMP verification
+
+The tabs below are **verification supplements** for the 5 CMPs our launch customers are most likely to use. If your CMP is in the WP-Consent-API-integrated 18 (or is OneTrust), you only need to follow the "Verify it worked" checklist at the bottom of your CMP's tab — the configuration is largely automatic.
+
+<Tabs>
+
+<Tab title="CookieYes">
+
+CookieYes works well with CleanClicks out of the box. Most customers need only Step 3 (verification).
+
+<Steps>
+
+<Step title="Cookie classification">
+
+In CookieYes admin:
+
+1. Go to **Cookie Manager** → **Categories**.
+2. Confirm cookies starting with `cc_` (`cc_pid`, `cc_sid`, `cc_click_ids`, `cc_attribution`, `cc_session_id`, `cc_ss_optout`) are categorized as **Necessary**.
+3. If your scanner classified them as Other or Functional, manually re-categorize to Necessary.
+
+<Info>**Why Necessary?** These cookies don't track behavior — `cc_pid` is a per-visitor identifier on YOUR domain, used for conversion measurement (a strictly-necessary purpose under GDPR and CCPA).</Info>
+
+</Step>
+
+<Step title="Enable url_passthrough (REQUIRED on free tier)">
+
+<Warning>**CookieYes free tier ships with Google Consent Mode v2 (GCM v2) DISABLED and `url_passthrough` set to false by default** — verified empirically against CookieYes 3.4.2 free tier. This means without the steps below, ad click IDs (gclid, fbclid, etc.) are stripped from URLs on page navigations under consent reject. CleanClicks's first-party capture stores click IDs into sessionStorage on first page load, so this matters less for CleanClicks's webhook capture — but it still affects gtag.js's own attribution and any other tools relying on URL passthrough.</Warning>
+
+1. CookieYes admin → **Banners** → Edit your active banner → **Advanced Settings**.
+2. **Enable Google Consent Mode v2** (the master toggle).
+3. **Enable the `url_passthrough` toggle.**
+4. Recommended: also enable `ads_data_redaction` (stricter ad-data privacy posture).
+5. Save.
+
+To verify in CookieYes admin → Settings → look for `cky_gcm_settings.status: true` + `url_passthrough: true` + `ads_data_redaction: true`. Or via wp-cli: `wp option get cky_gcm_settings --format=json | jq '.status, .url_passthrough, .ads_data_redaction'` should return `true`, `true`, `true`.
+
+</Step>
+
+<Step title="WordPress only — confirm WP Consent API">
+
+If you're on WordPress, CookieYes integrates with the WP Consent API automatically. CleanClicks's WP plugin auto-detects this. No action needed.
+
+To verify: WordPress admin → **Plugins** → confirm **WP Consent API** is installed and active. CookieYes installs it as a dependency.
+
+</Step>
+
+</Steps>
+
+### Verify it worked
+
+After completing the steps above:
+
+- [ ] Visit your site in a new private browsing window.
+- [ ] Click **Reject All** in the CookieYes banner.
+- [ ] Open browser DevTools → Application tab → Cookies → confirm `cc_pid` cookie is set on `cleanclicks.{your-domain}`.
+- [ ] Append `?gclid=test123` to a URL on your site, navigate around, then complete a test purchase.
+- [ ] In your CleanClicks dashboard → **Audit Log**, confirm the resulting `woo_webhook_ok` (or `shopify_webhook_ok`) entry shows `has_clickids: true`.
+
+</Tab>
+
+<Tab title="Cookiebot">
+
+<Steps>
+
+<Step title="Cookie classification (manual)">
+
+Cookiebot's scanner won't auto-classify cookies on a CNAMEd subdomain like `cleanclicks.{your-domain}`. You need to mark them manually.
+
+1. Cookiebot admin → **Cookies** tab → **Add cookie**.
+2. Add each of these as **Necessary**:
+   - `cc_pid`
+   - `cc_sid`
+   - `cc_click_ids`
+   - `cc_attribution`
+   - `cc_session_id`
+   - `cc_ss_optout`
+3. Domain: `cleanclicks.{your-domain}` (replace with your CleanClicks proxy hostname).
+
+</Step>
+
+<Step title="Auto-block mode (default — skip if customized)">
+
+Cookiebot's default auto-block uses an internal checklist of known third-party trackers. First-party paths like `cleanclicks.{your-domain}` are NOT in the default checklist, so CleanClicks works without further config.
+
+If you've enabled **strict allowlist mode** (block everything not on the allowlist), add `cleanclicks.{your-domain}` to the allowlist:
+
+1. Cookiebot admin → **Settings** → **Advanced** → **Domain allowlist**.
+2. Add `cleanclicks.{your-domain}`.
+
+</Step>
+
+<Step title="WordPress only — WP Consent API">
+
+If on WordPress, install Cookiebot's WP plugin (`cookiebot/cookiebot-cmp` or similar — version 1.0.1+ for WP Consent API support). CleanClicks's WP plugin auto-detects.
+
+</Step>
+
+</Steps>
+
+### Verify it worked
+
+- [ ] Visit your site in private browsing.
+- [ ] Click **Decline** in the Cookiebot banner.
+- [ ] DevTools → Cookies → confirm `cc_pid` is present on `cleanclicks.{your-domain}`.
+- [ ] Test purchase with `?gclid=test123` → CleanClicks dashboard shows `has_clickids: true`.
+
+</Tab>
+
+<Tab title="OneTrust">
+
+<Info>OneTrust is the only major CMP not integrated with the WP Consent API. CleanClicks's WordPress plugin includes a built-in bridge (no code or JavaScript snippets needed from you) — most steps below are about classifying cookies inside OneTrust's admin so the banner shows the right thing to your visitors. Plan ~15 minutes if you have OneTrust admin access.</Info>
+
+<Steps>
+
+<Step title="Add CleanClicks cookies as Strictly Necessary (C0001)">
+
+1. OneTrust admin → **Cookies** → **Add Cookie**.
+2. For each cookie below, set **Category** = **C0001 (Strictly Necessary)**:
+   - `cc_pid`
+   - `cc_sid`
+   - `cc_click_ids`
+   - `cc_attribution`
+   - `cc_session_id`
+   - `cc_ss_optout`
+3. Domain: `cleanclicks.{your-domain}`.
+
+</Step>
+
+<Step title="Allowlist CleanClicks in your Geolocation Rules">
+
+1. OneTrust admin → **Geolocation Rules** → select your active rule (probably "Default" or one per region).
+2. **Cookie Categories** → **Strictly Necessary** → ensure `cleanclicks.{your-domain}` is allowlisted.
+3. **Repeat for every Geolocation Rule** that applies to your site (EU, US, UK, etc.).
+
+</Step>
+
+<Step title="Confirm GCM mapping in OneTrust">
+
+1. OneTrust admin → **Geolocation Rules** → your rule → **Google Consent Mode Integration**.
+2. Confirm:
+   - C0001 → `security_storage`
+   - C0002 → `analytics_storage`
+   - C0004 → `ad_storage` + `ad_user_data` + `ad_personalization`
+
+</Step>
+
+<Step title="WordPress only — CleanClicks bridges WP Consent API for you">
+
+OneTrust does not natively integrate with the WP Consent API. CleanClicks's WP plugin includes a built-in OneTrust bridge that maps `OnetrustActiveGroups` → `wp_set_consent()` automatically.
+
+No action needed on your part. To verify: visit your site, open DevTools console, and run `wp_get_consent('statistics')` — it should return `'allow'` or `'deny'` matching your OneTrust banner choice.
+
+<Info>If you're a WordPress customer and `wp_get_consent('statistics')` returns `undefined`, [contact support](mailto:support@cleanclicks.io) — the bridge may not be loading.</Info>
+
+</Step>
+
+</Steps>
+
+### Verify it worked
+
+- [ ] Reject in the OneTrust banner → DevTools → Cookies → `cc_pid` is set.
+- [ ] DevTools console → `window.OnetrustActiveGroups` shows `,C0001,` (Strictly Necessary only).
+- [ ] WordPress: `wp_get_consent('statistics')` returns `'deny'`.
+- [ ] Test purchase with `?gclid=test123` → CleanClicks dashboard shows `has_clickids: true`.
+
+</Tab>
+
+<Tab title="Complianz">
+
+<Warning>Complianz is the highest-risk CMP because it can block scripts at the WordPress PHP layer (before they ever render in the browser). The Step 1 verification is critical.</Warning>
+
+<Steps>
+
+<Step title="Verify the cleanclicks-wp script handle is not blocked">
+
+1. WordPress admin → **Complianz** → **Integrations** OR **Cookies & Services**.
+2. Search for `cleanclicks-wp` (the script handle CleanClicks registers).
+3. **Pass:** `cleanclicks-wp` is classified as **Functional** OR not listed (Complianz's scanner didn't flag it).
+4. **Fail:** `cleanclicks-wp` is classified as **Marketing** or **Statistics**. Re-classify to **Functional** immediately.
+
+</Step>
+
+<Step title="Cookie classification">
+
+1. Complianz admin → **Cookies** tab.
+2. For each `cc_*` cookie listed by the scanner, set **Category** = **Functional**.
+3. If a cookie is unclassified, manually add it as Functional with domain `cleanclicks.{your-domain}`.
+
+</Step>
+
+<Step title="WP Consent API — confirmed working">
+
+Complianz integrates with the WP Consent API automatically (Complianz's author also maintains the WP Consent API plugin). CleanClicks's WP plugin detects this. No action.
+
+</Step>
+
+<Step title="GCM auto-enablement (informational)">
+
+Complianz auto-detects Google Analytics 4 and turns on Google Consent Mode v2 for you. If you have GA4 on your site, no extra config needed.
+
+</Step>
+
+</Steps>
+
+### Verify it worked
+
+- [ ] In a private browsing window, visit your site.
+- [ ] Click **Reject All** in the Complianz banner.
+- [ ] **Critical check:** View page source. Search for `cleanclicks-wp`. The script tag MUST be present even after reject. If absent, return to Step 1.
+- [ ] DevTools → Cookies → `cc_pid` is set.
+- [ ] Test purchase with `?gclid=test123` → CleanClicks dashboard shows `has_clickids: true`.
+
+</Tab>
+
+<Tab title="Iubenda">
+
+<Warning>Iubenda is the strictest default-deny of the five CMPs. The most important step is enabling `url_passthrough` (Step 2) — without it, ad click IDs will not survive page navigation under consent reject.</Warning>
+
+<Steps>
+
+<Step title="Cookie classification">
+
+1. Iubenda admin → **Cookie Solution** → **Cookies**.
+2. Mark `cc_*` family cookies as **strictly-necessary**.
+3. Domain: `cleanclicks.{your-domain}`.
+
+</Step>
+
+<Step title="ENABLE url_passthrough (most critical Iubenda step)">
+
+By default, Iubenda does NOT enable Google's `url_passthrough` — meaning click IDs in URLs (gclid, fbclid, etc.) will be lost across navigations.
+
+1. Iubenda admin → **Cookie Solution** → **Configure** → **Advanced**.
+2. Find **Google Consent Mode** section.
+3. Enable the **url_passthrough** toggle.
+4. Save.
+
+</Step>
+
+<Step title="Optional — enable ads_data_redaction">
+
+For stricter ad-data privacy posture (recommended):
+
+1. Same Advanced section as Step 2.
+2. Enable **ads_data_redaction** toggle.
+
+</Step>
+
+<Step title="WordPress only — WP Consent API">
+
+If on WordPress, install Iubenda's plugin (`iubenda-cookie-law-solution`). CleanClicks's WP plugin auto-detects via WP Consent API.
+
+</Step>
+
+</Steps>
+
+### Verify it worked
+
+- [ ] Reject in Iubenda banner.
+- [ ] Append `?gclid=test123` to URL → navigate to another page → return to a third page → DevTools console: `sessionStorage.getItem('cc_click_ids')` should still contain `gclid: "test123"`.
+- [ ] Cookies → `cc_pid` is set.
+- [ ] Test purchase → CleanClicks dashboard shows `has_clickids: true`.
+
+</Tab>
+
+</Tabs>
+
+## What if I use a different CMP?
+
+First, check the 18-CMP WP-Consent-API list at the top of this page — if your CMP is on it, you're already covered without any code-side configuration from us; just complete the cookie classification verification.
+
+If your CMP isn't on that list AND isn't OneTrust (Usercentrics standalone, Termly, Klaro, Osano, custom solution, etc.), the general pattern is:
+
+1. **Cookie classification:** mark `cc_*` cookies as Strictly Necessary or Functional.
+2. **Domain allowlist:** if your CMP has a strict-mode allowlist, add `cleanclicks.{your-domain}`.
+3. **Bridge to WP Consent API (WordPress only):** if you're on WordPress and your CMP doesn't integrate with WP Consent API, [contact support](mailto:support@cleanclicks.io) — we can build a bridge similar to the OneTrust one if there's enough customer demand.
+
+The 11 signals CleanClicks needs to function correctly under consent reject are documented in [our reference architecture doc](/reference/consent-mode-signals). Most CMPs preserve all 11 by default; the exceptions tend to involve strict allowlist modes or non-standard cookie classification.
+
+## Common gotchas
+
+<CardGroup cols={2}>
+
+<Card title="My CMP scanner classified cc_pid as 'tracking'" icon="triangle-exclamation">
+Most CMP scanners classify any cookie they don't recognize as tracking. `cc_pid` is functional (it's a per-visitor ID on YOUR domain, used for conversion measurement). Manually re-classify as Necessary or Functional.
+</Card>
+
+<Card title="My CMP shows 'unknown' under Reject All — what does that mean?" icon="circle-question">
+Most CMPs deny everything except Strictly Necessary on Reject All. CleanClicks works under this state because `cc_pid` is classified as Strictly Necessary (Step 1 of every CMP guide above).
+</Card>
+
+<Card title="I'm in the EU — does CleanClicks comply with GDPR?" icon="shield">
+Yes. CleanClicks's first-party design + Google Consent Mode v2 integration means we operate within GDPR's "performance of contract" and "legitimate interest" basis for the cc_pid + click ID pipeline. See our [Privacy & Compliance reference](/reference/privacy) for the full legal posture.
+</Card>
+
+<Card title="Test purchase shows has_clickids: false — what now?" icon="bug">
+Three possible causes: (1) the test URL didn't have `?gclid=test123` set; (2) your CMP rejected and the customer-config steps above weren't completed; (3) your WordPress install has a caching plugin stripping URL params. [Open a support ticket](mailto:support@cleanclicks.io) with your domain + a recent audit log entry.
+</Card>
+
+</CardGroup>
+
+## Need help?
+
+The CleanClicks team has set up dozens of CMPs for customers. If your CMP isn't behaving the way this doc describes, send us a screenshot of your CMP's banner and a recent CleanClicks audit log entry — we'll diagnose within one business day.
+
+**Email:** [support@cleanclicks.io](mailto:support@cleanclicks.io)
+
+**Onboarding session:** ClickPath consultants book per-customer onboarding sessions that include CMP config — ask about it during onboarding.
