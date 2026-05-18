@@ -1,78 +1,170 @@
 ---
 title: "WordPress Setup"
-description: "Install the CleanClicks WordPress plugin for automatic tracking, WooCommerce event capture, and analytics proxy integration."
+description: "Install the CleanClicks WordPress plugin for automatic tracking, WooCommerce event capture, server-side conversion webhooks, and analytics proxy integration."
 ---
 
-CleanClicks provides a dedicated WordPress plugin that handles tracking, ecommerce events (WooCommerce), and analytics proxy integration. The plugin is available on **Clarity** plans and above, though basic tag installation works on any plan.
+CleanClicks ships a dedicated WordPress plugin (v1.6.1) that handles tracking, ecommerce events, server-side order capture, and analytics proxy injection. The plugin works on **any plan** — Pulse customers can install it for click ID capture and conversion tracking, and the WooCommerce + analytics-proxy features activate automatically on tiers that include them.
 
-## Option A: Plugin Installation (Clarity+ Plans)
+## Option A: Plugin Installation (Recommended)
 
-The CleanClicks WordPress plugin provides the full integration, including WooCommerce event tracking and analytics proxy injection.
+The CleanClicks WordPress plugin is the full integration. It auto-creates the WooCommerce conversion webhook on activation, auto-derives your site domain, applies smart defaults when your CleanClicks account is fully configured, and shows live setup status in the admin UI.
 
 ### Download and Install
 
-1. In your CleanClicks dashboard, go to **Configuration** > **Ecommerce** tab
-2. Click **Download Plugin** to get the latest zip file
-3. In your WordPress Admin, go to **Plugins** > **Add New** > **Upload Plugin**
-4. Choose the downloaded zip file and click **Install Now**
+1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
+2. Click **Download Plugin** to get the latest zip
+3. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
+4. Choose the zip and click **Install Now**
 5. Click **Activate**
 
 ### Configure the Plugin
 
 After activation:
 
-1. Go to **Settings** > **CleanClicks** in your WordPress Admin
-2. Confirm the Client Domain matches your CleanClicks domain
-3. The plugin auto-detects your setup and begins tracking
+1. Go to **Settings** → **CleanClicks** in your WordPress Admin (or **WooCommerce** → **CleanClicks** if WooCommerce is active)
+2. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Integrations** tab)
+3. Click **Save Changes**
 
-### What the Plugin Does
+That's it. The plugin auto-detects your site domain from `home_url()` (stripping a leading `www.` for WP Engine and similar www-subdomain installs), fetches your CleanClicks configuration on activation, and begins tracking immediately.
 
-- **Pageview tracking** — Automatically loads the CleanClicks tag on every page
-- **WooCommerce events** — Tracks product views, add-to-cart, checkout, and purchase events
-- **Analytics proxy injection** — Loads GA4, Usermaven, and Plerdy scripts through your first-party subdomain (if configured)
-- **Session stitching** — Links CleanClicks sessions to GA4 and Usermaven sessions for accurate attribution
-- **WP Consent API** — Respects consent management plugins for GDPR/CCPA compliance
-- **Ad blocker bypass** — Analytics scripts loaded through your domain aren't blocked
+### What Happens Automatically on Activation
 
-### WooCommerce Events
+The plugin does several things on first activation so you don't have to:
 
-If WooCommerce is active, the plugin automatically captures:
+- **Domain auto-detection** — your CleanClicks proxy origin (`https://cleanclicks.yourdomain.com`) is derived from `home_url()`. No "Client Domain" field to fill in.
+- **Remote config fetch** — the plugin calls your CleanClicks `/__cc/wp-config` endpoint and caches the response for 1 hour, so the first page request doesn't pay the round trip.
+- **Smart defaults** (v1.6.1) — when your CleanClicks account has GA4 First-Party Mode fully configured (server-side proxy enabled + Measurement ID present), the plugin auto-enables the **GA4 First-Party Proxy** checkbox on your fresh install. One less manual step.
+- **WooCommerce webhook auto-create** — if WooCommerce is active, the plugin creates the `order.created` webhook for you, pointed at your CleanClicks proxy with the correct signing secret. No manual webhook setup required.
+- **Onboarding banner** — if you haven't entered your Inbound API Key yet, the plugin shows a banner on the settings page walking you through the one-step setup.
 
-| Event | Trigger |
+Smart defaults are gated server-side and preserve customer choice on **updates** and **reactivations** — your existing settings are never overwritten by a plugin update.
+
+### Webhook Status Card
+
+The plugin settings page includes a live **Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
+
+| State | What It Means |
 |---|---|
-| `view_item` | Product page view |
-| `add_to_cart` | Item added to cart |
-| `begin_checkout` | Checkout page loaded |
-| `purchase` | Order completed |
-| `view_item_list` | Shop/category page view |
-| `remove_from_cart` | Item removed from cart |
+| Active | Webhook is created in WC, pointed at your CleanClicks proxy, signed with your Inbound API Key. Nothing to do. |
+| Missing — no API key | Enter your Inbound API Key in the settings above and save. The webhook will create on the next page load. |
+| Missing — WC not loaded | WooCommerce isn't active yet. Activate WooCommerce and the webhook will create on the next page load. |
+| Missing — pending creation | The plugin flagged the webhook for creation but WooCommerce hadn't loaded at activation time. It will create on the next request. |
+| Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Recreate** to restore it. |
+| Error | The plugin tried to create the webhook and WooCommerce returned an error. The card shows the last error message. |
 
-Each event includes product details, quantities, prices, and order totals.
+If the webhook ever drifts (e.g., you delete it manually), click **Recreate Webhook** on the status card to restore it.
 
-### Server-Side Webhook
+### What the Plugin Tracks
 
-For the most reliable order tracking, set up the WooCommerce webhook in addition to the plugin:
+| Feature | Trigger | Plan Gate |
+|---|---|---|
+| Pageview tracking | Every page load | Any plan |
+| Click ID capture | URL parameters (gclid, fbclid, ttclid, tbclid, li_fat_id, msclkid, wbraid, gbraid) | Any plan |
+| Email identity hashing (SHA-256) | Form submissions + WooCommerce checkout | Any plan |
+| Conversion event posting | `purchase`, `view_item`, `add_to_cart`, `begin_checkout`, custom triggers | Any plan |
+| `view_item` | Single product pages | Any plan with WooCommerce |
+| `view_item_list` | Shop, category, tag archive pages | Any plan with WooCommerce |
+| `add_to_cart` | AJAX and form-based add-to-cart | Any plan with WooCommerce |
+| `remove_from_cart` | Cart item removal | Any plan with WooCommerce |
+| `begin_checkout` | Checkout page load + checkout-intent click from cart | Any plan with WooCommerce |
+| `purchase` | Order completed (client-side + server-side webhook) | Any plan with WooCommerce |
+| GA4 First-Party Proxy | Routes GA4 client-side traffic through `cleanclicks.yourdomain.com` | Signal+ |
+| Usermaven Proxy | First-party Usermaven tracking | Signal+ |
+| Plerdy Proxy | First-party Plerdy heatmaps + recordings | Signal+ |
+| WP Consent API integration | Honors consent state from compatible CMPs | Any plan |
 
-1. In your CleanClicks dashboard, go to **Configuration** > **Ecommerce**
-2. Copy the webhook URL and secret
-3. In WordPress Admin, go to **WooCommerce** > **Settings** > **Advanced** > **Webhooks**
-4. Click **Add Webhook**
-5. Name: `CleanClicks`
-6. Status: **Active**
-7. Topic: **Order updated**
-8. Delivery URL: paste the webhook URL from CleanClicks
-9. Secret: paste the webhook secret
-10. Click **Save Webhook**
+Every event includes enhanced product data: SKU, brand (YITH or product taxonomy), up to 5 category levels, and variant info for variable products.
 
-This ensures orders are captured server-side even if the customer's browser session ends.
+## Server-Side Conversion Capture
+
+CleanClicks captures WooCommerce orders server-side through **three coordinated layers** so no purchase falls through the cracks. All three activate automatically when the plugin is installed — there's nothing to configure.
+
+### Layer 1: Auto-Webhook (`order.created`)
+
+On activation, the plugin creates a WooCommerce webhook with these properties:
+
+- **Topic:** Order created
+- **Delivery URL:** `https://cleanclicks.yourdomain.com/__cc/woocommerce/webhook`
+- **Secret:** your Inbound API Key (the same key signs the webhook and authorizes inbound API calls — one key, two jobs)
+
+This is the primary capture path for the standard WooCommerce checkout flow. You can verify the webhook exists in WordPress Admin → **WooCommerce** → **Settings** → **Advanced** → **Webhooks** — look for "CleanClicks Conversion Capture" with topic "Order created."
+
+### Layer 2: `woocommerce_payment_complete` Hook
+
+The plugin hooks the WooCommerce `payment_complete` action with a fire-and-forget POST to the same webhook endpoint. This backstops three scenarios where the `order.created` webhook isn't enough:
+
+- **Subscription renewals** — `woocommerce_payment_complete` fires when a renewal payment is captured by the cron, even with no customer browser session present.
+- **Offsite checkout returns** — when a customer is bounced to an external payment processor (PayPal, Klarna, etc.) and returns, the standard webhook may fire before payment is confirmed. The `payment_complete` hook fires on actual payment.
+- **Custom thank-you flows** — sites with non-standard order-completion pages (membership signups, custom landing pages) where the client-side `purchase` event might not fire.
+
+CleanClicks de-duplicates between Layer 1 and Layer 2 via a 24-hour `dedupe:woo:{domain}:{orderId}` key, so a single order never doubles in your conversion data even when both fire.
+
+### Layer 3: Configurable `purchase_paths` Allowlist
+
+On every front-end page load, the plugin checks the current URL against an allowlist of paths that indicate a purchase-completion page. When matched, it fires a `purchase` event for the relevant order. Defaults:
+
+```
+/order-received/
+/thank-you/
+/order-confirmation/
+/my-account/view-subscription/
+```
+
+This catches custom thank-you pages that don't trigger the standard `woocommerce_thankyou` hook.
+
+#### Configuring Custom Thank-You Paths
+
+If your site uses a custom thank-you URL pattern (e.g., a checkout flow that redirects to `/platinum-thank-you/{order_id}/`), add it on the plugin settings page under **Custom Thank-You Paths**. One path per line, substring match.
+
+**Example: scm-platinum custom flow.** Sports Car Market's premium subscription flow redirects to URLs like `/scm-platinum-thanks/12345`. To capture those, set:
+
+- **Custom Thank-You Paths:** add `/scm-platinum-thanks/` on its own line
+- **Custom Thank-You Regex (advanced):** `^/scm-platinum-thanks/[0-9]+`
+
+The regex is optional. Substring matching covers most cases; regex is for surgical patterns where substring would over-match.
+
+#### Programmatic Extension
+
+If you need to extend `purchase_paths` from a child theme or companion plugin instead of through the admin UI, three filter hooks are available:
+
+- `cleanclicks_purchase_paths` — modify the path allowlist array
+- `cleanclicks_purchase_path_regex` — set or override the regex pattern
+- `cleanclicks_resolve_order_id` — supply a custom order-ID resolver for the matched page
+
+## Attribution Recovery Under Cookie Banner Rejection
+
+CleanClicks v1.6.0 ships several fixes (collectively "Phase 1.6 v2") that recover click-ID correlation when visitors reject your cookie consent banner. These activate automatically — no configuration required — but understanding them helps you reason about what your customers see.
+
+### Cookie Classification
+
+CleanClicks's first-party visitor identifier cookies (`cc_pid`, `cc_click_ids`, `cc_attribution`, `cc_session_id`) are now classified as **functional** under the WP Consent API. The 18 CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) respect this classification and allow these cookies under reject. This is correct under the architectural design — these are first-party measurement-only correlation identifiers, not third-party tracking cookies.
+
+`cc_ss_optout` (the user-controlled opt-out flag) remains classified as `functional` as well.
+
+### Consent Gate Split
+
+Tracking is now split into two phases:
+
+- **Phase 1 (functional, always-on):** click ID capture, attribution capture, session init, form watching, pre-purchase identify. These run regardless of consent state. The CleanClicks `/__cc/identify` endpoint is opt-out aware and stores reverse mappings with `opted_out: true` when the visitor has rejected — these mappings are never used for vendor dispatch under measurement-only mode.
+- **Phase 2 (analytics, consent-gated):** conversion POSTs and dataLayer pushes. These wait for consent. Deferred events are queued and drained on consent grant via `wp_listen_for_consent_change`, `cookieyes_consent_update`, and `cmplz_fire_categories` listeners.
+
+### OneTrust Bridge
+
+OneTrust isn't natively integrated with the WP Consent API. The plugin now bridges the two automatically — `OnetrustActiveGroups` (e.g., `,C0001,C0002,C0004,`) maps to `wp_set_consent()` calls on page load, on dataLayer-push interceptors for `OneTrustGroupsUpdated`, and on direct `OneTrust.OnConsentChanged()` API callbacks. OneTrust customers no longer need to paste custom JavaScript snippets.
+
+### Service-Level Consent
+
+On WP Consent API v2.0+, the plugin prefers service-level consent (`wp_has_service_consent("cleanclicks")`) over category-level (`wp_has_consent("statistics")`). Customers using Complianz, CookieYes, or iubenda can grant or deny CleanClicks individually in their service-toggle UI without affecting other analytics tools. Falls back to category-level on WP Consent API v1.x.
+
+For per-CMP configuration guidance, see [CMP Configuration](/setup/cmp-configuration).
 
 ## Option B: Manual Tag Installation (Any Plan)
 
-If you're on Pulse or Signal and just need the basic tracking tag:
+If you don't want to install the plugin — for example, if you don't have WooCommerce and only need basic page-view + click-ID tracking — you can install the CleanClicks tag manually.
 
 ### Using a Theme Header
 
-1. In WordPress Admin, go to **Appearance** > **Theme File Editor**
+1. In WordPress Admin, go to **Appearance** → **Theme File Editor**
 2. Open `header.php` (or your theme's equivalent head template)
 3. Add the script tag before `</head>`:
 
@@ -82,40 +174,69 @@ If you're on Pulse or Signal and just need the basic tracking tag:
 
 4. Click **Update File**
 
-### Using a Plugin
+### Using a Header Scripts Plugin
 
-If you prefer not to edit theme files, use a "header scripts" plugin:
+If you don't want to edit theme files:
 
-1. Install a plugin like **Insert Headers and Footers** (by WPCode) or similar
+1. Install a plugin like **WPCode** (formerly "Insert Headers and Footers") or similar
 2. Add the CleanClicks script tag to the header section
 3. Save
+
+Manual installation captures click IDs, attribution, and conversions on the standard `/__cc/conv` endpoint, but you lose the WooCommerce event capture, server-side webhook auto-create, analytics proxy injection, and admin status UI that ship with the plugin.
 
 ## Plugin Updates
 
 When updating the plugin:
 
-1. **Deactivate** the current version
+1. **Deactivate** the current version in WordPress Admin → Plugins
 2. **Delete** it
-3. **Upload** the new version
+3. **Upload** the new version via Plugins → Add New → Upload Plugin
 4. **Activate**
 
-Don't use WordPress's "Replace" feature for plugin updates, as it can be unreliable. Always delete and re-upload.
+Don't use WordPress's "Replace current with uploaded" feature — it's unreliable. Always deactivate, delete, and re-upload.
 
-After updating, clear any caching layers:
-- Your caching plugin (WP Rocket, W3 Total Cache, etc.)
-- Your hosting CDN cache
-- Your browser cache (hard refresh or Incognito test)
+Updates preserve your existing settings. Smart defaults only apply on fresh installs (where no `cleanclicks_settings` option exists). If you've configured the plugin manually, your configuration is sacred and never overwritten on update.
+
+After updating, clear all cache layers in this order:
+
+1. Your caching plugin (WP Rocket, W3 Total Cache, etc.)
+2. Your hosting CDN cache (WP Engine, Kinsta, Cloudflare, etc.)
+3. Your browser cache (hard refresh or Incognito test)
+
+Verify by viewing page source and checking that the `?ver=` parameter on the CleanClicks script tag matches the new version number.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |---|---|
-| Plugin won't activate | Check PHP version (requires 7.4+). Check error logs for conflicts. |
-| Events not firing | Verify your domain is Active in CleanClicks. Check browser DevTools for script loading. |
-| Stale JS after update | Clear all cache layers (plugin, hosting CDN, browser). Check the `?ver=` parameter in page source matches the new version. |
-| WooCommerce events missing | Confirm WooCommerce is active. Check that the plugin detects WooCommerce in Settings > CleanClicks. |
-| Analytics proxies not loading | Verify GA4/Usermaven are configured in CleanClicks Configuration > Vendors. Requires Clarity+ plan or Analytics Add-On. |
+| Plugin won't activate | Verify PHP 7.4+. Check your error log for class-name collisions with other plugins (CleanClicks uses the `CLEANCLICKS_` prefix to avoid conflicts but a third-party plugin may use the same identifier). |
+| Events not firing | Verify your domain is **Active** in CleanClicks. Check browser DevTools → Network for `cleanclicks.yourdomain.com/__cc/cc.js` returning 200. Verify the `?ver=` parameter matches the installed plugin version (mismatch means cache is stale — clear all cache layers). |
+| Webhook Status card shows "Missing — deleted externally" | Click **Recreate Webhook** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
+| WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
+| Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
+| Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
+| Analytics proxies not loading | Verify GA4, Usermaven, or Plerdy are configured in CleanClicks → **Configuration** → **Vendors**. Verify the proxy toggle is enabled. Note: analytics proxies require **Signal** plan or higher. |
+| Site is on `www.example.com` and proxy origin looks wrong | v1.5.3 and later auto-strip the leading `www.` from the auto-derived domain. If you're running v1.5.2 or earlier, upgrade — or manually populate the **Client Domain** field with the apex domain (`example.com`, no `www.`). |
+| GA4 events show as "Unassigned" | If you're running both the WordPress plugin **and** the GA4 Measurement Protocol vendor in CleanClicks, disable Measurement Protocol for this domain. The plugin handles GA4 client-side; Measurement Protocol creates duplicate "Unassigned" sessions. See [GA4 Connections](/connections/ga4) for the platform-specific rule. |
+
+## What's New in v1.6.1
+
+- **Smart defaults on fresh install** — GA4 First-Party Proxy auto-enables when your CleanClicks account is fully configured server-side. Cuts one step from onboarding. Server-controlled feature flag; ships dormant until enabled.
+
+## What's New in v1.6.0
+
+- **Zero-config setup** — the "Client Domain" admin field is gone. Domain is auto-detected from `home_url()` with a leading `www.` strip.
+- **Activation-time wp-config prefetch** — plugin starts with a hydrated 1-hour transient cache instead of waiting for the first front-end request.
+- **Expanded remote config response** (schema v2) — top-level `clientDomain`, `ga4Proxy`, `vendors` enable map, `proxy` first-party routes, and a `version` field for future schema upgrades.
+- **Attribution recovery under cookie banner rejection** — cc-wp.js sends `credentials: "include"` on fetches (stable `cc_pid` per visitor), cookies self-classify as `functional`, consent gate split into always-on functional capture + consent-gated analytics dispatch, OneTrust → WP Consent API bridge built in, pre-webhook identify trigger populates correlation data before the WooCommerce `order.created` webhook delivers.
+
+## What's New in v1.5.2
+
+- **Auto-creates the WooCommerce webhook** on activation; removes it on deactivation. No manual webhook setup.
+- **Server-side `woocommerce_payment_complete` hook** — backstops subscription renewals, custom thank-you flows, and offsite checkout returns.
+- **Configurable `purchase_paths` allowlist** — captures purchases on non-standard checkout completion URLs.
+- **Admin UI overhaul** — onboarding banner + live webhook status card with one-click recreate.
 
 ---
 
-**Next:** [Configuration — Vendors](/configuration/vendors)
+**Next:** [Configuration — Vendors](/configuration/vendors) | [CMP Configuration](/setup/cmp-configuration)

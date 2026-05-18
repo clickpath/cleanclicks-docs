@@ -63,9 +63,11 @@ Paste the script tag into the `<head>` section of every page:
 5. Click **Save** and then **Connect**
 
 ### WordPress
-1. Download the CleanClicks WordPress plugin from the Configuration > Ecommerce tab (available on Clarity+ plans) or install it manually
-2. Upload and activate the plugin in WordPress Admin > **Plugins** > **Add New** > **Upload Plugin**
-3. Go to **Settings** > **CleanClicks** to confirm it's active
+1. Download the CleanClicks WordPress plugin from the **Configuration** → **Ecommerce** tab
+2. Upload and activate the plugin in WordPress Admin → **Plugins** → **Add New** → **Upload Plugin**
+3. Go to **Settings** → **CleanClicks**, enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Integrations** tab), and save
+
+On activation, the plugin auto-detects your site domain, fetches your CleanClicks config, and (if WooCommerce is active) auto-creates the order-capture webhook. No manual webhook setup needed. See [WordPress Setup](/setup/wordpress-setup) for the full reference.
 
 Once installed, click **Detect Tag** in the wizard to verify CleanClicks can see the script running on your site.
 

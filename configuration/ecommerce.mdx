@@ -41,21 +41,25 @@ The webhook and pixel work together: the pixel captures the browsing journey, an
 
 ### WordPress Plugin
 
-The CleanClicks WordPress plugin handles WooCommerce event tracking automatically. See [WordPress Setup](/setup/wordpress-setup) for plugin installation.
+The CleanClicks WordPress plugin (v1.6.1) handles both client-side event tracking and server-side conversion capture. Install the plugin and the rest is automatic.
 
-### Webhook Setup
+See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference. Quick summary:
 
-For additional server-side reliability:
+1. Download the plugin from this Ecommerce tab
+2. Upload + activate in WordPress
+3. Enter your Inbound API Key (from **Configuration** → **Integrations** tab) in **Settings** → **CleanClicks** → save
 
-1. Copy the **Webhook URL** and **Secret** from the Ecommerce tab
-2. In WordPress Admin, go to **WooCommerce** > **Settings** > **Advanced** > **Webhooks**
-3. Click **Add Webhook**
-4. Name: `CleanClicks`
-5. Status: **Active**
-6. Topic: **Order updated**
-7. Delivery URL: paste the webhook URL
-8. Secret: paste the webhook secret
-9. Click **Save Webhook**
+### Server-Side Webhook (Automatic)
+
+On activation, the plugin auto-creates a WooCommerce `order.created` webhook pointed at your CleanClicks proxy, signed with your Inbound API Key. **No manual webhook configuration required.**
+
+Verify it in WordPress Admin → **WooCommerce** → **Settings** → **Advanced** → **Webhooks** — look for "CleanClicks Conversion Capture."
+
+The plugin layers two additional server-side capture paths on top of the standard webhook: a `woocommerce_payment_complete` hook for subscription renewals and offsite checkout returns, and a configurable `purchase_paths` allowlist for custom thank-you pages. See [WordPress Setup → Server-Side Conversion Capture](/setup/wordpress-setup#server-side-conversion-capture) for the full three-layer reference.
+
+### Webhook Status
+
+The plugin settings page shows a live Webhook Status card. If the auto-created webhook is ever missing or in an error state, the card surfaces the reason and offers a **Recreate Webhook** button.
 
 ## Plugin Download
 
