@@ -9,7 +9,7 @@ CleanClicks automatically captures UTM parameters from every visitor's landing p
 
 The tag automatically reads these parameters from the URL:
 
-- `utm_source` — where the traffic came from (google, facebook, linkedin, etc.)
+- `utm_source` — where the traffic came from (google, facebook, tiktok, etc.)
 - `utm_medium` — the marketing channel (cpc, social, email, etc.)
 - `utm_campaign` — the specific campaign name
 - `utm_term` — the keyword (primarily for search ads)
@@ -26,7 +26,6 @@ Ad platforms also append their own click IDs to URLs:
 | Google Ads | `gclid` | Yes (auto-tagging) |
 | Meta | `fbclid` | Yes |
 | TikTok | `ttclid` | Yes |
-| LinkedIn | `li_fat_id` | Via cookie |
 | Microsoft Ads | `msclkid` | Yes (auto-tagging) |
 
 CleanClicks captures **both** click IDs and UTMs. Click IDs provide precise ad-level attribution within each platform. UTMs provide cross-platform attribution and are readable by your analytics tools.
@@ -78,16 +77,6 @@ utm_source=tiktok&utm_medium=paid_social&utm_campaign=__CAMPAIGN_NAME__&utm_cont
 ```
 
 TikTok uses `__PARAMETER__` format for dynamic values.
-
-## LinkedIn Ads
-
-Add UTM parameters to your destination URL in Campaign Manager:
-
-```
-utm_source=linkedin&utm_medium=paid_social&utm_campaign={campaign_name}&utm_content={creative_name}
-```
-
-LinkedIn's dynamic parameters use single curly braces `{}`.
 
 ## Microsoft Ads (Bing)
 

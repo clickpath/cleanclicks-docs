@@ -47,7 +47,6 @@ For each vendor in Configuration > Vendors:
 - **Google Ads:** Customer ID format `123-456-7890`, valid Conversion Action ID
 - **Meta:** Valid System User Token with `ads_management` + `ads_read` permissions, correct Pixel ID
 - **TikTok:** Valid access token, correct Pixel Code (starts with `C`)
-- **LinkedIn:** Valid account ID and Conversion Action URN
 - **Microsoft Ads:** Valid Customer ID and Account ID
 - **GA4:** Correct Measurement ID (`G-XXXXXXXXXX`) and API Secret
 - **Usermaven:** Valid workspace token
@@ -63,7 +62,6 @@ Ad platforms don't process conversions instantly:
 | Meta Events Manager | 5-15 minutes |
 | Google Ads | 1-24 hours (offline conversions) |
 | TikTok | 5-15 minutes |
-| LinkedIn | 6-24 hours |
 | Microsoft Ads | 4-24 hours |
 
 If you just triggered a test conversion, wait at least the time listed above before concluding it's not working.

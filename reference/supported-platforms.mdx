@@ -12,7 +12,6 @@ Every ad platform, analytics tool, and ecommerce system CleanClicks integrates w
 | **Google Ads** | OAuth (one-click) | `gclid` | Enhanced Conversions via API | Pulse |
 | **Meta (Facebook)** | Manual token | `fbclid` | Conversions API (CAPI) | Pulse |
 | **TikTok** | Manual token | `ttclid` | Events API | Pulse |
-| **LinkedIn** | OAuth (one-click) | `li_fat_id` (cookie) | Conversions API | Pulse |
 | **Microsoft Ads (Bing)** | OAuth (one-click) | `msclkid` | Offline Conversions API | Pulse |
 
 ## Analytics Platforms
@@ -30,7 +29,7 @@ Analytics platforms count against your ad platform connection limit.
 | Platform | Client-Side | Server-Side | Plugin/Pixel | Minimum Plan |
 |---|---|---|---|---|
 | **Shopify** | Custom Pixel (7 events) | Webhook (purchase) | Shopify Custom Pixel | Clarity |
-| **WooCommerce** | WordPress plugin (6 events) | Webhook (order updated) | CleanClicks WP Plugin | Clarity |
+| **WooCommerce** | WordPress plugin (6 events) | Webhook (`order.created`, auto-created on plugin activation) + `woocommerce_payment_complete` hook + configurable `purchase_paths` allowlist | CleanClicks WP Plugin v1.6.1 | Clarity |
 
 ### Shopify Events
 
