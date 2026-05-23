@@ -68,8 +68,7 @@
             "pages": [
               { "title": "Traffic Analytics", "path": "features/traffic-analytics", "icon": "bar-chart-2" },
               { "title": "Domain Management", "path": "features/domain-management", "icon": "globe" },
-              { "title": "Billing and Plans", "path": "features/billing-and-plans", "icon": "credit-card" },
-              { "title": "Analytics Add-On", "path": "features/analytics-addon", "icon": "plus-circle" }
+              { "title": "Billing and Plans", "path": "features/billing-and-plans", "icon": "credit-card" }
             ]
           },
           {

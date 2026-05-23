@@ -7,9 +7,7 @@ CleanClicks sends conversion events to Google Analytics 4 via the Measurement Pr
 
 ## Plan Requirements
 
-GA4 is available on:
-- **Clarity** and **Command** plans (included)
-- **Pulse** and **Signal** plans with the **Analytics Add-On** ($299/mo)
+GA4 is available on **Signal**, **Clarity**, and **Command** plans.
 
 GA4 counts against your ad platform connection limit.
 
@@ -49,7 +47,7 @@ With GA4 configured, CleanClicks sends conversion events to GA4 via the Measurem
 
 CleanClicks automatically links server-side events to existing GA4 sessions. When a visitor converts, the event is attributed to the GA4 session that started during the same visit, not a new orphaned session. This prevents the "Unassigned" traffic source problem common with basic Measurement Protocol implementations.
 
-## GA4 First-Party Proxy (Clarity+ or Analytics Add-On)
+## GA4 First-Party Proxy (Signal+)
 
 Beyond server-side events, CleanClicks can proxy your entire GA4 client-side tracking through your first-party subdomain.
 
@@ -72,11 +70,15 @@ When using the GA4 proxy, an **Allow Signals** toggle controls whether Google's 
 - **On:** Age, gender, and interests data flows to GA4. You see demographics in reports.
 - **Off:** Maximum privacy. Demographics are stripped. Default.
 
-### Important: WordPress Sites
+### Important: Platform-Specific MP Guidance
 
-If you use the CleanClicks WordPress plugin with GA4, the plugin handles GA4 integration client-side. **Do not** also enable Measurement Protocol for the same site, as this creates duplicate events in GA4. The plugin + proxy combination gives you both ad-blocker bypass and proper attribution without duplication.
+**WordPress (plugin-based sites):** the CleanClicks WordPress plugin handles GA4 integration client-side via the proxied gtag.js + dataLayer. **Do not also enable Measurement Protocol against your primary GA4 property**, as this creates duplicate events in GA4 attributed to "Unassigned" sessions. The plugin + GA4 First-Party Proxy combination gives you full ad-blocker bypass without needing Measurement Protocol.
 
-**Shopify is the exception.** Because Shopify's pixel runs in a sandbox that can't push to GA4's data layer, Measurement Protocol is the only way to get ecommerce events into GA4. Keep it enabled for Shopify.
+**Shopify v2.1.0+ Custom Pixel:** the Custom Pixel sends GA4 purchase events client-side via Measurement Protocol routed through the `/__cc/g/mp` proxy endpoint, using your visitor's real `_ga` session cookie for proper attribution. **Disable the GA4 Measurement Protocol toggle** in this vendor tab if you're using the v2.1.0+ pixel. Configure the Measurement ID + API Secret here (the pixel code generator reads them) — just leave the MP dispatch toggle off.
+
+**Shopify pre-v2.1.0 (legacy):** server-side MP is the only way to get GA4 purchase events into Shopify since the legacy pixel can't fire client-side MP. Keep MP enabled, accept "Unassigned" attribution as a known tradeoff, and upgrade to the v2.1.0+ pixel to flip MP off and recover proper attribution.
+
+**Summary:** WordPress → MP OFF · Shopify v2.1.0+ → MP OFF · Shopify legacy → MP ON.
 
 ## Troubleshooting
 

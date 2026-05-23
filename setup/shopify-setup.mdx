@@ -25,7 +25,7 @@ The theme snippet routes all GA4 traffic through your first-party domain, bypass
 
 ### Configure in CleanClicks
 
-1. In the cc-admin dashboard, go to the **Shopify** tab
+1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
 2. Enter your **GA4 Measurement ID** (starts with `G-`, found in GA4 Admin > Data Streams)
 3. Toggle **Allow Signals** if you want demographics data (age, gender, interests)
 4. Click **Save GA4 Proxy Settings**
@@ -53,7 +53,7 @@ If you have an existing GA4 setup (gtag.js script, Google & YouTube channel app,
 
 The Custom Pixel (Step 2) sends GA4 purchase events through the Measurement Protocol. This requires an API Secret:
 
-1. In the cc-admin dashboard, go to the **GA4** vendor tab
+1. In your CleanClicks dashboard, go to **Configuration** → **Vendors** → **GA4** tab
 2. Enter your GA4 **API Secret** (found in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets)
 3. **Turn off** the GA4 Measurement Protocol toggle (the pixel handles purchase events client-side now)
 
@@ -65,7 +65,7 @@ If you enabled **Allow Signals**, GA4 demographics data (age, gender, interests)
 
 The Custom Pixel v2.1.0 runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
 
-1. In the cc-admin dashboard, go to the **Shopify** tab
+1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
 2. Copy the **Pixel Code** (it's generated per-domain with your configuration baked in)
 3. In Shopify Admin, go to **Settings** > **Customer events**
 4. Click **Add custom pixel**
@@ -94,7 +94,7 @@ The Custom Pixel v2.1.0 runs in Shopify's sandboxed iframe and tracks the full e
 
 The webhook captures purchase events directly from Shopify's servers. Even if a customer closes their browser before the confirmation page, the order is still captured.
 
-1. In the cc-admin dashboard, go to the **Shopify** tab and copy the **Webhook URL**
+1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab and copy the **Webhook URL**
 2. In Shopify Admin, go to **Settings** > **Notifications** > scroll to **Webhooks**
 3. Click **Create webhook**
 4. Event: **Order payment**
@@ -102,7 +102,7 @@ The webhook captures purchase events directly from Shopify's servers. Even if a 
 6. URL: paste the webhook URL
 7. Click **Save**
 8. Copy the **signing secret** that Shopify generates
-9. In the cc-admin Shopify tab, paste the signing secret and save
+9. In your CleanClicks dashboard's **Configuration** → **Ecommerce** tab, paste the signing secret and save
 
 ## Testing
 
