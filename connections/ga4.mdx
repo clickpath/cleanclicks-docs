@@ -11,9 +11,13 @@ GA4 is available on **Signal**, **Clarity**, and **Command** plans.
 
 GA4 counts against your ad platform connection limit.
 
-## Configuration (No OAuth Required)
+## Configuration (Two Paths)
 
-GA4 uses an API key rather than OAuth. No connection step is needed on the Connections page.
+CleanClicks supports two GA4 connection paths depending on how you started.
+
+**Audit-tier customers** (signed up via cleanclicks.io/audit) connect GA4 via Google OAuth at the audit signup step. CleanClicks requests `analytics.readonly` + `analytics.edit` scopes — read access to compare GA4 sessions against CleanClicks measurements for the audit gap-analysis, and edit access to create the server-side Measurement Protocol API Secret for you when you upgrade to a paid plan. See [Privacy Policy §2.3](https://cleanclicks.io/privacy-policy) for the full scope disclosure.
+
+**Paid-tier customers** (Signal+ direct signup) configure GA4 via API key entry on the dashboard — no OAuth required for the standard Measurement Protocol path.
 
 1. Go to **Configuration** > **Vendors** tab
 2. Enable **GA4**
