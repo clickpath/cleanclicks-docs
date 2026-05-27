@@ -34,8 +34,7 @@
               { "title": "Installing the Tag", "path": "setup/installing-the-tag", "icon": "code" },
               { "title": "Verifying Installation", "path": "setup/verifying-installation", "icon": "check-circle" },
               { "title": "Shopify Setup", "path": "setup/shopify-setup", "icon": "shopping-bag" },
-              { "title": "WordPress Setup", "path": "setup/wordpress-setup", "icon": "file-text" },
-              { "title": "CMP Configuration", "path": "setup/cmp-configuration", "icon": "shield" }
+              { "title": "WordPress Setup", "path": "setup/wordpress-setup", "icon": "file-text" }
             ]
           },
           {
