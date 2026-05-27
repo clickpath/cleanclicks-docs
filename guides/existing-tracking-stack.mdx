@@ -1,0 +1,135 @@
+---
+title: "Guide: Working With an Existing Tracking Stack (GTM, Stape, Taggers, Google Cloud Gateway)"
+description: "How to run CleanClicks alongside your existing server-side GTM or first-party tracking setup without double-counting conversions or distorting your data."
+---
+
+CleanClicks is a first-party conversion tracking platform. So is Stape. So is Taggers. So is a self-hosted Google Cloud Gateway setup. If you already run one of those, installing CleanClicks without a plan can double-count conversions, inflate your ad-platform reporting, and corrupt your bid algorithms.
+
+This guide walks through three paths for running CleanClicks alongside an existing setup, and helps you pick the right one.
+
+## Do you already have server-side tracking?
+
+You probably do if any of these are true:
+
+- You use a server-side GTM container hosted on a custom subdomain (`sgtm.example.com`, `metrics.example.com`, `tags.example.com`)
+- You pay Stape, Taggers, or a similar service for SS-GTM hosting
+- Your developer set up Google Cloud Gateway or Cloudflare Workers for first-party analytics
+- Your GTM Web container has a GA4 Configuration tag with a `server_container_url` field populated
+- Your Meta Pixel fires through a CAPI Gateway you control
+
+If none of those apply, you can skip this guide. The default CleanClicks install pattern works fine for you. Come back here only if your install starts showing duplicate conversions in GA4 or Ads Manager.
+
+## What goes wrong if you do nothing
+
+Running two first-party tracking layers at the same time without coordinating them produces four classes of problem.
+
+### 1. Doubled GA4 events
+
+If both your existing setup and CleanClicks send events to the same GA4 property:
+
+- **Purchase events** are deduped by GA4 via `transaction_id` — safe.
+- **Everything else** (page_view, view_item, add_to_cart, begin_checkout, generate_lead, sign_up, custom events) has no automatic deduplication. **Both layers count.** Sessions inflate. Conversion rate calculations break.
+
+### 2. Doubled Meta CAPI conversions
+
+Meta deduplicates browser Pixel events against Conversions API events using `event_id`. If your existing CAPI sender and CleanClicks generate different `event_id` values for the same conversion, Meta counts both. Your ROAS reports show inflated revenue. Your bid optimization burns budget chasing phantom conversions.
+
+### 3. Doubled Google Ads conversions
+
+Google Ads deduplicates uploads by `conversion_action_id + gclid`. If your existing setup uploads conversions under one conversion action and CleanClicks uploads under another, both count. Same problem as Meta.
+
+### 4. First-party cookie conflict
+
+Your existing setup and CleanClicks both want to own first-party cookies on your domain. The `_ga` cookie (GA4 client ID) is the most common collision point. Two layers writing it produces inconsistent attribution and session stitching that drifts over time.
+
+## Three paths
+
+### Path A: Audit-only (recommended for evaluation)
+
+**Use this if** you want to measure how much your existing tracking is missing before you commit to switching.
+
+CleanClicks runs in audit mode — we capture sessions, page views, conversions, and ad-blocker bypass metrics on your domain for a 7-day window. We do NOT dispatch anything to your ad platforms. Your existing setup continues firing normally. No collisions.
+
+At the end of the audit you get a comparison report: "GA4 saw X conversions. CleanClicks captured X+N. Here's the N that ad-blockers and bot filtering hid from your existing stack."
+
+If the gap is meaningful, move to Path B or Path C. If not, no harm done — your existing setup was already capturing most of your real traffic.
+
+**Setup:** Sign up at [cleanclicks.io/audit](https://cleanclicks.io/audit). Connect GA4. Add the CNAME. Wait 7 days. Read the report.
+
+### Path B: Parallel mode (keep both, disable our vendor dispatch)
+
+**Use this if** you want CleanClicks's bot filtering, attribution recovery, and first-party data layer ALONGSIDE your existing ad-platform conversion uploads.
+
+In this mode, CleanClicks captures conversions and attribution data for analytics and reporting, but does NOT dispatch to Google Ads, Meta, TikTok, Microsoft Ads, or GA4. Your existing setup keeps owning that delivery.
+
+You still get:
+
+- Server-side bot detection (always-on, hardcoded in our worker)
+- First-party CleanClicks dashboard with traffic-quality metrics
+- Geographic filtering and out-of-market traffic suppression
+- Click-ID and UTM attribution capture in the CleanClicks ledger
+- Per-domain conversion records for your own reporting
+
+You do NOT get conversion delivery — that's handled by your existing layer.
+
+**Setup:**
+
+1. Sign up and complete normal CleanClicks onboarding (install the WordPress plugin or Shopify Custom Pixel)
+2. In the cc-saas dashboard, go to **Configuration → Vendors** and confirm every vendor toggle is OFF
+3. In **Configuration → Ecommerce**, disable "GA4 Server-Side Events" (the default for WordPress and Shopify v2.1.0+ installs already does this)
+4. Your existing setup keeps firing. CleanClicks captures the data but doesn't onward-send.
+
+### Path C: Full migration (switch from your existing stack to CleanClicks)
+
+**Use this if** Path A's audit showed a meaningful gap AND you want to consolidate to one first-party layer.
+
+The key insight: Stape, Taggers, and Google Cloud Gateway are all SS-GTM destinations that your GTM Web container forwards to. They don't operate independently — they're downstream of GTM. If we control the GTM Web container, we control whether those destinations receive any traffic at all.
+
+That means we don't need to integrate with Stape's API or Taggers' API or your GCG control plane. We just need to modify your GTM Web container to stop forwarding to them and start firing through CleanClicks instead.
+
+**The CleanClicks-assisted path (Clarity tier and above):**
+
+1. Connect Google Tag Manager (one-click OAuth, separate from your GA4 connection)
+2. We scan your GTM Web container's tags and classify them — which fire to GA4, which to Meta, which forward to a SS-GTM destination like Stape
+3. We show you a preview: "Here are the 4 tags we'd change. We'll pause your SGTM-to-Stape tag and route GA4 through CleanClicks instead."
+4. You approve. We publish a new GTM container version named something like "CleanClicks Migration 2026-MM-DD" so it's reversible — your old version stays in history, one click to roll back if anything breaks.
+5. CleanClicks starts handling delivery to GA4, Meta, Google Ads, etc.
+6. Your Stape/Taggers subscription keeps running but stops receiving traffic. Cancel it on your own schedule.
+
+**The manual path (any tier):**
+
+If you prefer to make the GTM changes yourself, log into Google Tag Manager and:
+
+- **For SS-GTM destinations (Stape, Taggers, GCG):** open your GA4 Configuration tag in your Web container, remove the `server_container_url` field (this reverts to direct gtag.js firing through `googletagmanager.com`), and publish. Your SGTM server stops receiving traffic. Then enable CleanClicks vendor dispatch for the same destinations.
+- **For client-side GTM tags (no SS-GTM):** pause the GA4 Event tags, Meta Pixel events, Google Ads conversion tags you're moving to CleanClicks. Publish the GTM version. Enable the corresponding vendors in CleanClicks.
+
+**Caveats with the assisted path:**
+
+- We need GTM Admin OAuth scope (`tagmanager.edit.containers` + `tagmanager.publish`) — that's a separate consent screen from your GA4 OAuth.
+- You need publish permissions on the GTM container. If your developer holds publish access and you don't, we'll surface a preview and an "ask your developer to apply this" handoff instead of pushing directly.
+- Custom HTML tags in your container that we don't recognize won't be touched — we'll flag them for your manual review.
+- Container changes happen in a new GTM workspace named after the migration so they don't collide with any uncommitted changes in your default workspace.
+
+**After migration is complete,** keep your old `sgtm.{your-domain}` DNS as-is until you confirm CleanClicks is delivering reliably (typically 24-48h). Then you can remove the DNS record and cancel the Stape/Taggers subscription.
+
+## Recommended decision flow
+
+1. **First-time prospect, no existing stack:** Sign up normally. Default install pattern is correct. Skip this guide.
+2. **First-time prospect with existing stack:** Start with Path A. Audit for 7 days. Decide based on the gap report.
+3. **Existing CleanClicks customer who just added Stape/Taggers:** Move to Path B (disable our vendor dispatch) OR Path C (migrate off Stape/Taggers). Don't run both at full strength.
+4. **You're not sure what tracking you already have:** Ask your developer. Check your site source for `googletagmanager.com/gtm.js`. Check DNS for unusual subdomains like `sgtm.*`, `metric.*`, `tags.*`. If you find any, this guide applies.
+
+## Per-vendor collision reference
+
+| Vendor | Their auto-dedupe | What you need to do |
+|---|---|---|
+| GA4 (page_view, sessions) | None | Pick one layer. Path B disables ours. |
+| GA4 (purchase events) | `transaction_id` | Safe to double-fire if `transaction_id` matches. |
+| Meta CAPI | `event_id` between Pixel and CAPI | Align `event_id` across layers OR disable one. |
+| Google Ads | `conversion_action_id + gclid` | Use same conversion action, or disable one layer. |
+| TikTok Events API | `event_id` similar to Meta | Align or disable one. |
+| Microsoft Ads OCT | `msclkid` deduplication | Safe to double-fire on same msclkid. |
+
+## When in doubt
+
+Email [helpdesk@cleanclicks.io](mailto:helpdesk@cleanclicks.io). Tell us what your existing stack is. We'll tell you whether Path A, B, or C fits and walk through the specific changes you need to make.

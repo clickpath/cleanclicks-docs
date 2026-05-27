@@ -78,7 +78,8 @@
               { "title": "Ecommerce: Shopify", "path": "guides/ecommerce-tracking-shopify", "icon": "shopping-bag" },
               { "title": "Ecommerce: WooCommerce", "path": "guides/ecommerce-tracking-woocommerce", "icon": "shopping-cart" },
               { "title": "Inbound Webhooks", "path": "guides/inbound-webhooks", "icon": "terminal" },
-              { "title": "UTM Attribution", "path": "guides/utm-attribution-best-practices", "icon": "tag" }
+              { "title": "UTM Attribution", "path": "guides/utm-attribution-best-practices", "icon": "tag" },
+              { "title": "Existing Tracking Stack (GTM, Stape, Taggers)", "path": "guides/existing-tracking-stack", "icon": "git-merge" }
             ]
           },
           {
