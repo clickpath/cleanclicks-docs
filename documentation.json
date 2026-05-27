@@ -47,7 +47,7 @@
               { "title": "Traffic Filters", "path": "configuration/traffic-filters", "icon": "filter" },
               { "title": "Ecommerce", "path": "configuration/ecommerce", "icon": "shopping-cart" },
               { "title": "Advanced Settings", "path": "configuration/advanced-settings", "icon": "tool" },
-              { "title": "API Keys", "path": "configuration/api-keys", "icon": "key" }
+              { "title": "Inbound Integration Keys", "path": "configuration/api-keys", "icon": "key" }
             ]
           },
           {

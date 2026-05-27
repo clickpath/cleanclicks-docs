@@ -1,38 +1,38 @@
 ---
-title: "API Keys"
-description: "Create and manage API keys for sending conversion events to CleanClicks from CRMs, automation platforms, and custom backends."
+title: "Inbound Integration Keys"
+description: "Create and manage Inbound integration keys for sending conversion events to CleanClicks from CRMs, automation platforms, and custom backends."
 ---
 
-API keys let you send conversion events to CleanClicks from external systems: CRMs, marketing automation platforms, webhook-based integrations, or custom backends.
+Inbound integration keys let you send conversion events to CleanClicks from external systems: CRMs, marketing automation platforms, webhook-based integrations, or custom backends.
 
-## Accessing API Keys
+## Accessing Inbound Integration Keys
 
 1. Go to **Configuration** in the sidebar
 2. Select your domain
-3. Click the **API Keys** tab
+3. Click the **Inbound Integration Keys** tab
 
 ## Plan Limits
 
-| Plan | Max API Keys per Domain |
+| Plan | Max Inbound Integration Keys per Domain |
 |---|---|
 | Pulse | 2 |
 | Signal | 5 |
 | Clarity | 10 |
-| Command | 25 |
+| Command | Unlimited |
 
-## Creating an API Key
+## Creating an Inbound Integration Key
 
-1. Click **Create API Key**
+1. Click **Create Inbound Integration Key**
 2. Give it a descriptive name (e.g., "Zapier Integration," "CRM Webhook," "Backend Server")
 3. Click **Create**
 
-The full API key is displayed **once**. Copy it immediately and store it securely. After you close the dialog, you'll only see a masked version.
+The full inbound integration key is displayed **once**. Copy it immediately and store it securely. After you close the dialog, you'll only see a masked version.
 
-API keys use a `cc_` prefix followed by a random string. Example: `cc_a1b2c3d4e5f6...`
+Inbound integration keys use a `cc_` prefix followed by a random string. Example: `cc_a1b2c3d4e5f6...`
 
-## Using an API Key
+## Using an Inbound Integration Key
 
-Include the API key in the `X-CC-Api-Key` header when sending events to the CleanClicks inbound endpoint:
+Include the inbound integration key in the `X-CC-Api-Key` header when sending events to the CleanClicks inbound endpoint:
 
 ```
 POST https://cleanclicks.yourdomain.com/__cc/inbound
@@ -49,11 +49,11 @@ X-CC-Api-Key: cc_your_api_key_here
 
 See [Inbound Webhooks](/guides/inbound-webhooks) for the full API reference and payload format.
 
-## Managing API Keys
+## Managing Inbound Integration Keys
 
 ### Viewing Keys
 
-The API Keys tab shows all keys for the selected domain:
+The Inbound Integration Keys tab shows all keys for the selected domain:
 - **Name** — the label you gave it
 - **Key prefix** — first few characters for identification (full key is masked)
 - **Created date**
@@ -86,7 +86,7 @@ Permanently delete a key by clicking **Delete**. This is irreversible, unlike re
 ## Security Best Practices
 
 - **One key per integration.** If you use Zapier and a custom backend, create separate keys. This lets you revoke one without affecting the other.
-- **Never put API keys in client-side code.** API keys are for server-to-server communication only. They should never appear in JavaScript, HTML, or any code that runs in a browser.
+- **Never put Inbound integration keys in client-side code.** Inbound integration keys are for server-to-server communication only. They should never appear in JavaScript, HTML, or any code that runs in a browser.
 - **Rotate keys periodically.** Create a new key, update your integration, then revoke the old key.
 - **Use descriptive names.** When you need to revoke a key six months from now, you'll want to know which integration it belongs to.
 

@@ -38,7 +38,7 @@ If you're not sure which CMP your site uses, check one of these:
 - View page source on your homepage → search for `cookieyes`, `Cookiebot`, `OneTrust`, `complianz`, `iubenda`, etc.
 - Ask the person who set up your cookie banner.
 
-If you use a CMP not on the WP-Consent-API-integrated list AND not OneTrust, [contact support](mailto:support@cleanclicks.io) — most CMPs follow the same pattern, and we'll get you a config sheet.
+If you use a CMP not on the WP-Consent-API-integrated list AND not OneTrust, [contact support](mailto:helpdesk@cleanclicks.io) — most CMPs follow the same pattern, and we'll get you a config sheet.
 
 ## Per-CMP verification
 
@@ -192,7 +192,7 @@ OneTrust does not natively integrate with the WP Consent API. CleanClicks's WP p
 
 No action needed on your part. To verify: visit your site, open DevTools console, and run `wp_get_consent('statistics')` — it should return `'allow'` or `'deny'` matching your OneTrust banner choice.
 
-<Info>If you're a WordPress customer and `wp_get_consent('statistics')` returns `undefined`, [contact support](mailto:support@cleanclicks.io) — the bridge may not be loading.</Info>
+<Info>If you're a WordPress customer and `wp_get_consent('statistics')` returns `undefined`, [contact support](mailto:helpdesk@cleanclicks.io) — the bridge may not be loading.</Info>
 
 </Step>
 
@@ -315,7 +315,7 @@ If your CMP isn't on that list AND isn't OneTrust (Usercentrics standalone, Term
 
 1. **Cookie classification:** mark `cc_*` cookies as Strictly Necessary or Functional.
 2. **Domain allowlist:** if your CMP has a strict-mode allowlist, add `cleanclicks.{your-domain}`.
-3. **Bridge to WP Consent API (WordPress only):** if you're on WordPress and your CMP doesn't integrate with WP Consent API, [contact support](mailto:support@cleanclicks.io) — we can build a bridge similar to the OneTrust one if there's enough customer demand.
+3. **Bridge to WP Consent API (WordPress only):** if you're on WordPress and your CMP doesn't integrate with WP Consent API, [contact support](mailto:helpdesk@cleanclicks.io) — we can build a bridge similar to the OneTrust one if there's enough customer demand.
 
 The 11 signals CleanClicks needs to function correctly under consent reject are documented in [our reference architecture doc](/reference/consent-mode-signals). Most CMPs preserve all 11 by default; the exceptions tend to involve strict allowlist modes or non-standard cookie classification.
 
@@ -336,7 +336,7 @@ Yes. CleanClicks's first-party design + Google Consent Mode v2 integration means
 </Card>
 
 <Card title="Test purchase shows has_clickids: false — what now?" icon="bug">
-Three possible causes: (1) the test URL didn't have `?gclid=test123` set; (2) your CMP rejected and the customer-config steps above weren't completed; (3) your WordPress install has a caching plugin stripping URL params. [Open a support ticket](mailto:support@cleanclicks.io) with your domain + a recent audit log entry.
+Three possible causes: (1) the test URL didn't have `?gclid=test123` set; (2) your CMP rejected and the customer-config steps above weren't completed; (3) your WordPress install has a caching plugin stripping URL params. [Open a support ticket](mailto:helpdesk@cleanclicks.io) with your domain + a recent audit log entry.
 </Card>
 
 </CardGroup>
@@ -345,6 +345,6 @@ Three possible causes: (1) the test URL didn't have `?gclid=test123` set; (2) yo
 
 The CleanClicks team has set up dozens of CMPs for customers. If your CMP isn't behaving the way this doc describes, send us a screenshot of your CMP's banner and a recent CleanClicks audit log entry — we'll diagnose within one business day.
 
-**Email:** [support@cleanclicks.io](mailto:support@cleanclicks.io)
+**Email:** [helpdesk@cleanclicks.io](mailto:helpdesk@cleanclicks.io)
 
 **Onboarding session:** ClickPath consultants book per-customer onboarding sessions that include CMP config — ask about it during onboarding.
