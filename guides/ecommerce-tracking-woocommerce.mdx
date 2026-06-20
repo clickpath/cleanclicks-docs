@@ -1,6 +1,6 @@
 ---
 title: "Guide: Complete WooCommerce Ecommerce Tracking"
-description: "Set up end-to-end WooCommerce ecommerce tracking with CleanClicks using the WordPress plugin (v1.6.1), three-layer server-side conversion capture, and analytics proxies."
+description: "Set up end-to-end WooCommerce ecommerce tracking with CleanClicks using the WordPress plugin (v1.8.0), three-layer server-side conversion capture, and analytics proxies."
 ---
 
 This guide walks through setting up end-to-end ecommerce tracking for a WooCommerce store with CleanClicks. Every product view, cart action, and purchase is captured first-party and relayed to your ad platforms.
@@ -15,7 +15,7 @@ The previous version of this guide separated the WordPress plugin and the server
 
 ## Prerequisites
 
-- CleanClicks account on **Clarity** plan or higher (WooCommerce ecommerce tracking requires Clarity+; analytics proxies layer in automatically on Signal+ subscriptions)
+- CleanClicks account on **Signal** plan or higher (WooCommerce ecommerce tracking requires Signal+; analytics proxies are included on Signal+ as well)
 - Domain added and DNS verified in CleanClicks
 - WordPress site with WooCommerce active
 - Admin access to WordPress
@@ -28,7 +28,7 @@ The previous version of this guide separated the WordPress plugin and the server
 4. Upload the zip and click **Install Now**
 5. Click **Activate**
 6. Go to **Settings** → **CleanClicks** (or **WooCommerce** → **CleanClicks** if WooCommerce is active)
-7. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Integrations** tab) and **Save Changes**
+7. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Inbound keys** tab) and **Save Changes**
 
 That's the entire setup. The plugin handles domain auto-detection, remote config fetch, smart defaults, and webhook auto-creation. See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference.
 

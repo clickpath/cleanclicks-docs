@@ -16,9 +16,9 @@ Traffic filters control which visitors' data gets processed and sent to your ad 
 | Feature | Pulse | Signal | Clarity | Command |
 |---|---|---|---|---|
 | Bot filtering (basic) | Yes | Yes | Yes | Yes |
+| Geo filtering (country) | Yes | Yes | Yes | Yes |
 | Bot score customization | -- | Yes | Yes | Yes |
 | Custom UA patterns | -- | Yes | Yes | Yes |
-| Geo filtering | -- | Yes | Yes | Yes |
 | IP filtering | -- | Yes | Yes | Yes |
 
 Features not available on your plan show an upgrade prompt.
@@ -34,7 +34,7 @@ Bot filtering is enabled by default on all plans. It blocks known bots, crawlers
 
 ### Advanced Bot Filtering (Signal+)
 
-- **Bot score threshold:** Set a sensitivity level (0-100). Lower numbers block more aggressively. Default is 30, which is a good balance.
+- **Bot score threshold:** Set a value between 1 and 99. Each visitor gets a bot score where a *lower* score is more bot-like, so CleanClicks blocks visitors whose score falls **below** your threshold -- a **higher** threshold blocks more aggressively. There is no default; leave it unset to skip score-based filtering.
 - **Custom blocked UA patterns:** Add your own user-agent patterns to block. Useful for filtering proprietary crawlers or monitoring tools that your analytics shouldn't count.
 
 ### Adding Custom UA Patterns
@@ -48,7 +48,7 @@ Patterns are matched against the visitor's user-agent string. Partial matches wo
 
 ## Geographic Filtering
 
-Available on **Signal** plans and above. Filter traffic based on the visitor's country.
+**By default, CleanClicks filters to US visitors only.** A US-only geo allowlist is applied on every plan whenever you haven't configured geo yourself. To accept traffic from other countries (or turn geo filtering off), edit the country list below -- country-level geo customization is available on every plan. Filter traffic based on the visitor's country:
 
 ### How It Works
 
@@ -94,16 +94,16 @@ Supports individual IPs (e.g., `203.0.113.50`). Useful for filtering your own of
 
 Control which referrer origins are allowed to send data. This prevents unauthorized domains from sending events through your CleanClicks subdomain.
 
-Add allowed origins as full domain names. If no origins are specified, all origins are accepted.
+Add allowed origins as full domain names. If you don't configure any, CleanClicks accepts events only from your own domain (`https://yourdomain.com` and `https://www.yourdomain.com`). Add an origin here to also accept events from a subdomain (e.g. `app.yourdomain.com`) or another trusted source.
 
 ## How Filters Stack
 
 Filters are applied in order. A request must pass all active filters to be processed:
 
-1. **Bot filter** — Is it a bot? If yes, blocked.
-2. **Geo filter** — Is the visitor's country allowed? If no, blocked.
-3. **IP filter** — Is the visitor's IP allowed? If no, blocked.
-4. **Origin filter** — Is the referrer origin allowed? If no, blocked.
+1. **Bot filter** — known-bot and non-browser user agents are blocked first.
+2. **IP filter** — if you've set an IP allowlist/blocklist, it's checked next.
+3. **Geo filter** — the visitor's country is checked against your allowlist/blocklist (US-only by default).
+4. **Origin filter** — the request origin is checked at the endpoint.
 
 Traffic that's filtered out is not counted toward your session limit, not sent to ad platforms, and doesn't appear in your conversion data. Filtered requests are still logged in traffic analytics (on Signal+ plans) so you can see what's being blocked.
 
