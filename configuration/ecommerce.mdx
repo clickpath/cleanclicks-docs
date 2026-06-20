@@ -81,6 +81,8 @@ Both Shopify and WooCommerce integrations capture:
 
 Customer emails are SHA-256 hashed before being sent to ad platforms. The raw email is never shared with third parties.
 
+Beyond the purchase, the Shopify Custom Pixel and the WooCommerce plugin also capture the browsing funnel — `view_item`, `add_to_cart`, and `begin_checkout` — and pass those to GA4, Meta, and TikTok under each platform's standard event names.
+
 ## Attribution
 
 When a webhook or server-side event arrives, CleanClicks looks up the associated visitor session to recover:

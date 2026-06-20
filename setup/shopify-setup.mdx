@@ -104,6 +104,8 @@ The webhook captures purchase events directly from Shopify's servers. Even if a 
 8. Copy the **signing secret** that Shopify generates
 9. In your CleanClicks dashboard's **Configuration** → **Ecommerce** tab, paste the signing secret and save
 
+> **Refunds and cancellations:** to reverse refunded value in your ad platforms, also subscribe Shopify's **Refund created** and **Order cancellation** events to the same webhook URL, then map the `refund` (and `cancellation`) event for each platform in **Configuration → Vendors**. Without that mapping the reversal is recorded but not uploaded, so a refund is never sent as a purchase.
+
 ## Testing
 
 After setup, verify each component:

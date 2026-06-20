@@ -45,6 +45,8 @@ That's the entire setup. The plugin handles domain auto-detection, remote config
 
 Each event includes enhanced product data: SKU, brand, up to 5 category levels, and variant info for variable products.
 
+**Refunds and cancellations (plugin v1.8.0+):** when a WooCommerce order is refunded or cancelled, the plugin sends a reversal event carrying the refunded value. To subtract that value from a connected ad platform, map the `refund` (and `cancellation`) event for that platform in **Configuration → Vendors** — without an explicit mapping the reversal is recorded in CleanClicks but not uploaded (this stops a refund from being sent as a purchase-shaped conversion).
+
 ## Step 2: Server-Side Conversion Capture (Automatic)
 
 The plugin handles server-side conversion capture through three coordinated layers. **All three activate automatically** when the plugin is installed — there's nothing to configure for the standard WooCommerce checkout.
