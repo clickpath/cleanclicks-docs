@@ -79,10 +79,10 @@ For ecommerce, the key conversion event is `purchase`. Most ad platforms automat
 
 ## GA4 First-Party Analytics
 
-CleanClicks v2.1.0 introduces first-party GA4 tracking for Shopify. Instead of relying solely on server-side Measurement Protocol (which creates "Unassigned" attribution in GA4), the new approach uses:
+CleanClicks's Custom Pixel (currently v2.2.0) provides first-party GA4 tracking for Shopify. Instead of relying solely on server-side Measurement Protocol (which creates "Unassigned" attribution in GA4), it uses:
 
 - **Theme snippet** — loads proxied gtag.js and fires storefront events (view_item, add_to_cart, begin_checkout, search) through your first-party domain. These events get proper traffic source attribution.
-- **Custom Pixel v2.1.0** — sends GA4 purchase events via client-side Measurement Protocol through the `/__cc/g/mp` proxy endpoint, using the visitor's real `_ga` cookie for session stitching.
+- **Custom Pixel v2.2.0** — sends GA4 purchase events via client-side Measurement Protocol through the `/__cc/g/mp` proxy endpoint, using the visitor's real `_ga` cookie for session stitching.
 
 **If you were previously using server-side GA4 MP:** Turn it off in the GA4 vendor tab. The pixel now handles purchase events client-side with proper attribution. Keeping server-side MP on will create duplicate events.
 

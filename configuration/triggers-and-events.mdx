@@ -19,7 +19,7 @@ Triggers define what counts as a conversion on your website. When a visitor perf
 | **Purchase** | Completed ecommerce transaction |
 | **Page Visit** | Visitor reaches a specific URL (e.g., a thank-you page) |
 | **Button Click** | Visitor clicks a specific button or link |
-| **Phone Call** | Visitor clicks a phone number link (tel: link) |
+| **Phone Call** | Captures clicks on phone-number (`tel:`) links — configured as a Button Click trigger with a `tel:` selector |
 
 ## Creating a Trigger
 
@@ -35,8 +35,6 @@ For Page Visit and Form Submission triggers, you specify which URLs should fire 
 
 - **Exact match:** `https://yourdomain.com/thank-you` — fires only on that exact URL
 - **Contains:** `/thank-you` — fires on any URL containing that string
-- **Starts with:** `/checkout/` — fires on any URL starting with that path
-- **Regex:** `\/order\/[0-9]+` — fires on URLs matching the pattern
 
 ### CSS Selectors (Button Click)
 

@@ -8,8 +8,8 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 | Component | Plan Required | What It Does |
 |---|---|---|
 | GA4 First-Party Analytics | Signal+ | Routes all GA4 tracking through your domain |
-| Custom Pixel (v2.1.0) | Clarity+ | Tracks 7 ecommerce events in the pixel sandbox |
-| Server-Side Webhook | Clarity+ | Captures orders directly from Shopify servers |
+| Custom Pixel (v2.2.0) | Signal+ | Tracks 7 ecommerce events in the pixel sandbox |
+| Server-Side Webhook | Signal+ | Captures orders directly from Shopify servers |
 
 ## Prerequisites
 
@@ -61,9 +61,9 @@ The Custom Pixel (Step 2) sends GA4 purchase events through the Measurement Prot
 
 If you enabled **Allow Signals**, GA4 demographics data (age, gender, interests) will populate within 24-48 hours. This works by allowing DoubleClick requests to go directly to Google rather than through the proxy.
 
-## Step 2: Install the Custom Pixel (Clarity+)
+## Step 2: Install the Custom Pixel (Signal+)
 
-The Custom Pixel v2.1.0 runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
+The Custom Pixel v2.2.0 runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
 2. Copy the **Pixel Code** (it's generated per-domain with your configuration baked in)
@@ -90,7 +90,7 @@ The Custom Pixel v2.1.0 runs in Shopify's sandboxed iframe and tracks the full e
 | `purchase` | Order completed (also sends GA4 MP if configured) |
 | `search` | Search performed |
 
-## Step 3: Server-Side Webhook (Clarity+)
+## Step 3: Server-Side Webhook (Signal+)
 
 The webhook captures purchase events directly from Shopify's servers. Even if a customer closes their browser before the confirmation page, the order is still captured.
 
