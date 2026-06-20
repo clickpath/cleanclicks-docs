@@ -27,11 +27,11 @@ Once connected, you also need to configure the vendor settings:
 
 1. Go to **Configuration** > **Vendors** tab
 2. Enable **Google Ads**
-3. Enter your **Customer ID** (format: `123-456-7890`)
-4. Enter your **Conversion Action ID** (format: `AW-XXXXXXXXX/YYYYYYY`)
+3. Enter your **Customer ID** (the 10-digit account number from the top-right of Google Ads)
+4. Enter your **Conversion Action resource name** (format: `customers/1234567890/conversionActions/123456789`)
 5. Save
 
-The Customer ID is visible in the top-right corner of Google Ads. The Conversion Action ID is in Google Ads > **Goals** > **Conversions** > click a conversion action > look for the tag snippet or conversion action details.
+The Conversion Action resource name is the Google Ads API resource path for the action, not the `AW-xxx/yyy` gtag snippet ID. Find it under Google Ads > **Goals** > **Conversions**. You can also map a different conversion action per event (purchase, lead, etc.) in the vendor settings.
 
 ## How It Works
 
@@ -42,6 +42,10 @@ When a visitor clicks your Google Ad:
 4. Google Ads matches the conversion to the exact click, keyword, and campaign
 
 This is **enhanced conversions** via first-party data. Because it's server-side, it works even when the visitor has an ad blocker or restrictive browser settings.
+
+### Click-ID requirement
+
+Google Ads click conversions require a click identifier (`gclid`, `wbraid`, or `gbraid`) captured from the original ad click. A conversion from a visitor who did **not** arrive through a Google ad (organic, direct, referral, or another channel) has no click ID, so it is recorded in CleanClicks but **not** uploaded to Google Ads. This is Google's design, not a CleanClicks limitation, and it is the most common reason a conversion shows in CleanClicks but not in Google Ads.
 
 ## Recommended: Final URL Suffix
 
@@ -63,7 +67,7 @@ OAuth tokens are refreshed automatically. You shouldn't need to reconnect unless
 |---|---|
 | Connection fails during OAuth | Make sure you're signing in with an account that has admin access to the Google Ads account |
 | "Needs Reconnection" status | Click Disconnect, then Connect again to re-authorize |
-| Conversions not appearing in Google Ads | Verify Customer ID and Conversion Action ID in Configuration > Vendors. Allow 24-48 hours for Google Ads to process offline conversions. |
+| Conversions not appearing in Google Ads | First confirm the conversions came from ad clicks that carried a `gclid`/`wbraid`/`gbraid` (no click ID = not uploaded). Then verify the Customer ID and Conversion Action resource name in Configuration > Vendors. Allow 24-48 hours for Google Ads to process offline conversions. |
 | Wrong Google Ads account | Disconnect and reconnect. During OAuth, make sure to select the correct Google account. |
 
 ---

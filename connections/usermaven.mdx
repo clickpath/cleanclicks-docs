@@ -9,7 +9,7 @@ CleanClicks sends conversion and ecommerce events to Usermaven via the server-si
 
 Usermaven is available on **Signal**, **Clarity**, and **Command** plans.
 
-Usermaven counts against your ad platform connection limit.
+Usermaven is an analytics-layer connection (Signal and up) and does not count against your ad-platform connection limit.
 
 ## Configuration
 
@@ -17,19 +17,22 @@ No OAuth or connection step needed. Configure directly in vendors.
 
 1. Go to **Configuration** > **Vendors** tab
 2. Enable **Usermaven**
-3. Enter your **Workspace Token**
+3. Enter your **Workspace API Key** and your **Server Token**
 4. Save
 
-### Finding Your Workspace Token
+### Finding Your API Key and Server Token
 
 1. Log in to [Usermaven](https://app.usermaven.com)
-2. Go to your workspace **Settings**
-3. Find the API/workspace token
-4. Copy it
+2. Go to your workspace **Settings** > **API Keys**
+3. Copy both the **API Key** (workspace key) and the **Server Token** (used for server-to-server event ingest)
+
+CleanClicks needs both values — it combines them when sending events to Usermaven's server-side API. With only one of the two, events are skipped.
 
 ## Server-Side Events
 
 With Usermaven configured, CleanClicks sends ecommerce and conversion events server-side. This populates Usermaven's dashboards with revenue data, product analytics, and conversion metrics.
+
+> **WordPress sites:** the CleanClicks WordPress plugin sends Usermaven events directly. To avoid double-counting, the CleanClicks edge worker skips its own Usermaven dispatch when the WordPress plugin is active and lets the plugin handle it.
 
 ### WooCommerce / Shopify Dashboards
 
@@ -63,7 +66,7 @@ CleanClicks automatically stitches sessions between its own tracking and Usermav
 
 | Issue | Solution |
 |---|---|
-| Events not in Usermaven | Verify workspace token. Check that Usermaven is enabled in Configuration > Vendors. |
+| Events not in Usermaven | Verify both the API Key and Server Token are entered. Check that Usermaven is enabled in Configuration > Vendors. |
 | Revenue shows $0 | Usermaven dashboard widgets need manual configuration. Set up each widget to pull from the correct event and metric field. |
 | Proxy not working | Verify the proxy is enabled in Configuration > Advanced. Check browser DevTools for Usermaven requests routing through your subdomain. |
 

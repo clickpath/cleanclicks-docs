@@ -44,12 +44,12 @@ Go to **Connections** page. Each connected platform should show **Connected** st
 
 For each vendor in Configuration > Vendors:
 
-- **Google Ads:** Customer ID format `123-456-7890`, valid Conversion Action ID
+- **Google Ads:** Customer ID (10-digit), valid Conversion Action resource name (`customers/.../conversionActions/...`)
 - **Meta:** Valid System User Token with `ads_management` + `ads_read` permissions, correct Pixel ID
 - **TikTok:** Valid access token, correct Pixel Code (starts with `C`)
 - **Microsoft Ads:** Valid Customer ID and Account ID
 - **GA4:** Correct Measurement ID (`G-XXXXXXXXXX`) and API Secret
-- **Usermaven:** Valid workspace token
+- **Usermaven:** Valid API Key and Server Token
 
 ### 7. Are You Waiting Long Enough?
 
@@ -78,6 +78,7 @@ Temporarily disable filters for testing, or test from an unfiltered location.
 ### 9. Platform-Specific Checks
 
 #### Google Ads
+- **No click ID = no upload.** Google Ads click conversions require a `gclid`, `wbraid`, or `gbraid` from the original ad click. Conversions from visitors who did not arrive via a Google ad (organic, direct, referral) are recorded in CleanClicks but never sent to Google Ads -- the single most common reason Google Ads conversions look "missing." Test with a visit that actually carries a `gclid`.
 - Go to **Goals** > **Conversions** in Google Ads
 - Check the "Recent conversions" or "All conversions" columns
 - Offline conversions can take up to 24 hours to process

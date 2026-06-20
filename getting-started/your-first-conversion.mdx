@@ -26,7 +26,7 @@ Before a conversion can be tracked, confirm:
 
 If you're connected to Meta, you can use a **Test Event Code** in Configuration > Vendors > Meta. Meta's Events Manager will show test events in real time before they count toward your actual data.
 
-### Option C: Use Google Ads Debug Mode (GA4)
+### Option C: Use GA4 DebugView
 
 If GA4 is configured, enable debug mode in GA4's DebugView to watch events arrive in real time.
 
@@ -58,12 +58,14 @@ When a visitor triggers a conversion event:
 1. The CleanClicks tag captures the event with all relevant data (click IDs, UTM parameters, session info)
 2. The event is sent to your first-party subdomain
 3. CleanClicks relays the conversion server-side to each connected ad platform
-4. The ad platform receives the conversion with proper attribution data
+4. Each platform receives the conversion with its attribution data
 
 The whole process takes seconds. Because it's server-side, it works even when:
 - The visitor has an ad blocker
 - The browser restricts third-party cookies
 - The visitor navigates away quickly after converting
+
+One platform-specific caveat: Google Ads only accepts click conversions that carry a click ID (`gclid`, `wbraid`, or `gbraid`) from the original ad click. A conversion from a visitor who did not arrive through a Google ad is still recorded in CleanClicks, but is not uploaded to Google Ads.
 
 ---
 

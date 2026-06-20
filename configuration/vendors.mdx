@@ -19,19 +19,19 @@ These count against your plan's ad platform limit.
 
 | Vendor | What It Does | Required Fields |
 |---|---|---|
-| **Google Ads** | Uploads offline conversions via the Google Ads API | Customer ID, Conversion Action ID |
+| **Google Ads** | Uploads offline conversions via the Google Ads API (requires a click ID -- see note) | Customer ID, Conversion Action resource name |
 | **Meta (Facebook)** | Sends events via Meta Conversions API (CAPI) | Pixel ID, Access Token |
 | **TikTok** | Sends events via TikTok Events API | Pixel Code, Access Token |
 | **Microsoft Ads** | Uploads offline conversions via Microsoft Ads | Customer ID, Account ID |
 
 ### Analytics Platforms
 
-GA4 and Usermaven also count against your ad platform limit (not a separate analytics quota).
+GA4 and Usermaven are analytics-layer connections (Signal and up). They do not count against your ad-platform limit.
 
 | Vendor | What It Does | Required Fields |
 |---|---|---|
 | **GA4** | Sends events via GA4 Measurement Protocol | Measurement ID, API Secret |
-| **Usermaven** | Sends events via Usermaven server-side API | Workspace Token |
+| **Usermaven** | Sends events via Usermaven server-side API | API Key, Server Token |
 
 > **Note:** GA4 and Usermaven are available on Signal, Clarity, and Command plans. Pulse customers can connect ad platforms but not analytics platforms.
 
@@ -48,14 +48,16 @@ Sensitive fields (access tokens, API secrets) are masked after saving. You'll se
 
 Your plan determines how many vendors you can enable simultaneously:
 
-| Plan | Max Platforms |
+| Plan | Max ad platforms |
 |---|---|
 | Pulse | 1 |
-| Signal | 2 |
-| Clarity | 7 |
-| Command | 7 |
+| Signal | 5 |
+| Clarity | 5 |
+| Command | Unlimited |
 
-If you try to enable more vendors than your plan allows, you'll see an upgrade prompt.
+This limit counts ad platforms only. GA4 and Usermaven are analytics-layer connections (Signal and up) and do not count toward it.
+
+If you try to enable more ad platforms than your plan allows, you'll see an upgrade prompt.
 
 ## Disabling a Vendor
 
@@ -64,8 +66,9 @@ Toggle a vendor **off** to stop sending it data. The credentials are retained, s
 ## Vendor-Specific Notes
 
 ### Google Ads
-- **Customer ID** should be in `123-456-7890` format
-- **Conversion Action ID** is the specific conversion you want to track (format: `AW-XXXXXXXXX/YYYYYYY`)
+- **Customer ID** is the 10-digit Google Ads account number
+- **Conversion Action resource name** is the API resource path for the conversion (format: `customers/1234567890/conversionActions/123456789`), not the `AW-xxx/yyy` gtag snippet ID
+- Click conversions require a click ID (`gclid`, `wbraid`, or `gbraid`); conversions without one are recorded in CleanClicks but not uploaded to Google Ads
 - The Developer Token is managed by CleanClicks; you don't need to provide one
 
 ### Meta (Facebook)
@@ -86,7 +89,7 @@ Toggle a vendor **off** to stop sending it data. The credentials are retained, s
 - **API Secret** is generated in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets
 
 ### Usermaven
-- **Workspace Token** is available in your Usermaven workspace settings
+- **API Key** and **Server Token** are both in your Usermaven workspace settings (Settings > API Keys); CleanClicks needs both
 
 ---
 

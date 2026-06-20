@@ -44,6 +44,8 @@ When a visitor converts:
 3. Microsoft matches the conversion using the msclkid and/or hashed email
 4. The conversion is attributed to the correct ad click, keyword, and campaign
 
+A conversion with neither an `msclkid` nor a hashed email is recorded in CleanClicks but not uploaded to Microsoft Ads — there is nothing for Microsoft to match it against.
+
 ### Auto-Tagging
 
 For msclkid capture to work, make sure **Auto-tagging** is enabled in Microsoft Ads:
