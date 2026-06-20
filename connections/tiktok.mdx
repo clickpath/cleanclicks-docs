@@ -49,9 +49,11 @@ When a visitor converts:
 3. TikTok matches the conversion to the original ad click
 4. Customer data is sent as SHA-256 hashes for Advanced Matching
 
-## Limited Data Use
+## CCPA and opt-out behavior
 
-For visitors subject to CCPA, CleanClicks automatically sends `limited_data_use: true` to TikTok, restricting how TikTok processes that visitor's data.
+When a visitor opts out (through Global Privacy Control, a CleanClicks opt-out cookie, or your consent platform's "reject"), CleanClicks sends TikTok **nothing** for that visitor. Opted-out conversions are dropped before they leave CleanClicks, not transmitted to TikTok under a limited-data-use flag or any other mechanism.
+
+For visitors who have not opted out, conversions are sent to the Events API normally. CleanClicks does not attach `limited_data_use: true` by default.
 
 ## Troubleshooting
 

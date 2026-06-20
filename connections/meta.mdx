@@ -73,9 +73,11 @@ Meta's Conversions API also receives:
 - User agent and IP information
 - Attribution parameters
 
-## CCPA / Limited Data Use
+## CCPA and opt-out behavior
 
-For visitors in jurisdictions where Limited Data Use applies, CleanClicks automatically sends `data_processing_options: ["LDU"]` to Meta. This tells Meta to restrict how it processes that visitor's data, in compliance with CCPA regulations.
+When a visitor opts out (through Global Privacy Control, a CleanClicks opt-out cookie, or your consent platform's "reject"), CleanClicks sends Meta **nothing** for that visitor. Opted-out conversions are dropped before they leave CleanClicks, not transmitted to Meta under Limited Data Use or any other flag.
+
+For visitors who have not opted out, conversions are sent to the Conversions API normally. CleanClicks does not attach `data_processing_options: ["LDU"]` by default.
 
 ## Troubleshooting
 

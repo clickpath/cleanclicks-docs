@@ -11,7 +11,11 @@ CleanClicks operates as a first-party data processor. All tracking data flows th
 
 - **No third-party cookies.** CleanClicks uses first-party cookies only.
 - **No cross-site tracking.** Data is scoped to your domain.
-- **No data sharing.** Your conversion data is never shared with other CleanClicks customers or used for any purpose other than relaying it to your configured ad platforms.
+- **No data resale.** Your conversion data is never shared with other CleanClicks customers, sold, or used for any purpose other than relaying it to the ad platforms and analytics tools you connect.
+
+CleanClicks also provisions a dedicated GA4 property that it owns and operates on your behalf under service-provider terms. It is used for first-party, server-side measurement and is separate from your own primary GA4 property, which your existing analytics stack continues to populate untouched.
+
+By default, CleanClicks measures visitors in the United States only (a US-only geo allowlist). You can add other countries or turn geo filtering off in Configuration > Traffic Filters.
 
 ## What Data Is Collected
 
@@ -22,10 +26,10 @@ CleanClicks operates as a first-party data processor. All tracking data flows th
 | Session ID | Track visitor across pages | First-party cookie, 90-day retention |
 | Click IDs (gclid, fbclid, etc.) | Ad attribution | First-party cookie, 90-day retention |
 | UTM parameters | Campaign attribution | First-party cookie, 90-day retention |
-| IP address | Geographic classification | Used in real-time, not stored |
+| IP address | Geo classification + bot detection | Used in real time; not kept in long-term identity records |
 | User agent | Device classification, bot detection | Used in real-time, not stored |
 | Page URL | Trigger matching | Processed, not stored separately |
-| Email (when provided) | Cross-platform matching | SHA-256 hashed before relay |
+| Email (when provided) | Cross-platform matching | SHA-256 hashed in the browser (the raw email never leaves the browser); the hash is stored in the email-to-click-ID map for 90 days |
 
 ### From Ecommerce
 
@@ -41,9 +45,14 @@ CleanClicks operates as a first-party data processor. All tracking data flows th
 | Data Type | Retention Period |
 |---|---|
 | Conversion events | 90 days |
-| Session identification | 90 days |
+| Email-to-click-ID mapping | 90 days |
 | Failed event retries | 90 days |
 | Traffic analytics | 90 days |
+| Conversion audit log | 180 days |
+| Advertising click ID / visitor ID cookies | Up to 1 year |
+| Session cookie (cc_sid) | 30 minutes |
+| Deduplication records | 24 hours |
+| Ad platform OAuth tokens | 30 days |
 
 After the retention period, data is automatically purged. There is no "keep forever" option.
 
@@ -53,20 +62,20 @@ After the retention period, data is automatically purged. There is no "keep fore
 - **Ad platform credentials** (OAuth tokens, API keys) are encrypted at rest using AES-256-GCM with per-customer encryption keys.
 - **API keys** are stored as SHA-256 hashes. The raw key is shown once at creation and never stored.
 
-## CCPA Compliance
+## CCPA and opt-out behavior
 
-CleanClicks includes built-in CCPA / Limited Data Use support:
+When a visitor opts out (via Global Privacy Control, a CleanClicks opt-out cookie, or your consent platform's "reject" applied through the WordPress plugin's consent bridge), CleanClicks stops sending that visitor's data to advertising platforms:
 
-- **Meta:** Events include `data_processing_options: ["LDU"]` when applicable
-- **TikTok:** Events include `limited_data_use: true`
-- **Google:** Consent Mode v2 signals are respected in the tracking tag
-- **Microsoft Ads:** Handled via the platform's own measurement restrictions
+- **Meta, TikTok, LinkedIn, and Microsoft Advertising receive nothing.**
+- **Google Ads** conversions are limited to privacy-preserving signals with the advertising click identifiers removed, so they cannot be tied to the visitor.
+- **First-party website analytics continue** as measurement only. Google Analytics receives the activity as first-party measurement, with the advertising signals (ad personalization and ad-user-data) set to denied.
+- **Personal identifiers are stripped** for every platform: hashed email, IP address, user agent, geo, and device type are removed from opted-out events.
 
-These flags tell ad platforms to restrict how they process the visitor's data in accordance with California Consumer Privacy Act requirements.
+CleanClicks does not transmit Limited Data Use or limited-data-use flags. The previous LDU pathway was removed on 2026-05-29 so that opted-out visitors are dropped before dispatch rather than sent under a restriction flag.
 
 ## GPC (Global Privacy Control)
 
-The CleanClicks WordPress plugin supports the WP Consent API, which detects GPC signals and consent management platforms. When a visitor signals a privacy preference, the plugin respects it.
+CleanClicks honors GPC in real time, before any data is transmitted. The tracking script reads the browser's `navigator.globalPrivacyControl` signal, and the CleanClicks edge worker also honors the `Sec-GPC` request header and the CleanClicks opt-out cookie directly. A GPC signal is treated as a valid opt-out under California law. On WordPress, the plugin additionally integrates with the WP Consent API to detect GPC and consent-management platforms.
 
 ## GDPR
 
