@@ -1,0 +1,79 @@
+---
+title: "Implementing a US Consent Banner (DIY)"
+description: "How to set up a US privacy notice and opt-out control on your site with your own CMP, and how CleanClicks behaves alongside it."
+icon: "shield-check"
+---
+
+> **Read this first.** CleanClicks does **not** ship consent tooling, and using CleanClicks does not make your website compliant with any privacy law. This guide is educational: it explains how the US opt-out model generally works, how to implement a banner yourself with a consent platform you choose, and exactly what CleanClicks does (and doesn't do) with the consent signals your setup produces. For what compliance requires of *your* business, consult your own counsel.
+
+## What CleanClicks does and does not do
+
+**CleanClicks does:**
+
+- **Honor opt-out signals it observes.** When a visitor opts out — via Global Privacy Control (GPC) in their browser, a CleanClicks opt-out cookie (`cc_ss_optout`), or your consent platform's "reject" (bridged through the WP Consent API on WordPress) — CleanClicks sends ad platforms (Meta, TikTok, Microsoft, and similar) **nothing** for that visitor, and Google receives identifier-free signals only.
+- **Work alongside your CMP.** CleanClicks integrates with the WP Consent API (18 CMPs) and includes a OneTrust bridge. See [CMP Configuration](/setup/cmp-configuration) for the per-CMP setup.
+- **Respect GPC automatically.** No configuration needed — a browser sending GPC is treated as opted out.
+
+**CleanClicks does not:**
+
+- Render a consent banner or opt-out control on your site.
+- Store consent records for you.
+- Decide which laws apply to your business, or guarantee compliance with any of them.
+- Handle EU/GDPR consent. CleanClicks is built for the US opt-out model; if you serve EEA/UK visitors, you are responsible for your own certified CMP for that traffic.
+
+## The US opt-out model, in one minute
+
+US state privacy laws (CCPA/CPRA and the states that followed) generally use an **opt-out** model rather than the EU's opt-in model:
+
+- You can generally collect and use data by default, but you must give visitors a clear way to **opt out** of the sale or sharing of their personal information.
+- That usually means a "Do Not Sell or Share My Personal Information" link or control, a privacy policy that describes what you collect, and honoring **GPC** as a valid opt-out signal (California enforces this — the Sephora settlement was exactly about ignoring GPC).
+- No blocking "accept before you browse" wall is generally required, unlike the EU.
+
+Whether these laws apply to you depends on your revenue, data volume, and where your visitors live. That's a question for your counsel, not for this doc.
+
+## Implementing a banner with your own CMP
+
+Any mainstream consent platform (CookieYes, OneTrust, Cookiebot, Complianz, Iubenda, Termly, Osano, and others) can render a US-style notice. The general recipe:
+
+1. **Pick a CMP and enable its US/CCPA mode.** Most CMPs have a US preset that shows a notice with an opt-out control instead of an EU-style blocking banner.
+2. **Add a "Do Not Sell or Share" link** in your footer that opens the CMP's opt-out control (most CMPs generate this link for you).
+3. **Enable GPC support in the CMP** so a browser-level GPC signal registers as an opt-out in the CMP's own records.
+4. **Update your privacy policy** to describe what you collect and how visitors opt out. Your CMP or counsel can help with the disclosure language.
+5. **Configure the CMP to coexist with CleanClicks** — classify `cc_*` cookies as Necessary/Functional and verify nothing blocks the CleanClicks script under reject. This part is fully documented in [CMP Configuration](/setup/cmp-configuration).
+
+## What happens to your data per consent state
+
+Once your banner is live, here's how CleanClicks behaves for each visitor state:
+
+| Visitor state | Ad platforms (Meta, TikTok, Microsoft, etc.) | Google | First-party measurement |
+|---|---|---|---|
+| No opt-out signal | Conversions dispatched normally | Normal | Normal |
+| Opted out (GPC, opt-out cookie, or CMP reject) | **Nothing sent** | Identifier-free signals only | Continues on your own domain |
+
+The per-vendor detail (including exact CCPA behavior) is documented on each connection page — e.g. [Meta](/connections/meta#ccpa-and-opt-out-behavior) and [TikTok](/connections/tiktok#ccpa-and-opt-out-behavior).
+
+## Verifying your setup
+
+1. Open your site in a private window with GPC enabled (e.g. via a privacy extension, or `navigator.globalPrivacyControl` set by your browser).
+2. Complete a test conversion.
+3. Check your CleanClicks **Audit Log**: the conversion should show as captured first-party but not dispatched to ad platforms.
+4. Repeat without GPC and with the banner's opt-out clicked — same result.
+5. Repeat with no opt-out — the conversion should dispatch to your connected platforms.
+
+## FAQ
+
+**Do I even need a banner?**
+Depends on which laws apply to your business — that's a counsel question. What we can say: honoring opt-outs costs you very little data under the US model, because the default state (no interaction) is unaffected.
+
+**Can CleanClicks just render the banner for me?**
+Not today. CleanClicks deliberately stays out of the consent-tooling business — we measure; your CMP manages consent.
+
+**Does opting out break my analytics?**
+Opted-out visitors stop flowing to ad platforms entirely. First-party measurement on your own domain continues, so your traffic picture stays intact.
+
+**We get EU traffic. Are we covered?**
+No. CleanClicks is built for the US opt-out model. EEA/UK traffic needs your own certified CMP with an opt-in flow — that's your responsibility under our terms.
+
+---
+
+**Related:** [CMP Configuration](/setup/cmp-configuration) · [Data and Privacy](/reference/data-privacy)

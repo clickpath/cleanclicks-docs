@@ -1,15 +1,13 @@
 ---
 title: "Onboarding Walkthrough"
-description: "Walk through the 7-step CleanClicks setup wizard covering domain, DNS, tag installation, platform connections, and your first trigger."
+description: "Walk through the 8-step CleanClicks setup wizard covering domain, DNS, vendor IDs, tag installation, first results, platform connections, and your first trigger."
 ---
 
-After creating your account, CleanClicks launches a 7-step setup wizard. You can complete it all at once (about 15 minutes) or come back to it later. Your progress is saved automatically.
+After creating your account, CleanClicks launches an 8-step setup wizard. You can complete it all at once (about 15 minutes) or come back to it later. Your progress is saved automatically.
 
-## Step 1: Company Information
+Your name and company aren't part of the wizard — edit those anytime under **Settings**.
 
-Enter your name and company name. This is used for your account profile and appears in billing communications.
-
-## Step 2: Add Your Domain
+## Step 1: Add Your Domain
 
 Enter the domain you want to track (e.g., `yourdomain.com`). This is the website where you'll install the CleanClicks tag.
 
@@ -19,7 +17,7 @@ A few things to keep in mind:
 - If your site uses a subdomain (like `shop.yourdomain.com`), enter that specific subdomain.
 - You can add more domains later from the Domains page (subject to your plan's limit).
 
-## Step 3: DNS Setup
+## Step 2: DNS Setup
 
 This step creates the first-party connection between your domain and CleanClicks. You'll add a **CNAME record** in your DNS provider.
 
@@ -43,6 +41,12 @@ DNS changes typically propagate within a few minutes, though some providers take
 The wizard polls automatically and will detect when your CNAME is active. You can also click **Verify** to check manually.
 
 > **Can I skip this step?** Yes, but tracking won't work until DNS is configured. You can move forward in the wizard and come back to DNS later.
+
+## Step 3: Vendor IDs
+
+Enter the platform IDs CleanClicks should know about up front — your GA4 Measurement ID, Meta Pixel ID, and other analytics or ad platform IDs. Providing them here lets the tag (and, on WordPress, the plugin) smart-default your configuration at install time.
+
+> **Can I skip this step?** Yes. You can enter or change vendor IDs later under **Configuration** → **Vendors**.
 
 ## Step 4: Install the Tracking Tag
 
@@ -73,7 +77,11 @@ Once installed, click **Detect Tag** in the wizard to verify CleanClicks can see
 
 > **Can I skip this step?** Yes. You can install the tag later and the wizard will still advance. But conversions won't be tracked until the tag is live.
 
-## Step 5: Connect Ad Platforms
+## Step 5: First Results
+
+With the tag live, this step confirms data is arriving from your site. Visit your own site in another tab, then check back — once CleanClicks sees traffic, you're ready to move on. If nothing shows yet, that's usually DNS still propagating or the tag not installed on the page you visited.
+
+## Step 6: Connect Ad Platforms
 
 Choose which ad platforms should receive your conversion data. The number of platforms you can connect depends on your plan:
 
@@ -86,7 +94,7 @@ GA4 and Usermaven are analytics-layer connections (Signal and up) and don't coun
 
 The wizard shows toggles for each supported platform. Enable the ones you use. You'll configure the connection details (account IDs, tokens) after completing the wizard, on the **Connections** page.
 
-## Step 6: Configure Your First Event
+## Step 7: Configure Your First Event
 
 Pick a conversion event template to get started:
 
@@ -100,7 +108,7 @@ This sets a starting point. You can fully customize triggers, URL matching rules
 
 > **Can I skip this step?** Yes. You can set up triggers anytime from the Configuration page.
 
-## Step 7: Complete
+## Step 8: Complete
 
 The wizard shows a summary of what you've set up:
 - Domain status (verified or pending)
