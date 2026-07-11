@@ -49,6 +49,15 @@ When a visitor converts:
 3. TikTok matches the conversion to the original ad click
 4. Customer data is sent as SHA-256 hashes for Advanced Matching
 
+## Recommended TikTok settings
+
+| Setting | Recommended | Why |
+|---|---|---|
+| Pixel | Use your **existing** pixel | CleanClicks sends server-side events into the same pixel — never create a second pixel just for CleanClicks |
+| Access token | Generate from that same pixel's settings page | Tokens are pixel-scoped; a token from a different pixel sends your events to the wrong place |
+| Automatic Advanced Matching (web pixel) | **Off** | CleanClicks already sends hashed customer data server-side, deliberately and consistently |
+| Event rules / automatic events | **Off** for events CleanClicks delivers | Prevents TikTok-guessed events from duplicating or polluting the deterministic set |
+
 ## CCPA and opt-out behavior
 
 When a visitor opts out (through Global Privacy Control, a CleanClicks opt-out cookie, or your consent platform's "reject"), CleanClicks sends TikTok **nothing** for that visitor. Opted-out conversions are dropped before they leave CleanClicks, not transmitted to TikTok under a limited-data-use flag or any other mechanism.

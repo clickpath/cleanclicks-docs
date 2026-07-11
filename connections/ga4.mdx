@@ -86,6 +86,19 @@ When using the GA4 proxy, an **Allow Signals** toggle controls whether Google's 
 
 **Summary:** WordPress → MP OFF · Shopify v2.1.0+ → MP OFF · Shopify legacy → MP ON.
 
+## Recommended GA4 settings
+
+Set these on the GA4 side so the data CleanClicks delivers is retained and reportable:
+
+| Setting | Recommended | Where | Why |
+|---|---|---|---|
+| Data retention | **14 months** (the maximum on standard GA4) | Admin > Data Settings > Data Retention | The default is 2 months; explorations silently lose history beyond the retention window |
+| Reset user data on new activity | **On** | Same screen | Keeps returning-visitor history alive |
+| Internal traffic filter | **Define + activate** for your office/VPN IPs | Admin > Data Streams > Configure tag settings > Define internal traffic | Keeps your own team out of the recovered numbers |
+| Timezone + currency | Match your commerce platform | Admin > Property Settings | Prevents day-boundary and revenue mismatches when you reconcile against store totals |
+| Key events | Mark the events CleanClicks sends (e.g. `purchase`) as key events | Admin > Events | Key-event marking is what makes them count as conversions in reports |
+| Google Signals | Optional — pair with the **Allow Signals** proxy toggle | Admin > Data Settings > Data Collection | If Signals is on in GA4 but Allow Signals is off in CleanClicks, demographics stay empty by design |
+
 ## Troubleshooting
 
 | Issue | Solution |

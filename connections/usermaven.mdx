@@ -58,6 +58,15 @@ Benefits:
 - First-party cookie lifetime (no ITP restrictions)
 - Single tracking subdomain for all your analytics
 
+## Recommended Usermaven settings
+
+| Setting | Recommended | Why |
+|---|---|---|
+| API Key + Server Token | Enter **both** | With only one of the two, events are skipped entirely |
+| Workspace domain | Match the domain CleanClicks tracks | Events carry your domain as source; a mismatch orphans them |
+| First-party proxy | **On** (Configuration > Advanced in CleanClicks) | Usermaven's client script survives ad blockers only when served from your subdomain |
+| Dashboard widgets | Configure per event/metric after first events arrive | Usermaven widgets don't auto-build; $0 revenue with events flowing = widget config, not data |
+
 ## Session Stitching
 
 CleanClicks automatically stitches sessions between its own tracking and Usermaven. When a server-side conversion event is sent to Usermaven, it includes the visitor's Usermaven anonymous ID so the event joins the correct analytics session.

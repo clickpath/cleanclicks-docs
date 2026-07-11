@@ -1,31 +1,65 @@
 ---
 title: "Connecting Meta (Facebook)"
-description: "Connect Meta to CleanClicks using a System User Access Token to send conversion events via the Conversions API."
+description: "Connect Meta to CleanClicks with a Conversions API access token generated directly from your dataset in Events Manager."
 ---
 
-CleanClicks sends conversion events to Meta via the Conversions API (CAPI). Meta requires a manually generated System User Access Token rather than OAuth.
+CleanClicks sends conversion events to Meta via the Conversions API (CAPI). Meta requires a manually generated access token rather than OAuth. Generating one takes about two minutes and does **not** require creating a System User.
 
 ## Prerequisites
 
-- A Meta Business Manager account
-- A Meta Pixel created in Events Manager
-- Admin access to Business Manager
+- A Meta Business account with access to [Events Manager](https://business.facebook.com/events_manager2)
+- A Meta Pixel / dataset (if you don't have one yet, see [No pixel yet?](#no-pixel-yet) below)
+- Full control of the dataset (if you don't have it, see [Not an admin?](#not-an-admin) below)
 
-## Generating a System User Access Token
+> **Use your existing pixel/dataset.** CleanClicks dispatches server-side events into the **same dataset** your browser pixel uses, with deduplication keys so browser and server events merge cleanly. Never create a second pixel just for CleanClicks.
 
-1. Go to [Meta Business Manager](https://business.facebook.com)
-2. Navigate to **Business Settings** > **Users** > **System Users**
-3. Click **Add** to create a new system user (or use an existing one)
-4. Set the role to **Admin**
-5. Click **Generate New Token**
-6. Select your app (or create one if needed)
-7. Grant these permissions:
-   - `ads_management`
-   - `ads_read`
-8. Set the token expiration to **Never** (recommended) or the longest available
-9. Copy the generated token
+## Generating the access token
 
-> **Important:** System User Tokens are the recommended approach for server-to-server integrations. Personal access tokens expire and shouldn't be used.
+1. Go to [Meta Events Manager](https://business.facebook.com/events_manager2)
+2. Select your pixel/dataset in the left sidebar
+3. Open the **Settings** tab
+4. Scroll to the **Conversions API** section
+5. Choose **Set up direct integration**
+6. Select the **Set up with Dataset Quality API** option — this also activates the **Generate access token** link
+7. Click **Generate access token** and copy the token somewhere safe. Meta shows it only once.
+
+> **Avoid the Gateway trap.** Meta's setup wizard actively steers you toward "Conversions API Gateway" and partner/cloud relay options (Datahash and similar). Do **not** pick any Gateway or partner option — CleanClicks *is* your server-side integration, and a gateway is a redundant paid middlebox. If you see "Choose a partner" or "Conversions API Gateway," back up and pick **direct integration** instead.
+
+### No pixel yet?
+
+If your business has never created a pixel/dataset:
+
+1. In Events Manager, click **Connect data**
+2. Choose **Web**
+3. Choose **Conversions API** > **Set up direct integration** — *not* "Meta Pixel," *not* a partner integration
+4. Name the dataset after your website
+5. Continue to the Settings tab and generate the token per the steps above
+
+### Not an admin?
+
+Generating a token requires **full control of the dataset**. If your access level doesn't show the Generate access token link, either:
+
+- **Ask your Business admin to generate it.** Copy-paste request you can send them:
+
+  > "Can you open Meta Events Manager, select our pixel ([pixel name/ID]), go to the Settings tab > Conversions API section > Set up direct integration > choose 'Set up with Dataset Quality API,' click Generate access token, and send me the token securely? It's for connecting our server-side conversion tracking (CleanClicks). Takes about two minutes."
+
+- **Or ask the admin to grant you full control of just that dataset** (dataset-level permission, not Business-wide admin). Once granted, generate the token yourself with the steps above.
+
+Either way, the data CleanClicks collects and delivers is identical — it doesn't matter who generates the token.
+
+## Recommended dataset settings
+
+While you're on the dataset's **Settings** tab, set these so the dataset contains exactly what CleanClicks dispatches — controlled, auditable, and free of Meta-guessed noise:
+
+| Setting | Recommended | Why |
+|---|---|---|
+| First-party cookies | **On** | Improves match quality for returning visitors |
+| Automatically include more detailed page and product info | **Off** | Your dataset should contain exactly what CleanClicks sends, not AI-scraped page guesses |
+| Core setup | **Off** | Core setup restricts custom parameters and URL paths; off means maximum data |
+| Automatic advanced matching | **Off** | CleanClicks already sends hashed emails server-side, deliberately |
+| Track events automatically without code | **Off** | Prevents Meta-guessed events from polluting your deterministic event set |
+| Conversions API connection | **Direct integration with Dataset Quality API** | Gives you match-quality observability in Events Manager |
+| Traffic permissions | **Allow list with your domain(s)** | Blocks pixel hijacking; CleanClicks CAPI events carry your domain as the source URL |
 
 ## Connecting in CleanClicks
 
@@ -34,7 +68,7 @@ CleanClicks sends conversion events to Meta via the Conversions API (CAPI). Meta
 3. Find **Meta** in the Token Entry section
 4. Click to expand
 5. Paste your **Access Token**
-6. Enter your **Pixel ID** (found in Meta Events Manager > your pixel > Settings)
+6. Enter your **Pixel/Dataset ID** (shown in Events Manager under the dataset name, or in Settings)
 7. Click **Save**
 
 ## Configuring the Vendor
@@ -46,6 +80,11 @@ After connecting:
 3. Verify the Pixel ID and Access Token are present
 4. Optionally add a **Test Event Code** for testing
 5. Save
+
+## Deduplication
+
+- **Fresh dataset created for direct integration only** (no browser pixel firing): no dedup consideration needed — CleanClicks is the only event source.
+- **Existing dataset with a browser pixel still firing:** CleanClicks sends dedup keys so Meta merges the browser and server copies of the same event instead of double-counting. Keep both running; that overlap is what makes server-side recovery measurable.
 
 ## Test Event Code
 
@@ -83,7 +122,8 @@ For visitors who have not opted out, conversions are sent to the Conversions API
 
 | Issue | Solution |
 |---|---|
-| Token rejected | Verify the token has `ads_management` and `ads_read` permissions. Regenerate if needed. |
+| No "Generate access token" link | Select the **Set up with Dataset Quality API** option first — the link activates after that selection. If it's still missing, you don't have full control of the dataset (see [Not an admin?](#not-an-admin)). |
+| Token rejected | Regenerate the token from the dataset's Settings tab > Conversions API section and re-paste it. |
 | Events not in Events Manager | Check the Pixel ID is correct. Use a Test Event Code to verify delivery. |
 | "Invalid Pixel ID" error | The Pixel ID should be a numeric string (e.g., `123456789012345`). No letters or dashes. |
 | Events showing but no conversions | Make sure you have a matching conversion event configured in Meta Ads Manager. |

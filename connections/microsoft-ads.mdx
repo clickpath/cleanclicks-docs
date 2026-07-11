@@ -54,6 +54,16 @@ For msclkid capture to work, make sure **Auto-tagging** is enabled in Microsoft 
 
 Without auto-tagging, there's no msclkid to capture and conversions can only be matched via email.
 
+## Recommended Microsoft Ads settings
+
+| Setting | Recommended | Where | Why |
+|---|---|---|---|
+| Auto-tagging (msclkid) | **On** | Settings > Account Settings | No msclkid = nothing to match the conversion against |
+| Conversion goals | Use your **existing** goals | Tools > Conversion Goals | CleanClicks uploads into the goals you already have — don't create a parallel set |
+| Goal "Include in Conversions" | **On** for goals CleanClicks feeds | Goal settings | Otherwise uploads inform reporting but not automated bidding |
+| Conversion window | Match your real sales cycle | Goal settings | Server-side capture can land conversions days after the click |
+| UET tag | Keep your existing UET tag in place | Tools > UET Tags | CleanClicks' offline uploads complement UET; removing UET drops audience + remarketing data Microsoft only gets client-side |
+
 ## Troubleshooting
 
 | Issue | Solution |

@@ -57,6 +57,19 @@ utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&
 
 Set this in Google Ads: **Admin** > **Account Settings** > **Tracking** > **Final URL suffix**.
 
+## Recommended Google Ads settings
+
+Set these on the Google Ads side so CleanClicks can deliver maximum, correctly-attributed conversion data:
+
+| Setting | Recommended | Why |
+|---|---|---|
+| Auto-tagging | **On** (Admin > Account Settings > Auto-tagging) | Without a `gclid` on the click, CleanClicks has nothing to upload the conversion against |
+| Final URL suffix | **Set** (template above) | Preserves campaign/keyword/device detail in CleanClicks' own attribution reporting |
+| Conversion action source | **Website** conversion actions uploaded via API | Use your existing conversion actions — don't create a parallel set just for CleanClicks |
+| "Include in Conversions" / Primary | **On** for the actions CleanClicks feeds | Otherwise uploaded conversions inform reporting but not Smart Bidding |
+| Attribution model | **Data-driven** (Google's default) | Server-side uploads carry the original click ID, so data-driven attribution works normally |
+| Conversion window | Match your real sales cycle | CleanClicks can capture conversions that land days after the click; a too-short window discards them |
+
 ## Token Refresh
 
 OAuth tokens are refreshed automatically. You shouldn't need to reconnect unless you revoke CleanClicks access in your Google account or change Google Ads admin permissions.
