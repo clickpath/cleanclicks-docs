@@ -13,34 +13,17 @@ The Advanced tab contains settings for analytics proxying, UTM capture, and othe
 
 ## Analytics Proxy
 
-Available on **Signal** plans and above.
+Available on the current Signal and Clarity plans.
 
-Analytics proxying routes your third-party analytics scripts (GA4, Usermaven, Plerdy) through your first-party subdomain. This means:
-
-- **Ad blockers don't block your analytics.** The requests come from your own domain.
-- **Cookie lifetimes are respected.** No ITP/third-party cookie restrictions.
-- **Data stays first-party.** The browser sees it as your own site's traffic.
+The first-party analytics proxy reduces dependence on third-party request paths on supported installations. Browser rules, blockers, consent choices, content security policy, caching, and site configuration can still affect collection. Verify the actual property and event path before relying on the result.
 
 ### Enabling Proxies
 
-Each analytics platform can be proxied independently:
+Each supported analytics path can be configured separately. Enable only the path that matches the current installation, then verify the browser request, consent state, intended property, and accepted event.
 
-- **GA4 Proxy** — routes Google Analytics 4 collection through your subdomain
-- **Usermaven Proxy** — routes Usermaven tracking through your subdomain
-- **Plerdy Proxy** — routes Plerdy analytics through your subdomain
+### GA4 Signals
 
-Toggle each one on and save. The proxy starts working immediately.
-
-> **Note:** You still need the analytics platform configured in the Vendors tab for server-side event dispatch. Proxying handles the client-side script loading; vendor configuration handles server-side conversion relay.
-
-### GA4 Demographics (allowSignals)
-
-When GA4 proxying is enabled, there's an option called **Allow Signals**. Enabling this preserves Google's demographic and interest signals (age, gender, interests) that would otherwise be stripped by the proxy.
-
-- **Enabled:** GA4 receives demographic signals. You'll see age/gender/interests in your GA4 reports.
-- **Disabled:** Maximum privacy. No demographic signals pass through.
-
-Default is disabled. Enable it if you rely on GA4 audience demographics for targeting.
+The **Allow Signals** setting affects Google Signals behavior. Choose it according to the site's consent design and privacy policy, then verify the resulting requests and GA4 property.
 
 ## UTM Attribution
 

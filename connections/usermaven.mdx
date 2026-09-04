@@ -7,9 +7,7 @@ CleanClicks sends conversion and ecommerce events to Usermaven via the server-si
 
 ## Plan Requirements
 
-Usermaven is available on **Signal**, **Clarity**, and **Command** plans.
-
-Usermaven is an analytics-layer connection (Signal and up) and does not count against your ad-platform connection limit.
+Usermaven is available on the current **Signal** and **Clarity** plans. It is an analytics connection and does not use an ad-destination slot.
 
 ## Configuration
 
@@ -45,18 +43,14 @@ If you're tracking ecommerce events, Usermaven receives order data with:
 
 ## Usermaven First-Party Proxy (Signal+)
 
-CleanClicks can proxy Usermaven's client-side tracking script through your first-party subdomain.
+A first-party subdomain can reduce dependence on known third-party request paths. Browser rules, blockers, consent choices, CSP, caching, and site configuration can still affect collection.
 
 ### Enabling the Proxy
 
-1. Go to **Configuration** > **Advanced** tab
-2. Enable **Usermaven Proxy**
-3. Save
-
-Benefits:
-- Usermaven tracking survives ad blockers
-- First-party cookie lifetime (no ITP restrictions)
-- Single tracking subdomain for all your analytics
+1. Go to **Configuration > Advanced**.
+2. Enable **Usermaven Proxy**.
+3. Save.
+4. Verify the subdomain, consent state, browser request path, intended Usermaven property, and a meaningful event.
 
 ## Recommended Usermaven settings
 
@@ -64,7 +58,7 @@ Benefits:
 |---|---|---|
 | API Key + Server Token | Enter **both** | With only one of the two, events are skipped entirely |
 | Workspace domain | Match the domain CleanClicks tracks | Events carry your domain as source; a mismatch orphans them |
-| First-party proxy | **On** (Configuration > Advanced in CleanClicks) | Usermaven's client script survives ad blockers only when served from your subdomain |
+| First-party proxy | Verify for the current installation | Confirm the subdomain, consent state, browser request path, intended property, and accepted event |
 | Dashboard widgets | Configure per event/metric after first events arrive | Usermaven widgets don't auto-build; $0 revenue with events flowing = widget config, not data |
 
 ## Session Stitching

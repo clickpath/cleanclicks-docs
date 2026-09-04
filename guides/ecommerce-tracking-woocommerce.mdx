@@ -3,12 +3,12 @@ title: "Guide: Complete WooCommerce Ecommerce Tracking"
 description: "Set up end-to-end WooCommerce ecommerce tracking with CleanClicks using the WordPress plugin (v1.8.0), three-layer server-side conversion capture, and analytics proxies."
 ---
 
-This guide walks through setting up end-to-end ecommerce tracking for a WooCommerce store with CleanClicks. Every product view, cart action, and purchase is captured first-party and relayed to your ad platforms.
+This guide walks through the supported WooCommerce setup. Acceptance requires a bounded order fixture, deduplication result, and receipt from each intended destination.
 
 ## What You'll Set Up
 
 1. **WordPress plugin** — captures browsing events, injects tracking scripts, and auto-creates the server-side conversion webhook
-2. **Analytics proxies** — routes GA4, Usermaven, and Plerdy through your first-party subdomain (Signal+ plans)
+2. **Analytics connections** — configures the supported GA4 and Usermaven paths
 3. **Ad platform connections** — routes conversion data to your platforms
 
 The previous version of this guide separated the WordPress plugin and the server-side webhook into two manual steps. As of plugin v1.5.2, the webhook is auto-created on activation — no manual setup required.
@@ -49,25 +49,19 @@ Each event includes enhanced product data: SKU, brand, up to 5 category levels, 
 
 ## Step 2: Server-Side Conversion Capture (Automatic)
 
-The plugin handles server-side conversion capture through three coordinated layers. **All three activate automatically** when the plugin is installed — there's nothing to configure for the standard WooCommerce checkout.
+The current plugin can use three coordinated WooCommerce order paths. Verify the deployed plugin version, webhook, event ID, order ID, deduplication result, and intended destination receipt before accepting the purchase path.
 
 ### Layer 1: Auto-Webhook
 
-On activation, the plugin creates a WooCommerce `order.created` webhook pointed at your CleanClicks proxy, signed with your Inbound API Key. Verify it in WordPress Admin → **WooCommerce** → **Settings** → **Advanced** → **Webhooks** — look for "CleanClicks Conversion Capture."
+The current plugin can create a WooCommerce `order.created` webhook pointed at the configured CleanClicks proxy. Verify its topic, delivery URL, signing key, and last delivery result.
 
 ### Layer 2: `woocommerce_payment_complete` Hook
 
-Backstops subscription renewals, offsite checkout returns (PayPal, Klarna, etc.), and any case where the standard `order.created` webhook fires before payment confirmation. The plugin de-duplicates between Layer 1 and Layer 2 via a 24-hour key, so a single order never doubles in your data.
+The payment-complete hook provides another server-side order path for supported checkout flows. CleanClicks uses a 24-hour order deduplication key between the first two paths. Verify the result with one bounded order fixture.
 
 ### Layer 3: Configurable `purchase_paths` Allowlist
 
-Catches custom thank-you pages that don't trigger the standard `woocommerce_thankyou` hook. Default patterns cover `/order-received/`, `/thank-you/`, `/order-confirmation/`, and `/my-account/view-subscription/`. For custom flows (subscription confirmations, membership signups, branded thank-you URLs), add your URL pattern on the plugin settings page under **Custom Thank-You Paths**.
-
-See [WordPress Setup → Server-Side Conversion Capture](/setup/wordpress-setup#server-side-conversion-capture) for the full three-layer reference and per-customer custom-thank-you-path examples.
-
-### Webhook Status Card
-
-The plugin settings page shows a live status card for the auto-created webhook. If the webhook is ever missing or in an error state, the card shows why and offers a **Recreate Webhook** button.
+The configurable allowlist can support accepted custom completion paths. Add only the intended path, then verify one matching and one non-matching URL.
 
 ## Step 3: Connect and Configure Platforms
 
@@ -78,15 +72,12 @@ Same as any CleanClicks setup:
 
 ## Step 4: Enable Analytics Proxies (Signal+ Plans)
 
-If you use GA4, Usermaven, or Plerdy:
+If you use GA4 or Usermaven:
 
-1. Go to **Configuration** → **Advanced** tab
-2. Enable the proxy toggle for each analytics platform you use
-3. Save
-
-The WordPress plugin detects these settings via the `/__cc/wp-config` endpoint and automatically injects the proxied versions of your analytics scripts. No theme code changes needed.
-
-On v1.6.1, if your account has GA4 First-Party Mode fully configured (server-side proxy enabled + Measurement ID present), the plugin auto-enables the GA4 First-Party Proxy checkbox on fresh installs via smart defaults — you don't need to flip the toggle manually.
+1. Go to **Configuration > Advanced**.
+2. Enable the supported path used by the current installation.
+3. Save.
+4. Verify the first-party subdomain, consent state, browser request, intended property, and a meaningful event.
 
 ## Step 5: Test
 
@@ -103,18 +94,15 @@ If you use the CleanClicks WordPress plugin with GA4, **disable GA4 Measurement 
 
 Why? The plugin pushes GA4 ecommerce events to the dataLayer client-side, and the GA4 First-Party Proxy routes those through your subdomain. If Measurement Protocol is also enabled against the customer's primary property, GA4 receives every event twice — once client-side (properly attributed) and once server-side (attributed to "Unassigned"). This causes inflated event counts and broken attribution.
 
-The plugin + GA4 First-Party Proxy gives you full ad-blocker bypass without needing Measurement Protocol against the primary property. See [GA4 Connections](/connections/ga4) for the full platform rules.
+The first-party analytics proxy can reduce dependence on known third-party request paths. Browser rules, consent, caching, the plugin version, and the intended GA4 property can still affect collection. Verify the actual event path before relying on it. See [GA4 Connections](/connections/ga4).
 
 ## Cookie Banner Compatibility
 
-Plugin v1.6.0 ships fixes (Phase 1.6 v2) that recover click-ID correlation when visitors reject your cookie consent banner. These activate automatically — no configuration required:
+Consent behavior depends on the deployed plugin version, the site's CMP, its configuration, and the customer's legal and policy choices.
 
-- CleanClicks first-party visitor cookies (`cc_pid`, `cc_click_ids`, `cc_attribution`, `cc_session_id`) self-classify as `functional`, so WP-Consent-API-compatible CMPs allow them under reject.
-- Tracking splits into Phase 1 (functional, always-on — click ID capture, identify, session init) and Phase 2 (analytics, consent-gated — conversion POSTs and dataLayer pushes). Phase 2 events are queued and drained on consent grant.
-- OneTrust is bridged to the WP Consent API automatically — no custom JavaScript snippet needed.
-- WP Consent API v2.0+ service-level consent is preferred over category-level, so customers can grant or deny CleanClicks individually in Complianz, CookieYes, or iubenda service-toggle UIs.
+Test the current installation under accept, reject, later grant, Global Privacy Control, and CleanClicks opt-out states. Verify which identifiers are stored and which vendor events are sent in each state. CleanClicks support for WP Consent API or a named CMP does not choose a legal basis or consent category for the customer.
 
-For per-CMP configuration guidance (CookieYes, Cookiebot, Complianz, iubenda, OneTrust), see [CMP Configuration](/setup/cmp-configuration).
+See [CMP Configuration](/setup/cmp-configuration) for the bounded test matrix.
 
 ## Caching Considerations
 
@@ -140,7 +128,7 @@ When someone clicks your ad and buys on WooCommerce:
 3. Plugin tracks browsing events (product views, cart adds)
 4. Plugin server-renders a pre-purchase identify on checkout (Blocks + classic) so the hashed email lands in CleanClicks's correlation store before the order completes
 5. Visitor completes purchase → both the client-side `purchase` event and the server-side `order.created` webhook fire; CleanClicks de-duplicates and matches the order to the visitor session
-6. Each connected platform receives the conversion with proper attribution — Enhanced Conversions for Google Ads, Conversions API for Meta, etc.
+6. Each configured platform can receive the supported conversion data. Verify the accepted event and attribution result in that destination.
 
 ---
 

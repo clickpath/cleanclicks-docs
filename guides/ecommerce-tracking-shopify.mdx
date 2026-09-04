@@ -90,25 +90,21 @@ See [Shopify Setup](/setup/shopify-setup) for full installation instructions.
 
 ## Attribution Flow
 
-Here's what happens when someone clicks your ad and buys:
+A Shopify purchase can use browser and webhook paths:
 
-1. Visitor clicks ad → lands on your store with click ID in the URL (gclid, fbclid, etc.)
-2. CleanClicks tag captures the click ID and UTM parameters, stores them in a first-party cookie
-3. Visitor browses (CleanClicks tracks product views, cart adds)
-4. GA4 theme snippet fires view_item, add_to_cart, begin_checkout to GA4 through your first-party domain (proper attribution)
-5. Visitor purchases → Pixel sends purchase to CleanClicks AND to GA4 via Measurement Protocol (with session stitching)
-6. CleanClicks relays the purchase server-side to each connected platform with full attribution
-7. Shopify webhook also fires as backup, and CleanClicks matches it to the same visitor session
+1. The landing page may provide a supported click identifier and campaign fields.
+2. The current pixel can capture available browser events, identifiers, and consent state.
+3. A purchase can arrive through the pixel, Shopify webhook, or both.
+4. CleanClicks applies its event-ID and order-ID handling before configured destination delivery.
+5. The intended destination decides whether it accepts and attributes the event.
 
-Result: Your ad platforms see the conversion attributed to the correct ad click, even if the visitor had an ad blocker.
+Verify a bounded purchase fixture end to end. Record the current pixel version, consent state, click identifier, event ID, order ID, duplicate-event result, and destination receipt. Do not claim full attribution from configuration alone.
 
 ## Avoiding Duplicate Tracking
 
-- **Only use the CleanClicks Custom Pixel for Shopify.** Don't also paste the `cc.js` script tag into your theme.
-- If you have existing platform pixels (Meta Pixel, TikTok Pixel, etc.) installed in your Shopify theme, consider removing them. CleanClicks replaces them with more reliable server-side delivery.
-- **Disable existing GA4 scripts** if you're using the GA4 theme snippet. Running two gtag.js copies sends every event twice.
-- **Turn off GA4 server-side Measurement Protocol** if the pixel is sending GA4 purchase events. Check the GA4 vendor tab.
+Run a duplicate-event check before changing or removing an existing Shopify channel, platform pixel, theme tag, Google tag, or GA4 path.
 
----
-
-**Related:** [Shopify Setup](/setup/shopify-setup) | [Ecommerce Configuration](/configuration/ecommerce)
+- Keep one intended source per ad destination unless an accepted test proves deduplication.
+- Match browser and server event IDs where the destination supports that method.
+- Verify the current GA4 property and event path before enabling or disabling Measurement Protocol.
+- Record the before state, change, test order, destination result, and rollback path.

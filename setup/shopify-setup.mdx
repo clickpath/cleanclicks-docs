@@ -8,7 +8,7 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 | Component | Plan Required | What It Does |
 |---|---|---|
 | GA4 First-Party Analytics | Signal+ | Routes all GA4 tracking through your domain |
-| Custom Pixel (v2.2.0) | Signal+ | Tracks 7 ecommerce events in the pixel sandbox |
+| Custom Pixel (v2.3.0) | Signal+ | Tracks 7 ecommerce events in the pixel sandbox |
 | Server-Side Webhook | Signal+ | Captures orders directly from Shopify servers |
 
 ## Prerequisites
@@ -21,7 +21,7 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 
 ## Step 1: GA4 First-Party Analytics (Signal+)
 
-The theme snippet routes all GA4 traffic through your first-party domain, bypassing ad blockers and improving data quality. It fires storefront ecommerce events (view_item, add_to_cart, begin_checkout, search) directly to GA4.
+The first-party analytics path can reduce dependence on known third-party request paths. Browser rules, consent, storefront configuration, caching, and the intended GA4 property can still affect collection. Verify the theme snippet and each accepted event in the intended property.
 
 ### Configure in CleanClicks
 
@@ -63,7 +63,7 @@ If you enabled **Allow Signals**, GA4 demographics data (age, gender, interests)
 
 ## Step 2: Install the Custom Pixel (Signal+)
 
-The Custom Pixel v2.2.0 runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
+The Custom Pixel v2.3.0 runs in Shopify's sandboxed iframe and supports the documented ecommerce events. When GA4 is configured, it also sends a GA4 purchase event via Measurement Protocol on checkout completion.
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
 2. Copy the **Pixel Code** (it's generated per-domain with your configuration baked in)
@@ -92,7 +92,7 @@ The Custom Pixel v2.2.0 runs in Shopify's sandboxed iframe and tracks the full e
 
 ## Step 3: Server-Side Webhook (Signal+)
 
-The webhook captures purchase events directly from Shopify's servers. Even if a customer closes their browser before the confirmation page, the order is still captured.
+The webhook provides a server-side order path. Verify webhook delivery, event and order IDs, deduplication, and the intended destination receipt before treating the purchase path as accepted.
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab and copy the **Webhook URL**
 2. In Shopify Admin, go to **Settings** > **Notifications** > scroll to **Webhooks**

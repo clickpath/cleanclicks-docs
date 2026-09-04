@@ -11,13 +11,13 @@ Ecommerce tracking enables server-side order capture from Shopify and WooCommerc
 2. Select your domain
 3. Click the **Ecommerce** tab
 
-If you're on a Pulse plan, you'll see an upgrade prompt instead of the settings.
+Ecommerce support is part of the current Signal and Clarity plans.
 
 ## Shopify Integration
 
 ### Webhook Setup
 
-CleanClicks uses a Shopify webhook to receive order data server-side. This ensures conversions are captured even if the customer's browser closes before the confirmation page loads.
+CleanClicks uses a Shopify webhook as one server-side order path. Webhook delivery, identifiers, deduplication, destination configuration, and an accepted receipt still determine whether the purchase path is complete.
 
 The Ecommerce tab provides:
 - **Webhook URL** — copy this into Shopify
@@ -35,7 +35,7 @@ To configure in Shopify:
 
 Shopify also needs the client-side Custom Pixel for capturing browsing events (page views, product views, cart actions). See [Shopify Setup](/setup/shopify-setup) for pixel installation.
 
-The webhook and pixel work together: the pixel captures the browsing journey, and the webhook ensures the purchase is always recorded.
+The browser and webhook paths work together to improve purchase coverage. Verify the installed pixel or plugin, webhook, event ID, order ID, and destination receipt before treating a purchase path as accepted.
 
 ## WooCommerce Integration
 
@@ -85,15 +85,6 @@ Beyond the purchase, the Shopify Custom Pixel and the WooCommerce plugin also ca
 
 ## Attribution
 
-When a webhook or server-side event arrives, CleanClicks looks up the associated visitor session to recover:
+Browser and webhook events can carry available click identifiers and attribution data into configured destination paths. Coverage still depends on capture timing, consent state, identity matching, deduplication, webhook delivery, and destination acceptance.
 
-- Original click IDs from ad platforms
-- UTM parameters
-- Geographic data from the original visit
-- Analytics session IDs (GA4, Usermaven)
-
-This means server-side conversions get the same attribution quality as client-side events. Even if the visitor used an ad blocker or closed their browser, the conversion is attributed to the correct campaign and ad click.
-
----
-
-**Next:** [Advanced Settings](/configuration/advanced-settings)
+Verify one bounded purchase fixture from the browser or webhook through the intended destination receipt before claiming complete attribution.

@@ -3,7 +3,7 @@ title: "WordPress Setup"
 description: "Install the CleanClicks WordPress plugin for automatic tracking, WooCommerce event capture, server-side conversion webhooks, and analytics proxy integration."
 ---
 
-CleanClicks ships a dedicated WordPress plugin (v1.6.1) that handles tracking, ecommerce events, server-side order capture, and analytics proxy injection. The plugin works on **any plan** — Pulse customers can install it for click ID capture and conversion tracking, and the WooCommerce + analytics-proxy features activate automatically on tiers that include them.
+CleanClicks ships a dedicated WordPress plugin. The currently released version is v1.11.0. The current Signal and Clarity plans support the guided WordPress and WooCommerce path. Available features still depend on the selected plan, current plugin version, domain configuration, consent state, and connected destinations.
 
 ## Option A: Plugin Installation (Recommended)
 
@@ -58,26 +58,25 @@ If the webhook ever drifts (e.g., you delete it manually), click **Recreate Webh
 
 | Feature | Trigger | Plan Gate |
 |---|---|---|
-| Pageview tracking | Every page load | Any plan |
-| Click ID capture | URL parameters (gclid, fbclid, ttclid, tbclid, li_fat_id, msclkid, wbraid, gbraid) | Any plan |
-| Email identity hashing (SHA-256) | Form submissions + WooCommerce checkout | Any plan |
-| Conversion event posting | `purchase`, `view_item`, `add_to_cart`, `begin_checkout`, custom triggers | Any plan |
-| `view_item` | Single product pages | Any plan with WooCommerce |
-| `view_item_list` | Shop, category, tag archive pages | Any plan with WooCommerce |
-| `add_to_cart` | AJAX and form-based add-to-cart | Any plan with WooCommerce |
-| `remove_from_cart` | Cart item removal | Any plan with WooCommerce |
-| `begin_checkout` | Checkout page load + checkout-intent click from cart | Any plan with WooCommerce |
-| `purchase` | Order completed (client-side + server-side webhook) | Any plan with WooCommerce |
+| Pageview tracking | Every page load | Signal or Clarity |
+| Click ID capture | URL parameters (gclid, fbclid, ttclid, tbclid, li_fat_id, msclkid, wbraid, gbraid) | Signal or Clarity |
+| Email identity hashing (SHA-256) | Form submissions + WooCommerce checkout | Signal or Clarity |
+| Conversion event posting | `purchase`, `view_item`, `add_to_cart`, `begin_checkout`, custom triggers | Signal or Clarity |
+| `view_item` | Single product pages | Signal or Clarity with WooCommerce |
+| `view_item_list` | Shop, category, tag archive pages | Signal or Clarity with WooCommerce |
+| `add_to_cart` | AJAX and form-based add-to-cart | Signal or Clarity with WooCommerce |
+| `remove_from_cart` | Cart item removal | Signal or Clarity with WooCommerce |
+| `begin_checkout` | Checkout page load + checkout-intent click from cart | Signal or Clarity with WooCommerce |
+| `purchase` | Order completed (client-side + server-side webhook) | Signal or Clarity with WooCommerce |
 | GA4 First-Party Proxy | Routes GA4 client-side traffic through `cleanclicks.yourdomain.com` | Signal+ |
 | Usermaven Proxy | First-party Usermaven tracking | Signal+ |
-| Plerdy Proxy | First-party Plerdy heatmaps + recordings | Signal+ |
-| WP Consent API integration | Honors consent state from compatible CMPs | Any plan |
+| WP Consent API integration | Honors consent state from compatible CMPs | Signal or Clarity |
 
 Every event includes enhanced product data: SKU, brand (YITH or product taxonomy), up to 5 category levels, and variant info for variable products.
 
 ## Server-Side Conversion Capture
 
-CleanClicks captures WooCommerce orders server-side through **three coordinated layers** so no purchase falls through the cracks. All three activate automatically when the plugin is installed — there's nothing to configure.
+The current plugin can use three coordinated WooCommerce order paths. Verify the deployed plugin version, webhook, event ID, order ID, deduplication result, and intended destination receipt before accepting the purchase path.
 
 ### Layer 1: Auto-Webhook (`order.created`)
 
@@ -97,7 +96,7 @@ The plugin hooks the WooCommerce `payment_complete` action with a fire-and-forge
 - **Offsite checkout returns** — when a customer is bounced to an external payment processor (PayPal, Klarna, etc.) and returns, the standard webhook may fire before payment is confirmed. The `payment_complete` hook fires on actual payment.
 - **Custom thank-you flows** — sites with non-standard order-completion pages (membership signups, custom landing pages) where the client-side `purchase` event might not fire.
 
-CleanClicks de-duplicates between Layer 1 and Layer 2 via a 24-hour `dedupe:woo:{domain}:{orderId}` key, so a single order never doubles in your conversion data even when both fire.
+CleanClicks uses a 24-hour `dedupe:woo:{domain}:{orderId}` key between Layer 1 and Layer 2. Verify the duplicate-event result with a bounded order fixture before relying on that behavior.
 
 ### Layer 3: Configurable `purchase_paths` Allowlist
 
@@ -133,32 +132,13 @@ If you need to extend `purchase_paths` from a child theme or companion plugin in
 
 ## Attribution Recovery Under Cookie Banner Rejection
 
-CleanClicks v1.6.0 ships several fixes (collectively "Phase 1.6 v2") that recover click-ID correlation when visitors reject your cookie consent banner. These activate automatically — no configuration required — but understanding them helps you reason about what your customers see.
+Consent behavior is specific to the deployed plugin version, the site's CMP, its category and service settings, and the customer's legal and policy choices.
 
-### Cookie Classification
+The plugin supports WP Consent API and additional consent bridges, but support does not decide a customer's legal basis or consent category. Test the current plugin under accept, reject, later grant, Global Privacy Control, and CleanClicks opt-out states. Confirm which identifiers are stored and which vendor events are sent in each state before relying on the result.
 
-CleanClicks's first-party visitor identifier cookies (`cc_pid`, `cc_click_ids`, `cc_attribution`, `cc_session_id`) are now classified as **functional** under the WP Consent API. The 18 CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) respect this classification and allow these cookies under reject. This is correct under the architectural design — these are first-party measurement-only correlation identifiers, not third-party tracking cookies.
+For the verification matrix, see [CMP Configuration](/setup/cmp-configuration).
 
-`cc_ss_optout` (the user-controlled opt-out flag) remains classified as `functional` as well.
-
-### Consent Gate Split
-
-Tracking is now split into two phases:
-
-- **Phase 1 (functional, always-on):** click ID capture, attribution capture, session init, form watching, pre-purchase identify. These run regardless of consent state. The CleanClicks `/__cc/identify` endpoint is opt-out aware and stores reverse mappings with `opted_out: true` when the visitor has rejected — these mappings are never used for vendor dispatch under measurement-only mode.
-- **Phase 2 (analytics, consent-gated):** conversion POSTs and dataLayer pushes. These wait for consent. Deferred events are queued and drained on consent grant via `wp_listen_for_consent_change`, `cookieyes_consent_update`, and `cmplz_fire_categories` listeners.
-
-### OneTrust Bridge
-
-OneTrust isn't natively integrated with the WP Consent API. The plugin now bridges the two automatically — `OnetrustActiveGroups` (e.g., `,C0001,C0002,C0004,`) maps to `wp_set_consent()` calls on page load, on dataLayer-push interceptors for `OneTrustGroupsUpdated`, and on direct `OneTrust.OnConsentChanged()` API callbacks. OneTrust customers no longer need to paste custom JavaScript snippets.
-
-### Service-Level Consent
-
-On WP Consent API v2.0+, the plugin prefers service-level consent (`wp_has_service_consent("cleanclicks")`) over category-level (`wp_has_consent("statistics")`). Customers using Complianz, CookieYes, or iubenda can grant or deny CleanClicks individually in their service-toggle UI without affecting other analytics tools. Falls back to category-level on WP Consent API v1.x.
-
-For per-CMP configuration guidance, see [CMP Configuration](/setup/cmp-configuration).
-
-## Option B: Manual Tag Installation (Any Plan)
+## Option B: Manual Tag Installation
 
 If you don't want to install the plugin — for example, if you don't have WooCommerce and only need basic page-view + click-ID tracking — you can install the CleanClicks tag manually.
 
@@ -215,7 +195,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
-| Analytics proxies not loading | Verify GA4, Usermaven, or Plerdy are configured in CleanClicks → **Configuration** → **Vendors**. Verify the proxy toggle is enabled. Note: analytics proxies require **Signal** plan or higher. |
+| Analytics proxies not loading | Verify GA4 or Usermaven is configured in CleanClicks → **Configuration** → **Vendors**. Verify the proxy toggle is enabled. Note: analytics proxies require **Signal** plan or higher. |
 | Site is on `www.example.com` and proxy origin looks wrong | v1.5.3 and later auto-strip the leading `www.` from the auto-derived domain. If you're running v1.5.2 or earlier, upgrade — or manually populate the **Client Domain** field with the apex domain (`example.com`, no `www.`). |
 | GA4 events show as "Unassigned" | If you're running both the WordPress plugin **and** the GA4 Measurement Protocol vendor in CleanClicks, disable Measurement Protocol for this domain. The plugin handles GA4 client-side; Measurement Protocol creates duplicate "Unassigned" sessions. See [GA4 Connections](/connections/ga4) for the platform-specific rule. |
 

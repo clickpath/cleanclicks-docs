@@ -7,12 +7,10 @@ Traffic Analytics gives you real-time visibility into the quality of traffic hit
 
 ## Plan Availability
 
-| Plan | Access Level |
+| Current plan | Access level |
 |---|---|
-| Pulse | Not available |
-| Signal | Full: All time periods, all sections |
-| Clarity | Full: All time periods, all sections |
-| Command | Full: All time periods, all sections |
+| Signal | Full current Traffic Analytics view |
+| Clarity | Full current Traffic Analytics view |
 
 ## Accessing Traffic Analytics
 
@@ -44,8 +42,9 @@ The percentage of human traffic coming from outside your target market. If you'v
 
 The target market defaults to the United States. You can change this by configuring geo filters.
 
-### Ad-Blocker Bypass
-The percentage of visitors using ad blockers whose data was still captured because it routed through your first-party subdomain. This is the direct value add of first-party tracking.
+### Observed First-Party Collection
+
+This metric compares observed browser and first-party collection paths. Treat a difference as a diagnostic signal. It does not prove blocker use, recovered revenue, or return on investment by itself.
 
 ## Daily Trend Chart
 
@@ -93,14 +92,12 @@ Check Traffic Analytics weekly. A sudden spike in non-human traffic could indica
 - Click fraud on your ad campaigns
 
 ### Validating Ad Spend
-Compare your ad platform's reported clicks with CleanClicks' human traffic numbers. A large gap suggests you're paying for clicks that never resulted in real human visits.
+
+Compare ad-platform clicks with observed CleanClicks traffic as a diagnostic. A gap can have several causes, including filtering, consent, browser behavior, duplicate setup, or mismatched reporting windows. Investigate before labeling the difference invalid spend.
 
 ### Optimizing Filters
 Use the country table and bot breakdown to refine your traffic filters. If a specific country or bot type keeps showing up, add it to your filters.
 
 ### Before/After Comparison
-After enabling CleanClicks on a domain, compare your ad platform conversion numbers with the previous period. The improvement in data accuracy is your ROI.
 
----
-
-**Next:** [Domain Management](/features/domain-management)
+Use the same reporting window, traffic mix, configuration, and accepted event definitions for a before-and-after comparison. Treat the result as measured evidence for that period. Do not call the count difference recovered revenue or ROI without accepted revenue evidence.

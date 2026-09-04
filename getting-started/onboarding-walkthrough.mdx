@@ -3,7 +3,7 @@ title: "Onboarding Walkthrough"
 description: "Walk through the 8-step CleanClicks setup wizard covering domain, DNS, vendor IDs, tag installation, first results, platform connections, and your first trigger."
 ---
 
-After creating your account, CleanClicks launches an 8-step setup wizard. You can complete it all at once (about 15 minutes) or come back to it later. Your progress is saved automatically.
+After creating your account, CleanClicks launches an 8-step setup wizard. Setup is guided, but the elapsed time depends on DNS access, site access, consent configuration, destination credentials, caching, and the events being tested. Your progress is saved so you can return later. Treat the first correctly received meaningful event as the installation acceptance point.
 
 Your name and company aren't part of the wizard — edit those anytime under **Settings**.
 
@@ -83,16 +83,13 @@ With the tag live, this step confirms data is arriving from your site. Visit you
 
 ## Step 6: Connect Ad Platforms
 
-Choose which ad platforms should receive your conversion data. The number of platforms you can connect depends on your plan:
+Connect the current destinations your plan allows:
 
-- Pulse: 1 ad platform
-- Signal: up to 5 ad platforms
-- Clarity: up to 5 ad platforms
-- Command: unlimited
+- **Signal:** choose any three of Google Ads, Meta, TikTok, and Microsoft Ads.
+- **Clarity:** use all four current ad destinations.
+- GA4 and Usermaven are analytics connections and do not use an ad-destination slot.
 
-GA4 and Usermaven are analytics-layer connections (Signal and up) and don't count toward this limit.
-
-The wizard shows toggles for each supported platform. Enable the ones you use. You'll configure the connection details (account IDs, tokens) after completing the wizard, on the **Connections** page.
+Open **Connections**, complete the required OAuth or credential path, then verify the intended account and an accepted event. LinkedIn is not part of the current sellable destination set.
 
 ## Step 7: Configure Your First Event
 

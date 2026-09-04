@@ -1,52 +1,32 @@
 ---
 title: "What Is CleanClicks?"
-description: "Learn how CleanClicks routes ad platform data and conversion events through your own domain to bypass ad blockers and browser privacy restrictions."
+description: "Learn how CleanClicks uses a first-party collection path and server-side destination delivery to reduce measurement gaps on supported installations."
 ---
 
-CleanClicks is a first-party conversion tracking platform. It routes your ad platform data, analytics, and conversion events through your own domain instead of third-party cookies and scripts that browsers increasingly block.
+CleanClicks provides first-party conversion tracking for supported WordPress, WooCommerce, Shopify, and custom-site installations. It can reduce browser-related measurement gaps, filter configured unwanted traffic, and send supported events to connected analytics and ad destinations.
 
-## The Problem
+Results still depend on the site, consent state, event definition, destination credentials, and the completed installation.
 
-If you're running paid ads, you've probably noticed the data getting worse. Conversions don't match between platforms. Attribution gaps keep growing. The culprit: browser privacy features, ad blockers, and the slow death of third-party cookies are all eroding the data your ad platforms depend on.
+## What It Does
 
-When a visitor clicks your Google Ad and lands on your site, the tracking pixel fires from a third-party domain. Safari, Firefox, and a growing number of Chrome users either block that request entirely or limit the cookie to 24 hours. Your conversion? Gone. Your optimization data? Incomplete. Your ROAS reporting? Fiction.
+- First-party request paths can reduce blocking associated with known third-party tracking domains.
+- Server-side delivery can send supported events after the browser path has collected the required identifiers and consent state.
+- Configured bot and market filters can remove traffic that matches the selected rules.
+- GA4 and Usermaven provide an analytics layer that must be verified against the actual property and events.
 
-## How CleanClicks Fixes It
+## Current Destinations
 
-CleanClicks creates a first-party tracking subdomain on your website (like `cleanclicks.yourdomain.com`). All tracking data flows through this subdomain instead of third-party domains. To the browser, it looks like your own website talking to itself, because it is.
+The current ad destinations are Google Ads, Meta, TikTok, and Microsoft Ads. GA4 and Usermaven are analytics connections and do not use an ad-destination slot.
 
-This means:
-- **Ad blockers don't block it.** First-party requests sail through.
-- **Cookies last as long as they should.** No 24-hour ITP limits.
-- **Conversion data reaches your ad platforms.** Server-side relay ensures delivery even when client-side scripts are blocked.
-- **Your analytics stay accurate.** GA4, Usermaven, and Plerdy data proxied through your domain.
+CleanClicks supports guided paths for WordPress, WooCommerce, Shopify, and custom sites. The exact path depends on the current plugin, pixel, webhook, consent setup, and destination configuration.
 
-## What It Supports
+## Who It Fits
 
-CleanClicks works with the major ad and analytics platforms:
+CleanClicks is built for US businesses and marketers that run paid media and need clearer first-party conversion evidence across supported sites and destinations.
 
-- **Ad Platforms:** Google Ads, Meta (Facebook), TikTok, Microsoft Ads (Bing)
-- **Analytics:** GA4, Usermaven, Plerdy
-- **Ecommerce:** Shopify, WooCommerce
+## Setup
 
-Each platform gets conversion data delivered server-side, so even if the visitor's browser blocks the original tracking script, the conversion still gets recorded.
-
-## Who It's For
-
-- **Performance marketers** who need accurate conversion data for campaign optimization
-- **Ecommerce brands** losing revenue attribution to ad blockers and privacy restrictions
-- **Agencies** managing multiple client domains that need reliable cross-platform tracking
-- **Any business running paid ads** where the gap between actual conversions and reported conversions keeps growing
-
-## How It Works (The Short Version)
-
-1. You add your domain to CleanClicks
-2. You create a DNS record that routes a tracking subdomain through CleanClicks
-3. You install a lightweight script tag on your site
-4. You connect your ad platforms
-5. CleanClicks captures conversions first-party and relays them server-side to each platform
-
-The whole setup takes about 15 minutes. The onboarding wizard walks you through every step.
+Setup is guided, but the elapsed time depends on DNS access, site access, consent configuration, destination credentials, caching, and the events being tested. Treat the first correctly received meaningful event as the installation acceptance point.
 
 ---
 

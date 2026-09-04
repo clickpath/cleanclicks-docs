@@ -7,29 +7,30 @@ Every ad platform, analytics tool, and ecommerce system CleanClicks integrates w
 
 ## Ad Platforms
 
-| Platform | Connection Method | Click ID | Server-Side Delivery | Minimum Plan |
+| Platform | Connection | Click ID | Server-Side Method | Current public plan |
 |---|---|---|---|---|
-| **Google Ads** | OAuth (one-click) | `gclid` | Enhanced Conversions via API | Pulse |
-| **Meta (Facebook)** | Manual token | `fbclid` | Conversions API (CAPI) | Pulse |
-| **TikTok** | Manual token | `ttclid` | Events API | Pulse |
-| **Microsoft Ads (Bing)** | OAuth (one-click) | `msclkid` | Offline Conversions API | Pulse |
+| **Google Ads** | OAuth | `gclid`, `wbraid`, `gbraid` | Enhanced Conversions and configured offline conversion paths | Signal or Clarity |
+| **Meta** | Manual token | `fbclid` | Conversions API | Signal or Clarity |
+| **TikTok** | Manual token | `ttclid` | Events API | Signal or Clarity |
+| **Microsoft Ads** | OAuth | `msclkid` | Offline Conversions API | Signal or Clarity |
+
+Signal can use any three of these four current ad destinations. Clarity can use all four. LinkedIn is not part of the current sellable destination set.
 
 ## Analytics Platforms
 
-| Platform | Connection Method | Features | Minimum Plan |
+| Platform | Connection | Purpose | Current public plan |
 |---|---|---|---|
-| **GA4** | Measurement ID + API Secret | Measurement Protocol + first-party proxy | Signal |
-| **Usermaven** | Workspace token | Server-side events + first-party proxy | Signal |
-| **Plerdy** | Proxy only | First-party script proxying | Signal |
+| **GA4** | Measurement ID and supported API credentials | Analytics layer and supported event delivery | Signal or Clarity |
+| **Usermaven** | Workspace API key and server token | Analytics layer and supported event delivery | Signal or Clarity |
 
-Analytics platforms count against your ad platform connection limit.
+GA4 and Usermaven do not use an ad-destination slot.
 
 ## Ecommerce Platforms
 
 | Platform | Client-Side | Server-Side | Plugin/Pixel | Minimum Plan |
 |---|---|---|---|---|
-| **Shopify** | Custom Pixel (7 events) | Webhook (purchase) | Shopify Custom Pixel | Clarity |
-| **WooCommerce** | WordPress plugin (6 events) | Webhook (`order.created`, auto-created on plugin activation) + `woocommerce_payment_complete` hook + configurable `purchase_paths` allowlist | CleanClicks WP Plugin v1.6.1 | Clarity |
+| **Shopify** | Custom Pixel (7 events) | Webhook (purchase) | Shopify Custom Pixel | Signal or Clarity |
+| **WooCommerce** | WordPress plugin (6 events) | Supported browser and server order paths | CleanClicks WP Plugin v1.11.0 | Signal or Clarity |
 
 ### Shopify Events
 
