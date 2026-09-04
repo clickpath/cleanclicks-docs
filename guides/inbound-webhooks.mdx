@@ -94,15 +94,11 @@ Authentication and validation errors return `{ "ok": false, "error": "..." }` â€
 
 ## How Attribution Works
 
-When an inbound webhook arrives, CleanClicks:
+When an inbound webhook arrives, CleanClicks can look up previously captured identifiers and campaign fields for the supplied email identity. Whether a match is available depends on earlier capture, consent state, retention, and current configuration.
 
-1. Looks up the email address in its session database
-2. If found, recovers the original visit's click IDs (gclid, fbclid, etc.), UTM parameters, and geographic data
-3. Dispatches the event to all connected platforms with full attribution
+Current consent and destination rules determine which fields and events may be relayed. A matching email does not guarantee a matching ad click or full attribution. If an identifier is missing, a destination may skip the event or accept it without attributing it to an ad.
 
-This means a conversion that happens hours or days after the initial website visit still gets attributed to the correct ad click, as long as the same email was captured during the visitor's session.
-
-If no prior session is found for the email, the event is still dispatched to ad platforms, but without click ID attribution. Platforms can still match via email using their own identity graphs.
+Verify the webhook response, per-destination result, event and order IDs, and destination receipt. A successful top-level response alone does not prove that every destination received or attributed the conversion.
 
 ## Examples
 

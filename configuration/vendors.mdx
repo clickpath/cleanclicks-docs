@@ -26,8 +26,12 @@ These count against your plan's ad platform limit.
 
 ### Analytics Platforms
 
-- **GA4** — Measurement Protocol and supported first-party analytics paths
-- **Usermaven** — server-side API and supported first-party analytics paths
+| Analytics connection | Fields shown in manual configuration |
+|---|---|
+| **GA4** | Measurement ID, API Secret |
+| **Usermaven** | API Key, Tracking Host |
+
+Use the fields shown for the selected domain and supported connection path. The Usermaven server-side relay also requires an API Key and Server Token in its domain configuration; Tracking Host does not replace that token. If the needed credential is not exposed in your screen, ask support to verify the server-side configuration. Enabling a proxy alone does not configure server-side delivery.
 
 GA4 and Usermaven are included in the current Signal and Clarity analytics layer and do not use an ad-destination slot.
 
@@ -79,7 +83,7 @@ Toggle a vendor **off** to stop sending it data. The credentials are retained, s
 - **API Secret** is generated in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets
 
 ### Usermaven
-- **API Key** and **Server Token** are both in your Usermaven workspace settings (Settings > API Keys); CleanClicks needs both
+- Manual vendor configuration shows **API Key** and **Tracking Host**. The server-side relay separately requires a **Server Token**. Verify the intended workspace and complete credential configuration before testing delivery. Do not paste a token into the Tracking Host field.
 
 ---
 

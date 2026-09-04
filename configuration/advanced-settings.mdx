@@ -21,9 +21,11 @@ The first-party analytics proxy reduces dependence on third-party request paths 
 
 Each supported analytics path can be configured separately. Enable only the path that matches the current installation, then verify the browser request, consent state, intended property, and accepted event.
 
+Proxy settings control the supported browser path. Server-side delivery also requires the corresponding vendor configuration. Review **Configuration > Vendors** for the same domain.
+
 ### GA4 Signals
 
-The **Allow Signals** setting affects Google Signals behavior. Choose it according to the site's consent design and privacy policy, then verify the resulting requests and GA4 property.
+The **Allow Signals** setting affects Google Signals behavior. It defaults to off for new configurations; an explicit choice in the GA4 connection flow can change it. Choose it according to the site's consent design and privacy policy, then verify the resulting requests and GA4 property.
 
 ## UTM Attribution
 

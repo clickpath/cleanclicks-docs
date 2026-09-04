@@ -11,20 +11,18 @@ Usermaven is available on the current **Signal** and **Clarity** plans. It is an
 
 ## Configuration
 
-No OAuth or connection step needed. Configure directly in vendors.
+Configure the intended domain in **Configuration > Vendors**. The manual Usermaven card shows **API Key** and **Tracking Host**.
 
-1. Go to **Configuration** > **Vendors** tab
-2. Enable **Usermaven**
-3. Enter your **Workspace API Key** and your **Server Token**
-4. Save
+1. Select the intended domain and review its Usermaven configuration.
+2. Enter the **Workspace API Key** and the **Tracking Host** for that workspace.
+3. Save the configuration.
+4. Verify the browser path and a supported server-side event separately.
 
-### Finding Your API Key and Server Token
+### Server-Side Credentials
 
-1. Log in to [Usermaven](https://app.usermaven.com)
-2. Go to your workspace **Settings** > **API Keys**
-3. Copy both the **API Key** (workspace key) and the **Server Token** (used for server-to-server event ingest)
+The Usermaven server-side relay requires both an **API Key** and a **Server Token** in the domain configuration. Without either value, that relay reports missing credentials. Tracking Host is not a replacement for Server Token.
 
-CleanClicks needs both values — it combines them when sending events to Usermaven's server-side API. With only one of the two, events are skipped.
+If your screen does not expose the required server credential, ask support to verify that domain's configuration before relying on server-side delivery. Do not paste a Server Token into the Tracking Host field. Record the accepted event in the intended Usermaven workspace.
 
 ## Server-Side Events
 
@@ -41,7 +39,7 @@ If you're tracking ecommerce events, Usermaven receives order data with:
 
 > **Note:** Usermaven's WooCommerce dashboard widgets require manual setup inside Usermaven. Each widget needs to be configured with the event name, metric source, and aggregation. If you see $0 revenue in Usermaven but events are being sent, the issue is widget configuration, not CleanClicks.
 
-## Usermaven First-Party Proxy (Signal+)
+## Usermaven First-Party Proxy (Signal or Clarity)
 
 A first-party subdomain can reduce dependence on known third-party request paths. Browser rules, blockers, consent choices, CSP, caching, and site configuration can still affect collection.
 
@@ -56,7 +54,7 @@ A first-party subdomain can reduce dependence on known third-party request paths
 
 | Setting | Recommended | Why |
 |---|---|---|
-| API Key + Server Token | Enter **both** | With only one of the two, events are skipped entirely |
+| API Key + Server Token | Verify **both** in the server-side domain configuration | The server-side relay requires both; check the server credential with support if your screen does not expose it |
 | Workspace domain | Match the domain CleanClicks tracks | Events carry your domain as source; a mismatch orphans them |
 | First-party proxy | Verify for the current installation | Confirm the subdomain, consent state, browser request path, intended property, and accepted event |
 | Dashboard widgets | Configure per event/metric after first events arrive | Usermaven widgets don't auto-build; $0 revenue with events flowing = widget config, not data |

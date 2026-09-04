@@ -9,21 +9,27 @@ CleanClicks sends conversion events to Google Analytics 4 via the Measurement Pr
 
 GA4 is available on the current **Signal** and **Clarity** plans. It is an analytics connection and does not use an ad-destination slot.
 
-The exact GA4 path depends on the installation and property being used. Verify the current property, consent state, browser path, credentials, and accepted event before relying on a specific result.
+### Which Property Receives Events
 
-## Configuration (Two Paths)
+GA4 events are sent to the property and web stream configured for this domain. The connection flow can create a separate property or link an existing property you select. Check the displayed Measurement ID before accepting the connection.
 
-CleanClicks supports two GA4 connection paths depending on how you started.
+Choosing an existing property adds CleanClicks events to that property's reporting. Creating a separate property keeps that reporting separate. Test for duplicate events alongside your existing collection; do not assume CleanClicks always uses a dedicated property or leaves a selected existing property untouched.
 
-**Audit-tier customers** (signed up via cleanclicks.io/audit) connect GA4 via Google OAuth at the audit signup step. CleanClicks requests `analytics.readonly` + `analytics.edit` scopes — read access to compare GA4 sessions against CleanClicks measurements for the audit gap-analysis, and edit access to create the server-side Measurement Protocol API Secret for you when you upgrade to a paid plan. See [Privacy Policy §2.3](https://cleanclicks.io/privacy-policy) for the full scope disclosure.
+The exact delivery path depends on the installation, consent state, browser path, credentials, and accepted event.
 
-**Paid-tier customers** (Signal+ direct signup) configure GA4 via API key entry on the dashboard — no OAuth required for the standard Measurement Protocol path.
+## Configuration
 
-1. Go to **Configuration** > **Vendors** tab
-2. Enable **GA4**
-3. Enter your **Measurement ID** (format: `G-XXXXXXXXXX`)
-4. Enter your **API Secret**
-5. Save
+The guided GA4 connection offers a choice to create a separate property or use an existing property and web stream. Confirm the intended choice and Measurement ID. Creating an API Secret on an existing stream requires the explicit choice shown in that connection flow.
+
+For manual Measurement Protocol configuration:
+
+1. Go to **Configuration** > **Vendors** tab.
+2. Select the intended domain and review its GA4 delivery configuration.
+3. Enter the intended web stream's **Measurement ID** (format: `G-XXXXXXXXXX`).
+4. Enter its **API Secret**.
+5. Save, then test an event in that same property.
+
+The GA4 OAuth flow requests `analytics.readonly` and `analytics.edit`: read access supports reporting checks, and edit access supports the approved property, stream, and Measurement Protocol secret operations. Manual API credentials serve a different path. Review the current connection screen and [Privacy Policy](https://cleanclicks.io/privacy-policy) before granting access.
 
 ### Finding Your Measurement ID
 
@@ -45,7 +51,7 @@ CleanClicks can send supported conversion events through GA4 Measurement Protoco
 
 Session attribution, geography, cookie lifetime, and event coverage depend on the current browser capture, consent state, first-party endpoint, GA4 property, and accepted event path. Verify the actual event in the intended property before treating the path as accepted.
 
-## GA4 First-Party Proxy (Signal+)
+## GA4 First-Party Proxy (Signal or Clarity)
 
 The first-party analytics proxy reduces dependence on third-party request paths on supported installations. Browser rules, blockers, consent choices, CSP, caching, and site configuration can still affect collection. Verify the actual property and event path before relying on the result.
 
@@ -62,7 +68,7 @@ The **Allow Signals** setting affects Google Signals behavior. Choose it accordi
 
 ### Measurement Protocol by platform
 
-Do not enable two delivery paths to the same primary GA4 property without a duplicate-event test. WordPress and Shopify installations differ by plugin or pixel version. Verify the deployed version and the intended property before changing Measurement Protocol.
+Verify the configured browser and server paths, destination property, and duplicate-event handling before changing GA4 delivery. The correct setup depends on the deployed plugin or pixel, proxy configuration, consent state, and event source. WordPress installation alone is not a reason to disable Measurement Protocol. Test both browser and webhook purchase events where applicable, and record the accepted destination result.
 
 ## Recommended GA4 settings
 
@@ -84,7 +90,7 @@ Set these on the GA4 side so the data CleanClicks delivers is retained and repor
 | Events not in GA4 Realtime | Verify Measurement ID and API Secret. Events should appear in Realtime within 30 seconds. |
 | Events show as "Unassigned" source | Session stitching may not have a matching GA4 session. This happens when the visitor had never loaded GA4 client-side. |
 | Demographics not showing | Enable "Allow Signals" in Advanced settings. Allow 48 hours for demographic data to populate. |
-| Duplicate events | If using WordPress plugin, disable Measurement Protocol for that domain. See note above. |
+| Duplicate events | Check the selected property and browser/server event IDs. Follow the platform verification steps above before changing a delivery path. |
 
 ---
 

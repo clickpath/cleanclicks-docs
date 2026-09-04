@@ -3,7 +3,7 @@ title: "WordPress Setup"
 description: "Install the CleanClicks WordPress plugin for automatic tracking, WooCommerce event capture, server-side conversion webhooks, and analytics proxy integration."
 ---
 
-CleanClicks ships a dedicated WordPress plugin. The currently released version is v1.11.0. The current Signal and Clarity plans support the guided WordPress and WooCommerce path. Available features still depend on the selected plan, current plugin version, domain configuration, consent state, and connected destinations.
+CleanClicks ships a dedicated WordPress plugin. The current Signal and Clarity plans support the guided WordPress and WooCommerce path. Available features still depend on the selected plan, current plugin version, domain configuration, consent state, and connected destinations.
 
 ## Option A: Plugin Installation (Recommended)
 
@@ -12,7 +12,7 @@ The CleanClicks WordPress plugin is the full integration. It auto-creates the Wo
 ### Download and Install
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
-2. Click **Download Plugin** to get the latest zip
+2. Click **Download Plugin** and record the version in the downloaded zip
 3. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
 4. Choose the zip and click **Install Now**
 5. Click **Activate**
@@ -68,8 +68,8 @@ If the webhook ever drifts (e.g., you delete it manually), click **Recreate Webh
 | `remove_from_cart` | Cart item removal | Signal or Clarity with WooCommerce |
 | `begin_checkout` | Checkout page load + checkout-intent click from cart | Signal or Clarity with WooCommerce |
 | `purchase` | Order completed (client-side + server-side webhook) | Signal or Clarity with WooCommerce |
-| GA4 First-Party Proxy | Routes GA4 client-side traffic through `cleanclicks.yourdomain.com` | Signal+ |
-| Usermaven Proxy | First-party Usermaven tracking | Signal+ |
+| GA4 First-Party Proxy | Routes GA4 client-side traffic through `cleanclicks.yourdomain.com` | Signal or Clarity |
+| Usermaven Proxy | First-party Usermaven tracking | Signal or Clarity |
 | WP Consent API integration | Honors consent state from compatible CMPs | Signal or Clarity |
 
 Every event includes enhanced product data: SKU, brand (YITH or product taxonomy), up to 5 category levels, and variant info for variable products.
@@ -195,9 +195,9 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
-| Analytics proxies not loading | Verify GA4 or Usermaven is configured in CleanClicks → **Configuration** → **Vendors**. Verify the proxy toggle is enabled. Note: analytics proxies require **Signal** plan or higher. |
+| Analytics proxies not loading | Verify GA4 or Usermaven is configured in CleanClicks → **Configuration** → **Vendors**. Verify the proxy toggle is enabled. Note: analytics proxies require **Signal** or **Clarity** plan. |
 | Site is on `www.example.com` and proxy origin looks wrong | v1.5.3 and later auto-strip the leading `www.` from the auto-derived domain. If you're running v1.5.2 or earlier, upgrade — or manually populate the **Client Domain** field with the apex domain (`example.com`, no `www.`). |
-| GA4 events show as "Unassigned" | If you're running both the WordPress plugin **and** the GA4 Measurement Protocol vendor in CleanClicks, disable Measurement Protocol for this domain. The plugin handles GA4 client-side; Measurement Protocol creates duplicate "Unassigned" sessions. See [GA4 Connections](/connections/ga4) for the platform-specific rule. |
+| GA4 events show as "Unassigned" | Verify the selected property, available session identifiers, consent state, and configured browser and server paths. Run a duplicate-event test before changing Measurement Protocol. See [GA4 Connections](/connections/ga4) for the property and event-path checks. |
 
 ## What's New in v1.6.1
 

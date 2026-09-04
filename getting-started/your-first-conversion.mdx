@@ -35,7 +35,7 @@ If GA4 is configured, enable debug mode in GA4's DebugView to watch events arriv
 Conversions flow to two places:
 
 1. **Your CleanClicks dashboard** — the home page shows recent activity and basic metrics
-2. **Your ad platform** — each connected platform receives the conversion via server-side relay
+2. **Your ad platform** — check whether the enabled destination accepted the conversion through its configured delivery path
 
 Allow a few minutes for data to appear. Ad platforms like Google Ads and Meta can take 15-30 minutes to reflect new conversions in their dashboards.
 
@@ -55,15 +55,12 @@ For more detailed troubleshooting, see [Conversions Not Appearing](/troubleshoot
 
 When a visitor triggers a conversion event:
 
-1. The CleanClicks tag captures the event with all relevant data (click IDs, UTM parameters, session info)
-2. The event is sent to your first-party subdomain
-3. CleanClicks relays the conversion server-side to each connected ad platform
-4. Each platform receives the conversion with its attribution data
+1. The installed tag or integration captures available event fields, identifiers, and consent state.
+2. The event can be sent through the configured first-party endpoint.
+3. CleanClicks applies current filtering, consent, and destination rules.
+4. Each enabled destination decides whether to accept and attribute the event.
 
-The whole process takes seconds. Because it's server-side, it works even when:
-- The visitor has an ad blocker
-- The browser restricts third-party cookies
-- The visitor navigates away quickly after converting
+A server-side relay cannot recover an event or identifier that the installation never captured. Blockers, browser rules, consent choices, navigation timing, and configuration can still affect the result. Verify one test event in both CleanClicks and the intended destination, including its event ID, consent state, and duplicate-event result.
 
 One platform-specific caveat: Google Ads only accepts click conversions that carry a click ID (`gclid`, `wbraid`, or `gbraid`) from the original ad click. A conversion from a visitor who did not arrive through a Google ad is still recorded in CleanClicks, but is not uploaded to Google Ads.
 

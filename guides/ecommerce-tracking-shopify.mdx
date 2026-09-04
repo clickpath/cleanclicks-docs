@@ -8,13 +8,13 @@ This guide walks through setting up end-to-end ecommerce tracking for a Shopify 
 ## What You'll Set Up
 
 1. **Client-side pixel** — captures browsing events and GA4 purchase via Measurement Protocol
-2. **GA4 first-party proxy** — routes all GA4 tracking through your domain (Signal+)
+2. **GA4 first-party proxy** — supports first-party GA4 collection on supported configurations (Signal or Clarity)
 3. **Server-side webhook** — captures purchase events directly from Shopify servers
 4. **Ad platform connections** — routes conversion data to your platforms
 
 ## Prerequisites
 
-- CleanClicks account on **Signal** plan or higher (ecommerce requires Signal+)
+- CleanClicks account on **Signal** or **Clarity** plan
 - Domain added and DNS verified in CleanClicks
 - Shopify store with admin access
 
@@ -79,12 +79,12 @@ For ecommerce, the key conversion event is `purchase`. Most ad platforms automat
 
 ## GA4 First-Party Analytics
 
-CleanClicks's Custom Pixel (currently v2.2.0) provides first-party GA4 tracking for Shopify. Instead of relying solely on server-side Measurement Protocol (which creates "Unassigned" attribution in GA4), it uses:
+The generated Custom Pixel and theme snippet provide supported first-party GA4 paths for Shopify. Record the installed pixel version before testing.
 
-- **Theme snippet** — loads proxied gtag.js and fires storefront events (view_item, add_to_cart, begin_checkout, search) through your first-party domain. These events get proper traffic source attribution.
-- **Custom Pixel v2.2.0** — sends GA4 purchase events via client-side Measurement Protocol through the `/__cc/g/mp` proxy endpoint, using the visitor's real `_ga` cookie for session stitching.
+- **Theme snippet** loads the configured GA4 browser path through the first-party endpoint.
+- **Custom Pixel** can send supported checkout events through the configured Measurement Protocol path.
 
-**If you were previously using server-side GA4 MP:** Turn it off in the GA4 vendor tab. The pixel now handles purchase events client-side with proper attribution. Keeping server-side MP on will create duplicate events.
+Verify the selected property, available session identifiers, consent state, and one test order across the browser and webhook paths. Do not change an existing GA4 path or disable Measurement Protocol solely because a pixel is installed. Accept the change only after a duplicate-event check.
 
 See [Shopify Setup](/setup/shopify-setup) for full installation instructions.
 
@@ -108,3 +108,7 @@ Run a duplicate-event check before changing or removing an existing Shopify chan
 - Match browser and server event IDs where the destination supports that method.
 - Verify the current GA4 property and event path before enabling or disabling Measurement Protocol.
 - Record the before state, change, test order, destination result, and rollback path.
+
+---
+
+**Related:** [Shopify Setup](/setup/shopify-setup) | [Ecommerce Configuration](/configuration/ecommerce)
