@@ -29,7 +29,7 @@ For manual Measurement Protocol configuration:
 4. Enter its **API Secret**.
 5. Save, then test an event in that same property.
 
-The GA4 OAuth flow requests `analytics.readonly` and `analytics.edit`: read access supports reporting checks, and edit access supports the approved property, stream, and Measurement Protocol secret operations. Manual API credentials serve a different path. Review the current connection screen and [Privacy Policy](https://cleanclicks.io/privacy-policy) before granting access.
+The GA4 OAuth flow requests `analytics.readonly` and `analytics.edit`: read access supports reporting checks, and edit access supports the approved property, stream, and Measurement Protocol secret operations. Manual API credentials serve a different path. Review the current connection screen and [Privacy Policy](https://cleanclicks.ai/privacy-policy) before granting access.
 
 ### Finding Your Measurement ID
 
@@ -55,20 +55,32 @@ Session attribution, geography, cookie lifetime, and event coverage depend on th
 
 The first-party analytics proxy reduces dependence on third-party request paths on supported installations. Browser rules, blockers, consent choices, CSP, caching, and site configuration can still affect collection. Verify the actual property and event path before relying on the result.
 
-### Enabling the Proxy
+### Where to turn it on
 
-1. Go to **Configuration > Advanced**.
-2. Enable **GA4 Proxy**.
-3. Save.
-4. Verify the network path, intended GA4 property, consent behavior, and a meaningful event.
+There is no GA4 proxy switch on the **Configuration > Advanced** tab. That tab holds Event Bridges and Inbound Webhooks only. The control sits with your platform's install.
 
-### Allow Signals
+**Shopify:** go to **Configuration > Ecommerce**. The Shopify card carries a **GA4 First-Party Mode** section, and you set it up from card 4 of the Shopify guided setup further down that same tab. Open **Setup steps** for the theme snippet, then paste it just before the closing `</head>` tag in `theme.liquid`. Remove or comment out any existing GA4 or gtag.js scripts so the page does not track twice.
 
-The **Allow Signals** setting affects Google Signals behavior. Choose it according to the site's consent design and privacy policy, then verify the resulting requests and GA4 property.
+**WordPress:** in WP Admin, open **CleanClicks**, expand **Advanced settings**, and find the **Analytics Proxies** section. **GA4 First-Party Proxy** is on by default there. It skips itself when that Measurement ID is already firing on your site, to avoid double-counting. Leave **GA4 Measurement ID** blank unless you need to override the value pulled from your CleanClicks dashboard.
+
+After either setup, check the network path, the destination GA4 property, consent behavior, and one real event.
+
+### Google Signals
+
+Google Signals is **off** by default. New domains are created with the signals allowance off, and turning it on is a choice you make in the GA4 connection flow, where the checkbox reads **Turn on Google Signals**.
+
+- **On:** age, gender, and interest data reaches GA4, and GA4 remarketing audiences become available.
+- **Off (default):** demographics stay empty in GA4.
+
+We recommend leaving it off. Demographics only come from visitors signed in to Google with Ads Personalization on, which is a fraction of your traffic rather than a census, and Google may hide report rows for small audience segments. It does not affect your Google Ads results, because CleanClicks sends conversions to Google Ads directly.
 
 ### Measurement Protocol by platform
 
-Verify the configured browser and server paths, destination property, and duplicate-event handling before changing GA4 delivery. The correct setup depends on the deployed plugin or pixel, proxy configuration, consent state, and event source. WordPress installation alone is not a reason to disable Measurement Protocol. Test both browser and webhook purchase events where applicable, and record the accepted destination result.
+Purchase events reach GA4 through the API secret saved when you connected GA4. Nothing else needs adding for them.
+
+Keep the **Measurement ID** and **API Secret** saved even when browser-side GA4 handles purchases. The Shopify pixel code generator reads both values, so clearing them breaks the browser path too.
+
+Installing a plugin or a pixel is not by itself a reason to change the GA4 server-side setting. If you see duplicate GA4 purchases after an install, contact support rather than changing a delivery path yourself, so we can confirm which path fired.
 
 ## Recommended GA4 settings
 
@@ -81,7 +93,7 @@ Set these on the GA4 side so the data CleanClicks delivers is retained and repor
 | Internal traffic filter | **Define + activate** for your office/VPN IPs | Admin > Data Streams > Configure tag settings > Define internal traffic | Keeps your own team out of the recovered numbers |
 | Timezone + currency | Match your commerce platform | Admin > Property Settings | Prevents day-boundary and revenue mismatches when you reconcile against store totals |
 | Key events | Mark the events CleanClicks sends (e.g. `purchase`) as key events | Admin > Events | Key-event marking is what makes them count as conversions in reports |
-| Google Signals | Optional — pair with the **Allow Signals** proxy toggle | Admin > Data Settings > Data Collection | If Signals is on in GA4 but Allow Signals is off in CleanClicks, demographics stay empty by design |
+| Google Signals | Optional. Leave it off unless you need demographics | Admin > Data Settings > Data Collection | If Signals is on in GA4 but you never turned on Google Signals in the CleanClicks connection flow, demographics stay empty by design |
 
 ## Troubleshooting
 
@@ -89,8 +101,8 @@ Set these on the GA4 side so the data CleanClicks delivers is retained and repor
 |---|---|
 | Events not in GA4 Realtime | Verify Measurement ID and API Secret. Events should appear in Realtime within 30 seconds. |
 | Events show as "Unassigned" source | Session stitching may not have a matching GA4 session. This happens when the visitor had never loaded GA4 client-side. |
-| Demographics not showing | Enable "Allow Signals" in Advanced settings. Allow 48 hours for demographic data to populate. |
-| Duplicate events | Check the selected property and browser/server event IDs. Follow the platform verification steps above before changing a delivery path. |
+| Demographics not showing | Google Signals is off unless you turned it on in the GA4 connection flow. Turn it on there, and in GA4 under Admin > Data Settings > Data Collection. Allow 48 hours for demographic data to populate. |
+| Duplicate events | Confirm which property received them, then contact support before changing a delivery path. |
 
 ---
 

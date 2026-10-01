@@ -41,7 +41,7 @@ The browser and webhook paths work together to improve purchase coverage. Verify
 
 ### WordPress Plugin
 
-The CleanClicks WordPress plugin (v1.8.0) handles both client-side event tracking and server-side conversion capture. Install the plugin and the rest is automatic.
+The CleanClicks WordPress plugin handles both client-side event tracking and server-side conversion capture. Install the plugin and the rest is automatic.
 
 See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference. Quick summary:
 
@@ -85,9 +85,16 @@ Beyond the purchase, the Shopify Custom Pixel and the WooCommerce plugin also ca
 
 ## Attribution
 
-Browser and webhook events can carry available click identifiers and attribution data into configured destination paths. Coverage still depends on capture timing, consent state, identity matching, deduplication, webhook delivery, and destination acceptance.
+A webhook order arrives with no browser session attached to it. CleanClicks looks the visitor up by hashed email and recovers:
 
-Verify one bounded purchase fixture from the browser or webhook through the intended destination receipt before claiming complete attribution.
+- Click IDs from the ad platforms (gclid, fbclid, and the rest)
+- UTM parameters from the original visit
+- The GA4 client ID and session ID
+- The Usermaven anonymous ID
+
+Recovery needs that visitor's hashed email to have been captured earlier in the visit. Without it there is nothing to match the order against, and the conversion goes out carrying only what the webhook itself brought. If the visitor opted out, the order is sent as measurement-only.
+
+Coverage also depends on capture timing, consent state, deduplication, webhook delivery, and whether the destination accepts the event.
 
 ---
 

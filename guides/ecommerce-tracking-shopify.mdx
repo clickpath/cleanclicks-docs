@@ -8,7 +8,7 @@ This guide walks through setting up end-to-end ecommerce tracking for a Shopify 
 ## What You'll Set Up
 
 1. **Client-side pixel** — captures browsing events and GA4 purchase via Measurement Protocol
-2. **GA4 first-party proxy** — supports first-party GA4 collection on supported configurations (Signal or Clarity)
+2. **GA4 first-party proxy** — routes GA4 through your own domain (Signal or Clarity)
 3. **Server-side webhook** — captures purchase events directly from Shopify servers
 4. **Ad platform connections** — routes conversion data to your platforms
 
@@ -83,12 +83,12 @@ For ecommerce, the key conversion event is `purchase`. Most ad platforms automat
 
 ## GA4 First-Party Analytics
 
-The generated Custom Pixel and theme snippet provide supported first-party GA4 paths for Shopify. Record the installed pixel version before testing.
+The theme snippet and the Custom Pixel together give Shopify a first-party GA4 path.
 
-- **Theme snippet** loads the configured GA4 browser path through the first-party endpoint.
-- **Custom Pixel** can send supported checkout events through the configured Measurement Protocol path.
+- **Theme snippet** loads proxied gtag.js through your own domain and fires the storefront events: `view_item`, `view_item_list`, `add_to_cart`, `begin_checkout`, and `search`. These keep their traffic source attribution.
+- **Custom Pixel** sends the GA4 purchase event on checkout completion, using the visitor's own `_ga` cookie for session stitching.
 
-Verify the selected property, available session identifiers, consent state, and one test order across the browser and webhook paths. Do not change an existing GA4 path or disable Measurement Protocol solely because a pixel is installed. Accept the change only after a duplicate-event check.
+Purchase events reach GA4 through the API secret saved when you connected GA4. Installing the pixel is not on its own a reason to change the GA4 server-side setting. If GA4 starts showing duplicate purchases, contact support instead of flipping that setting yourself.
 
 See [Shopify Setup](/setup/shopify-setup) for full installation instructions.
 
@@ -106,12 +106,11 @@ Verify a bounded purchase fixture end to end. Record the current pixel version, 
 
 ## Avoiding Duplicate Tracking
 
-Run a duplicate-event check before changing or removing an existing Shopify channel, platform pixel, theme tag, Google tag, or GA4 path.
-
-- Keep one intended source per ad destination unless an accepted test proves deduplication.
+- **Only use the CleanClicks Custom Pixel for Shopify.** Don't also paste the `cc.js` script tag into your theme.
+- **Remove or comment out any existing GA4/gtag.js scripts.** CleanClicks loads its own proxied copy, and two copies send every event twice. Check your theme, the Google & YouTube app, and any GA4 tags in your Google Tag Manager container.
+- Keep one intended source per ad destination unless a test proves deduplication.
 - Match browser and server event IDs where the destination supports that method.
-- Verify the current GA4 property and event path before enabling or disabling Measurement Protocol.
-- Record the before state, change, test order, destination result, and rollback path.
+- Record the before state, the change, the test order, the destination result, and your rollback path.
 
 ---
 

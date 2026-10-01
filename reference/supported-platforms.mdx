@@ -14,13 +14,13 @@ Every ad platform, analytics tool, and ecommerce system CleanClicks integrates w
 | **TikTok** | Manual token | `ttclid` | Events API | Signal or Clarity |
 | **Microsoft Ads** | OAuth | `msclkid` | Offline Conversions API | Signal or Clarity |
 
-Signal can use any three of these four current ad destinations. Clarity can use all four. LinkedIn is not part of the current sellable destination set.
+Signal can use any three of these four current ad destinations. Clarity can use all four. LinkedIn is not currently offered as a destination.
 
 ## Analytics Platforms
 
 | Platform | Connection | Purpose | Current public plan |
 |---|---|---|---|
-| **GA4** | Measurement ID and supported API credentials | Analytics layer and supported event delivery | Signal or Clarity |
+| **GA4** | Measurement ID and API Secret | Analytics layer and supported event delivery | Signal or Clarity |
 | **Usermaven** | Workspace API key and server token | Analytics layer and supported event delivery | Signal or Clarity |
 
 GA4 and Usermaven do not use an ad-destination slot.
@@ -30,7 +30,7 @@ GA4 and Usermaven do not use an ad-destination slot.
 | Platform | Client-Side | Server-Side | Plugin/Pixel | Minimum Plan |
 |---|---|---|---|---|
 | **Shopify** | Custom Pixel (7 events) | Webhook (purchase) | Shopify Custom Pixel | Signal or Clarity |
-| **WooCommerce** | WordPress plugin (6 events) | Supported browser and server order paths | CleanClicks WP Plugin v1.11.0 | Signal or Clarity |
+| **WooCommerce** | WordPress plugin (6 events) | On activation the plugin auto-creates the WooCommerce `order.created` webhook | The current plugin from your dashboard | Signal or Clarity |
 
 ### Shopify Events
 

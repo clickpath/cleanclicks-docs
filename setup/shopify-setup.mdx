@@ -7,7 +7,7 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 
 | Component | Plan Required | What It Does |
 |---|---|---|
-| GA4 First-Party Analytics | Signal or Clarity | Supports first-party GA4 collection on supported configurations; verify the property, consent state, and event path |
+| GA4 First-Party Analytics | Signal or Clarity | Routes GA4 through your own domain to keep the sessions ad blockers hide |
 | Custom Pixel | Signal or Clarity | Tracks 7 ecommerce events in the pixel sandbox |
 | Server-Side Webhook | Signal or Clarity | Captures orders directly from Shopify servers |
 
@@ -21,15 +21,16 @@ CleanClicks integrates with Shopify through three components: a **GA4 first-part
 
 ## Step 1: GA4 First-Party Analytics (Signal or Clarity)
 
-The first-party analytics path can reduce dependence on known third-party request paths. Browser rules, consent, storefront configuration, caching, and the intended GA4 property can still affect collection. Verify the theme snippet and each accepted event in the intended property.
+The theme snippet routes GA4 traffic through your own first-party domain to keep the sessions ad blockers hide. It fires the storefront ecommerce events straight to GA4: `view_item`, `view_item_list`, `add_to_cart`, `begin_checkout`, and `search`.
 
 ### Configure in CleanClicks
 
-1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
+1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab, to the **GA4 First-Party Mode** section
 2. Enter your **GA4 Measurement ID** (starts with `G-`, found in GA4 Admin > Data Streams)
-3. Toggle **Allow Signals** if you want demographics data (age, gender, interests)
-4. Click **Save GA4 Proxy Settings**
-5. Copy the generated **Theme Snippet**
+3. Click **Save GA4 Proxy Settings**
+4. Copy the generated **Theme Snippet**
+
+You can also run this from card 4 of the Shopify guided setup on the same tab.
 
 ### Install the Theme Snippet
 
@@ -39,11 +40,15 @@ The first-party analytics path can reduce dependence on known third-party reques
 4. Paste the snippet just before the closing `</head>` tag
 5. Click **Save**
 
-### Check Existing GA4 Collection
+### Disable Existing GA4
 
-Inventory existing GA4 theme tags, the Google & YouTube app, and any Google Tag Manager GA4 tags. Confirm which property and web stream each uses.
+Remove or comment out any existing GA4/gtag.js scripts to avoid duplicate tracking. CleanClicks loads its own proxied copy of gtag.js, and two copies send every event twice. Three places to check:
 
-Before changing an existing path, compare it with the CleanClicks theme snippet and Custom Pixel using one test order. Record event IDs, order IDs, and the destination result. Remove or disable a duplicate path only after the test identifies it and you have a rollback plan.
+- **Theme script:** remove or comment out any `gtag.js` or `googletagmanager.com/gtag/js` script tags in your theme
+- **Google & YouTube app:** open the app's settings and turn off its GA4 tracking
+- **Google Tag Manager:** if you run GA4 through GTM, remove the GA4 tags from your container
+
+Note which property and web stream each one used before you remove it, so you have a rollback path.
 
 ### Configure API Secret for Purchase Events
 
@@ -51,15 +56,17 @@ The Custom Pixel (Step 2) sends GA4 purchase events through the Measurement Prot
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Vendors** → **GA4** tab
 2. Enter your GA4 **API Secret** (found in GA4 Admin > Data Streams > your stream > Measurement Protocol API secrets)
-3. Verify the intended property and test browser and server purchase paths together before changing the GA4 Measurement Protocol toggle. See [GA4 Connections](/connections/ga4).
+3. Leave the API Secret saved. The Shopify pixel generator reads it, and purchase events reach GA4 through it. Installing the pixel is not on its own a reason to change the GA4 server-side setting. If GA4 starts showing duplicate purchases, contact support instead of flipping that setting yourself. See [GA4 Connections](/connections/ga4).
 
-### GA4 Signals / Demographics
+### Google Signals / Demographics
 
-**Allow Signals** affects Google Signals behavior. Choose it according to the approved consent configuration and GA4 property settings, then verify the resulting requests and reports. Enabling the setting alone does not establish that demographic data is available.
+GA4 demographics reports (age, gender, interests) and GA4 remarketing audiences need Google Signals. The option is **Turn on Google Signals** in the GA4 connection flow, and it is off by default.
+
+Our recommendation is to leave it off. Demographics only come from visitors who are signed into Google with Ads Personalization on, which is a slice of your traffic rather than a census, so the picture is often inaccurate. It will not change your Google Ads results either, because CleanClicks sends conversions to Google Ads directly. Turn it on and Google may also hide report rows for small audience segments, which hits smaller-traffic sites hardest.
 
 ## Step 2: Install the Custom Pixel (Signal or Clarity)
 
-Use the Custom Pixel generated for your domain and record its version before testing. It runs in Shopify's sandbox and supports the documented ecommerce events. Where the deployed pixel supports GA4 purchase delivery, verify the configured Measurement ID, credentials, consent state, and accepted checkout event.
+The Custom Pixel is generated for your domain with your configuration baked in. It runs in Shopify's sandboxed iframe and tracks the full ecommerce funnel. When GA4 is configured, it also sends the GA4 purchase event on checkout completion.
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
 2. Copy the **Pixel Code** (it's generated per-domain with your configuration baked in)

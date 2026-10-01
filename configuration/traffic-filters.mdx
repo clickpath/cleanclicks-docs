@@ -9,23 +9,24 @@ Traffic filters control which visitors' data gets processed and sent to your ad 
 
 1. Go to **Configuration** in the sidebar
 2. Select your domain
-3. Click the **Traffic Filters** tab
+3. Click the **Filters** tab
 
 ## Plan Availability
 
+Bot detection and country filtering run on every plan. Bot detection needs no configuration.
+
 | Feature | Signal | Clarity |
 |---|---|---|
-| Configured bot filtering | Yes | Yes |
-| Country and market filtering | Yes | Yes |
-| Bot score customization | Yes | Yes |
+| Bot score threshold | Yes | Yes |
 | Custom user-agent patterns | Yes | Yes |
+| Market (metro-area) narrowing | Yes | Yes |
 | IP filtering | Yes | Yes |
 
-The exact control shown in the dashboard depends on the current deployed product and domain configuration.
+A control your plan does not include shows an upgrade card in its place.
 
 ## Bot Filtering
 
-Configured bot filtering is available on the current Signal and Clarity plans. It blocks known bots, crawlers, and automated traffic from being counted as conversions.
+Bot detection runs on every plan and needs no configuration, so the Bot Filtering section carries an **Always On** badge. It blocks known bots, crawlers, and automated traffic from being counted as conversions. Bot score thresholds and custom user-agent patterns are the Signal+ add-ons layered on top.
 
 ### Basic Bot Filtering
 
@@ -63,6 +64,10 @@ You choose a mode and a list of countries:
 2. Choose **Allowlist** or **Blocklist** mode
 3. Add countries using their two-letter country codes (e.g., `US`, `CA`, `GB`, `AU`)
 4. Save
+
+### Markets (US metro areas), Signal+
+
+Signal and Clarity can narrow an allowlist to the US metro areas you actually serve. The **Markets (US metro areas)** picker appears only in **Allowlist** mode, and markets narrow within the countries you already allow. Leave it empty to track your whole country list. Visitors whose metro area cannot be determined are always tracked, never blocked.
 
 ### Common Configurations
 

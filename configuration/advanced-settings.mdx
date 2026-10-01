@@ -1,9 +1,11 @@
 ---
 title: "Advanced Settings"
-description: "The Advanced tab contains settings for analytics proxying, UTM capture, and other options that don't fit neatly into the other configuration tabs."
+description: "The Advanced tab holds event bridges and inbound webhooks. Proxy and Google Signals settings live in other places."
 ---
 
-The Advanced tab contains settings for analytics proxying, UTM capture, and other options that don't fit neatly into the other configuration tabs.
+The Advanced tab holds two things: **Event Bridges** and **Inbound Webhooks**. Everything on it can break tracking for the whole domain if you get it wrong, which is why the tab opens with a warning banner.
+
+Analytics proxy settings and Google Signals are not on this tab. See [Where proxy settings live](#where-proxy-settings-live) and [Google Signals](#google-signals) below.
 
 ## Accessing Advanced Settings
 
@@ -11,25 +13,53 @@ The Advanced tab contains settings for analytics proxying, UTM capture, and othe
 2. Select your domain
 3. Click the **Advanced** tab
 
-## Analytics Proxy
+## Event Bridges
 
-Available on the current Signal and Clarity plans.
+CleanClicks can receive events from iframe-based platforms (scheduling tools, booking widgets, embedded forms) through the browser's `postMessage` API. The bridge captures those events and routes them through CleanClicks.
 
-The first-party analytics proxy reduces dependence on third-party request paths on supported installations. Browser rules, blockers, consent choices, content security policy, caching, and site configuration can still affect collection. Verify the actual property and event path before relying on the result.
+Turn it on with **Enable event bridges**. When it's on, the tab shows the two things a bridge needs:
 
-### Enabling Proxies
+- **Allowed Origins**: the origins a bridge will accept messages from
+- **Event Mappings**: a table of **Source Event** to **Target Event**, so the third-party event name becomes a CleanClicks event name
 
-Each supported analytics path can be configured separately. Enable only the path that matches the current installation, then verify the browser request, consent state, intended property, and accepted event.
+Click **Save Event Bridges** to apply a change.
 
-Proxy settings control the supported browser path. Server-side delivery also requires the corresponding vendor configuration. Review **Configuration > Vendors** for the same domain.
+## Inbound Webhooks
 
-### GA4 Signals
+The tab shows your inbound webhook URL:
 
-The **Allow Signals** setting affects Google Signals behavior. It defaults to off for new configurations; an explicit choice in the GA4 connection flow can change it. Choose it according to the site's consent design and privacy policy, then verify the resulting requests and GA4 property.
+```
+https://cleanclicks.yourdomain.com/__cc/inbound
+```
+
+POST to it to send events from external systems (CRMs, backend pipelines, automation platforms). Expand **Payload format & example curl command** for the field list and a copy-ready `curl` call. The `event` field is required; `value`, `currency`, `email`, `phone`, `orderId`, `sessionId`, and a free-form `properties` object are optional.
+
+Authentication uses an inbound integration key in the `X-CC-API-Key` header. Create and revoke those keys in the **Inbound keys** tab, not here. See [Inbound Integration Keys](/configuration/api-keys) and [Inbound Webhooks](/guides/inbound-webhooks).
+
+## Where proxy settings live
+
+The first-party analytics proxy routes analytics requests through your CleanClicks subdomain instead of a third-party host. Its controls are on the platform you installed, not in the Advanced tab.
+
+**WordPress.** The plugin's **Analytics Proxies** section holds the proxy controls:
+
+- **GA4 First-Party Proxy**: on by default. Skips itself automatically when that measurement ID is already firing on your site, to avoid double-counting.
+- **GA4 Measurement ID**: leave blank. It's pulled from your CleanClicks dashboard. Fill it only to override.
+- **Usermaven Proxy**
+- **Plerdy Proxy**
+
+**Shopify.** GA4 first-party mode is under **Configuration > Ecommerce > GA4 First-Party Mode** (Signal and Clarity). It needs a theme snippet in `theme.liquid`; the **Setup steps** panel there has the exact steps.
+
+A proxy only covers the browser request path. Server-side delivery to a vendor still needs that vendor configured under **Configuration > Vendors** for the same domain.
+
+## Google Signals
+
+Google Signals is **off by default**. The only place to turn it on is the **Turn on Google Signals** checkbox in the GA4 connection flow during onboarding.
+
+Our recommendation is to leave it off. Demographics data only comes from visitors signed into Google with Ads Personalization on, which is a fraction of your traffic, and turning it on may cause Google to hide report rows for small audience segments (thresholding). It does not affect your Google Ads results, because CleanClicks sends conversions to Google Ads directly.
 
 ## UTM Attribution
 
-CleanClicks automatically captures UTM parameters from visitor URLs:
+CleanClicks captures UTM parameters from visitor URLs automatically. There is no toggle:
 
 - `utm_source`
 - `utm_medium`
@@ -37,7 +67,7 @@ CleanClicks automatically captures UTM parameters from visitor URLs:
 - `utm_term`
 - `utm_content`
 
-These are stored in first-party cookies and attached to every conversion event. The Advanced tab lets you toggle UTM capture on or off (it's on by default).
+They are stored in first-party browser storage on your own domain and attached to conversion events.
 
 ### Google Ads Final URL Suffix
 
@@ -49,17 +79,11 @@ utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&
 
 Set this in Google Ads: **Admin** > **Account Settings** > **Tracking** > **Final URL suffix**.
 
-This ensures every ad click arrives with UTM parameters that CleanClicks, your analytics platforms, and your conversion tracking can all use for attribution.
-
-## Event Bridges
-
-CleanClicks can receive events from iframe-based platforms (like scheduling tools, booking widgets, or embedded forms) via the browser's `postMessage` API.
-
-If you use embedded third-party tools that fire events inside iframes, the event bridge captures those events and routes them through CleanClicks. Configure allowed origins and event name mappings in the Advanced tab.
+Every ad click then arrives with UTM parameters that CleanClicks, your analytics platforms, and your conversion tracking can all use for attribution.
 
 ## Data Retention
 
-Conversion data is retained for **90 days** by default. Session identification data follows the same retention period. After expiry, data is automatically purged.
+Conversion records are retained for **90 days**. Session identification data follows the same 90-day period. After that they expire automatically.
 
 ---
 

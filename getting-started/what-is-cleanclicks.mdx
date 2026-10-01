@@ -7,6 +7,10 @@ CleanClicks provides first-party conversion tracking for supported WordPress, Wo
 
 Results still depend on the site, consent state, event definition, destination credentials, and the completed installation.
 
+## The First-Party Subdomain
+
+CleanClicks gives you a tracking subdomain on your own domain, such as `cleanclicks.yourdomain.com`. You create it as a CNAME record in your DNS and point it at CleanClicks. Tracking requests then go to that subdomain rather than to a third-party tracking domain, so the browser sees a request to your own site, and cookies set on that path are first-party cookies.
+
 ## What It Does
 
 - First-party request paths can reduce blocking associated with known third-party tracking domains.
@@ -23,6 +27,16 @@ CleanClicks supports guided paths for WordPress, WooCommerce, Shopify, and custo
 ## Who It Fits
 
 CleanClicks is built for US businesses and marketers that run paid media and need clearer first-party conversion evidence across supported sites and destinations.
+
+## How It Works (The Short Version)
+
+1. You add your domain to CleanClicks.
+2. You create the DNS record that routes the tracking subdomain through CleanClicks.
+3. You install the CleanClicks script tag, WordPress plugin, or Shopify Custom Pixel on your site.
+4. You connect your ad platforms.
+5. CleanClicks captures conversions on the first-party path and relays them server-side to each connected destination.
+
+The onboarding wizard walks you through every step.
 
 ## Setup
 

@@ -9,18 +9,18 @@ Inbound integration keys let you send conversion events to CleanClicks from exte
 
 1. Go to **Configuration** in the sidebar
 2. Select your domain
-3. Click the **Inbound Integration Keys** tab
+3. Click the **Inbound keys** tab
 
 ## Plan Limits
 
-Current source defines these limits:
+Each plan allows a fixed number of inbound integration keys per domain:
 
-| Current plan | Maximum inbound integration keys per domain |
+| Plan | Maximum inbound integration keys per domain |
 |---|---:|
 | Signal | 5 |
 | Clarity | 10 |
 
-An older or internally provisioned account may show a legacy plan label. The signed-in account and current product rules control.
+Once you reach the limit, the create button is disabled and the tab tells you to revoke an existing key or upgrade your plan.
 
 ## Creating an Inbound Integration Key
 
@@ -55,12 +55,11 @@ See [Inbound Webhooks](/guides/inbound-webhooks) for the full API reference and 
 
 ### Viewing Keys
 
-The Inbound Integration Keys tab shows all keys for the selected domain:
-- **Name** — the label you gave it
-- **Key prefix** — first few characters for identification (full key is masked)
-- **Created date**
-- **Last used** — when the key was last used to authenticate a request
-- **Status** — Active or Revoked
+The **Inbound keys** tab lists the active keys for the selected domain in four columns:
+- **Name**: the label you gave it
+- **Key**: the first few characters, for identification (the rest stays masked)
+- **Created**: the date you created the key
+- **Last Used**: the date the key last authenticated a request, or `Never`
 
 ### Revoking a Key
 
@@ -70,11 +69,7 @@ If a key is compromised or no longer needed:
 2. Click **Revoke**
 3. Confirm
 
-Revoked keys immediately stop working. Any system using that key will receive authentication errors. Revoking is permanent — if you need access again, create a new key and update your integration.
-
-### Deleting a Key
-
-Permanently delete a key by clicking **Delete**. This is irreversible, unlike revoking.
+Revoked keys immediately stop working, and any system still using one receives authentication errors. A revoked key drops off the list and cannot be restored from the dashboard. If you need access again, create a new key and update your integration.
 
 ## Security Best Practices
 

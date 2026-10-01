@@ -19,9 +19,9 @@ Each domain appears as a card showing:
 
 ## Adding a Domain
 
-1. Click **Add Domain**
+1. Click **+ Add domain**
 2. Enter the domain (bare domain, no `https://` or `www`)
-3. Click **Add**
+3. Click **Add domain**
 
 The domain starts in **Pending Verification** status. Complete the DNS setup (CNAME record) to activate it.
 
@@ -32,7 +32,7 @@ The domain starts in **Pending Verification** status. Complete the DNS setup (CN
 | Signal | 1 |
 | Clarity | Unlimited |
 
-The domain allowance does not include organization users or shared staff access.
+The domain allowance does not include organization users or shared staff access. At your plan's allowance the **+ Add domain** button is disabled and an upgrade prompt appears on the Domains page.
 
 ## Domain Lifecycle
 
@@ -60,11 +60,11 @@ Permanently removed. All associated configuration, connections, API keys, and da
 
 Clarity supports multiple domains. Add and verify each domain separately, then configure its installation, consent behavior, events, and destinations.
 
-- Select the intended domain before editing its connections or configuration.
+- Select the domain in the domain picker before editing its connections or configuration. Once you have more than one domain, the sidebar carries a global **Viewing domain** switcher that follows you between pages, and the Connections and Configuration pages each show their own picker (Configuration labels it **Domain**).
 - Vendor credentials, triggers, and filters are configured per domain.
 - Inbound integration keys are scoped to the domain that created them. Use that domain's key for its inbound endpoint; the active-key limit is also per domain.
 
-Agencies and multi-brand operators can use Clarity for multiple domains. Organization accounts and multi-user access are planned and are not currently available.
+Agencies and multi-brand operators can use Clarity for multiple domains. CleanClicks accounts are single-user today. Organization accounts and shared staff access are not available.
 
 ## DNS Verification
 

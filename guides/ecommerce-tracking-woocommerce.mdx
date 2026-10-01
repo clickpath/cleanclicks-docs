@@ -1,6 +1,6 @@
 ---
 title: "Guide: Complete WooCommerce Ecommerce Tracking"
-description: "Set up end-to-end WooCommerce ecommerce tracking with CleanClicks using the WordPress plugin (v1.8.0), three-layer server-side conversion capture, and analytics proxies."
+description: "Set up end-to-end WooCommerce ecommerce tracking with CleanClicks using the WordPress plugin, three-layer server-side conversion capture, and analytics proxies."
 ---
 
 This guide walks through the supported WooCommerce setup. Acceptance requires a bounded order fixture, deduplication result, and receipt from each intended destination.
@@ -11,7 +11,7 @@ This guide walks through the supported WooCommerce setup. Acceptance requires a 
 2. **Analytics connections** — configures the supported GA4 and Usermaven paths
 3. **Ad platform connections** — routes conversion data to your platforms
 
-The previous version of this guide separated the WordPress plugin and the server-side webhook into two manual steps. As of plugin v1.5.2, the webhook is auto-created on activation — no manual setup required.
+The previous version of this guide separated the WordPress plugin and the server-side webhook into two manual steps. The current plugin auto-creates the webhook on activation, so there is no manual webhook setup.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ The previous version of this guide separated the WordPress plugin and the server
 3. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
 4. Upload the zip and click **Install Now**
 5. Click **Activate**
-6. Go to **Settings** → **CleanClicks** (or **WooCommerce** → **CleanClicks** if WooCommerce is active)
+6. In your WordPress Admin sidebar, click **CleanClicks**
 7. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Inbound keys** tab) and **Save Changes**
 
 That's the entire setup. The plugin handles domain auto-detection, remote config fetch, smart defaults, and webhook auto-creation. See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference.
@@ -45,23 +45,36 @@ That's the entire setup. The plugin handles domain auto-detection, remote config
 
 Each event includes enhanced product data: SKU, brand, up to 5 category levels, and variant info for variable products.
 
-**Refunds and cancellations (plugin v1.8.0+):** when a WooCommerce order is refunded or cancelled, the plugin sends a reversal event carrying the refunded value. To subtract that value from a connected ad platform, map the `refund` (and `cancellation`) event for that platform in **Configuration → Vendors** — without an explicit mapping the reversal is recorded in CleanClicks but not uploaded (this stops a refund from being sent as a purchase-shaped conversion).
+**Refunds and cancellations:** when a WooCommerce order is refunded or cancelled, the plugin sends a reversal event carrying the refunded value. To subtract that value from a connected ad platform, map the `refund` (and `cancellation`) event for that platform in **Configuration → Vendors** — without an explicit mapping the reversal is recorded in CleanClicks but not uploaded (this stops a refund from being sent as a purchase-shaped conversion).
 
 ## Step 2: Server-Side Conversion Capture (Automatic)
 
-The current plugin can use three coordinated WooCommerce order paths. Verify the deployed plugin version, webhook, event ID, order ID, deduplication result, and intended destination receipt before accepting the purchase path.
+The plugin uses three coordinated WooCommerce order paths: two server-side, plus a client-side fallback for custom thank-you pages. The two server-side paths post to the same CleanClicks webhook endpoint, `/__cc/woocommerce/webhook`, where CleanClicks de-duplicates by order ID so one order produces one conversion.
 
 ### Layer 1: Auto-Webhook
 
-The current plugin can create a WooCommerce `order.created` webhook pointed at the configured CleanClicks proxy. Verify its topic, delivery URL, signing key, and last delivery result.
+On activation the plugin creates a WooCommerce `order.created` webhook pointed at `https://cleanclicks.yourdomain.com/__cc/woocommerce/webhook`, signed with your Inbound API Key by default. You can see it in WordPress Admin → **WooCommerce** → **Settings** → **Advanced** → **Webhooks**, listed as "CleanClicks Conversion Capture."
 
 ### Layer 2: `woocommerce_payment_complete` Hook
 
-The payment-complete hook provides another server-side order path for supported checkout flows. CleanClicks uses a 24-hour order deduplication key between the first two paths. Verify the result with one bounded order fixture.
+The payment-complete hook provides a second server-side order path, covering subscription renewals and offsite checkout returns where the `order.created` webhook can fire before payment is confirmed. CleanClicks de-duplicates by order ID across both paths, using a 48-hour order dedupe window (configurable up to 7 days), so one order still produces one conversion.
 
 ### Layer 3: Configurable `purchase_paths` Allowlist
 
-The configurable allowlist can support accepted custom completion paths. Add only the intended path, then verify one matching and one non-matching URL.
+On every front-end page load the plugin checks the current URL against an allowlist of purchase-completion paths. The defaults are:
+
+```
+/order-received/
+/thank-you/
+/order-confirmation/
+/my-account/view-subscription/
+```
+
+If your store redirects somewhere else, add that path under **Custom Thank-You Paths** in **Advanced settings** on the plugin page. One path per line, substring match against the request URL path.
+
+### Webhook Status
+
+The plugin page shows a live status card for the auto-created webhook. If the webhook ever goes missing or lands in an error state, the card says why and gives you a **Recreate Webhook** button.
 
 ## Step 3: Connect and Configure Platforms
 
@@ -72,12 +85,14 @@ Same as any CleanClicks setup:
 
 ## Step 4: Enable Analytics Proxies (Signal+ Plans)
 
-If you use GA4 or Usermaven:
+The proxy checkboxes live on the plugin page in WordPress, not in the CleanClicks dashboard.
 
-1. Go to **Configuration > Advanced**.
-2. Enable the supported path used by the current installation.
-3. Save.
-4. Verify the first-party subdomain, consent state, browser request, intended property, and a meaningful event.
+1. In WordPress Admin, click **CleanClicks**.
+2. Open **Advanced settings**.
+3. Under **Analytics Proxies**, tick the box for each platform you use: **GA4 First-Party Proxy**, **Usermaven Proxy**, or **Plerdy Proxy**.
+4. Click **Save Changes**.
+
+The plugin pulls your GA4 Measurement ID and proxy routes from CleanClicks on its own, so leave the **GA4 Measurement ID** field blank unless you need to override it. The GA4 First-Party Proxy box is on by default.
 
 ## Step 5: Test
 
@@ -88,13 +103,13 @@ If you use GA4 or Usermaven:
 5. Check CleanClicks dashboard for events
 6. Check each ad platform (allow 15-30 minutes)
 
-## Important: GA4 Measurement Protocol
+## GA4 Purchase Events
 
-If you use the CleanClicks WordPress plugin with GA4, **disable GA4 Measurement Protocol** for the customer's primary GA4 property in Configuration → Vendors.
+Purchase events reach GA4 through the API secret saved when you connected GA4. There is nothing else to add.
 
-Why? The plugin pushes GA4 ecommerce events to the dataLayer client-side, and the GA4 First-Party Proxy routes those through your subdomain. If Measurement Protocol is also enabled against the customer's primary property, GA4 receives every event twice — once client-side (properly attributed) and once server-side (attributed to "Unassigned"). This causes inflated event counts and broken attribution.
+The plugin also pushes GA4 ecommerce events to the dataLayer client-side, and the GA4 First-Party Proxy routes those through your own subdomain so they keep their traffic source. Installing the plugin is not on its own a reason to change the GA4 server-side setting. If GA4 starts showing duplicate purchases, contact support instead of flipping that setting yourself.
 
-The first-party analytics proxy can reduce dependence on known third-party request paths. Browser rules, consent, caching, the plugin version, and the intended GA4 property can still affect collection. Verify the actual event path before relying on it. See [GA4 Connections](/connections/ga4).
+The first-party proxy cuts your dependence on third-party request paths. Browser rules, consent state, caching, and which GA4 property you are looking at still affect what lands. See [GA4 Connections](/connections/ga4).
 
 ## Cookie Banner Compatibility
 
@@ -102,7 +117,7 @@ Consent behavior depends on the deployed plugin version, the site's CMP, its con
 
 Test the current installation under accept, reject, later grant, Global Privacy Control, and CleanClicks opt-out states. Verify which identifiers are stored and which vendor events are sent in each state. CleanClicks support for WP Consent API or a named CMP does not choose a legal basis or consent category for the customer.
 
-See [CMP Configuration](/setup/cmp-configuration) for the bounded test matrix.
+For what the plugin stores and how it reads consent (cookie and storage classification, service-level consent, the OneTrust bridge), see [WordPress Setup → Cookies, Storage, and Consent](/setup/wordpress-setup#cookies-storage-and-consent). See [CMP Configuration](/setup/cmp-configuration) for the bounded test matrix.
 
 ## Caching Considerations
 

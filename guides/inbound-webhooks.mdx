@@ -90,15 +90,19 @@ The `results` object shows the per-platform dispatch outcome. A duplicate event 
 }
 ```
 
-Authentication and validation errors return `{ "ok": false, "error": "..." }` — e.g. `Invalid API key` (401), `email or hashed_email required` (400), `Inbound webhook not enabled` (403). Malformed requests (bad content type, oversized body, invalid JSON) return a plain-text error with the matching status.
+Authentication and validation errors return `{ "ok": false, "error": "..." }`, e.g. `Invalid API key` (401), `email or hashed_email required` (400), `Inbound webhook not enabled` (403). After repeated wrong keys from the same domain, further attempts return `Too many failed authentication attempts` with status 429 instead of 401. Malformed requests (bad content type, oversized body, invalid JSON) return a plain-text error with the matching status.
 
 ## How Attribution Works
 
-When an inbound webhook arrives, CleanClicks can look up previously captured identifiers and campaign fields for the supplied email identity. Whether a match is available depends on earlier capture, consent state, retention, and current configuration.
+An inbound webhook carries no browser context, so CleanClicks hashes the email you send and looks it up against the identifiers stored for that hashed email: the click IDs (`gclid`, `fbclid`, `ttclid`, `msclkid`, and the rest) and UTM fields captured on the visitor's earlier visit to your site.
 
-Current consent and destination rules determine which fields and events may be relayed. A matching email does not guarantee a matching ad click or full attribution. If an identifier is missing, a destination may skip the event or accept it without attributing it to an ad.
+That stored record only exists if the same email was captured during that visit. The tag writes it when the visitor submits a form carrying their email address (or when your code calls `ccRelay.identifyEmail()`). No earlier identify means no record, so the lookup finds nothing and the conversion is sent with no click ID attached.
 
-Verify the webhook response, per-destination result, event and order IDs, and destination receipt. A successful top-level response alone does not prove that every destination received or attributed the conversion.
+Consent can also suppress the lookup. Under a confirmed opt-out, or when the consent record cannot be read, no identifiers are returned at all.
+
+A matching email does not guarantee a matching ad click. Without a click ID, a destination may skip the event or accept it without attributing it to an ad. Google Ads in particular drops click conversions that carry no `gclid`, `wbraid`, or `gbraid`.
+
+To confirm a test event landed, read the `results` object in the response: it names each platform and whether that platform accepted the event. Then look up the order ID you sent in the destination platform. A `200` with `"ok": true` alone does not prove every destination received or attributed the conversion.
 
 ## Examples
 

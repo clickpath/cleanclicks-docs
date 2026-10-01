@@ -34,8 +34,8 @@ If GA4 is configured, enable debug mode in GA4's DebugView to watch events arriv
 
 Conversions flow to two places:
 
-1. **Your CleanClicks dashboard** — the home page shows recent activity and basic metrics
-2. **Your ad platform** — check whether the enabled destination accepted the conversion through its configured delivery path
+1. **Your CleanClicks dashboard** — the home page carries a **Recent conversions** list, one row per conversion, showing the timestamp, the channel, the `order_id`, and a status light per platform (GAds, Meta, TikTok, MS, GA4). Green means that platform accepted the event, red means it failed, grey means it was not sent. The list reloads when you switch back to the tab, so leave it and come back rather than waiting on the open page.
+2. **Your ad platform** — look up the same order ID in the platform's own reporting to confirm it arrived there too
 
 Allow a few minutes for data to appear. Ad platforms like Google Ads and Meta can take 15-30 minutes to reflect new conversions in their dashboards.
 
@@ -56,11 +56,13 @@ For more detailed troubleshooting, see [Conversions Not Appearing](/troubleshoot
 When a visitor triggers a conversion event:
 
 1. The installed tag or integration captures available event fields, identifiers, and consent state.
-2. The event can be sent through the configured first-party endpoint.
+2. The event is posted to your first-party endpoint at `cleanclicks.yourdomain.com/__cc/conv`.
 3. CleanClicks applies current filtering, consent, and destination rules.
 4. Each enabled destination decides whether to accept and attribute the event.
 
-A server-side relay cannot recover an event or identifier that the installation never captured. Blockers, browser rules, consent choices, navigation timing, and configuration can still affect the result. Verify one test event in both CleanClicks and the intended destination, including its event ID, consent state, and duplicate-event result.
+The tag sends that request with `keepalive`, so the request can finish even if the visitor leaves the page right after converting.
+
+A server-side relay cannot recover an event or identifier that the installation never captured. Blockers, browser rules, consent choices, and configuration can still affect the result. To check one test event, find its row in **Recent conversions** on the dashboard home page, confirm the status lights for the platforms you expect, then look up the same order ID in those platforms.
 
 One platform-specific caveat: Google Ads only accepts click conversions that carry a click ID (`gclid`, `wbraid`, or `gbraid`) from the original ad click. A conversion from a visitor who did not arrive through a Google ad is still recorded in CleanClicks, but is not uploaded to Google Ads.
 

@@ -44,17 +44,17 @@ Your existing setup and CleanClicks both want to own first-party cookies on your
 
 ## Three paths
 
-### Path A: Audit-only (recommended for evaluation)
+### Path A: Free Monitor (recommended for evaluation)
 
-**Use this if** you want to measure how much your existing tracking is missing before you commit to switching.
+**Use this if** you want to see how your existing tracking is holding up before you commit to switching.
 
-CleanClicks runs in audit mode — we capture sessions, page views, conversions, and ad-blocker bypass metrics on your domain for a 7-day window. We do NOT dispatch anything to your ad platforms. Your existing setup continues firing normally. No collisions.
+The Free Monitor watches your domain and dispatches nothing to your ad platforms. Your existing setup keeps firing normally, so there are no collisions. It takes no payment.
 
-At the end of the audit you get a comparison report: "GA4 saw X conversions. CleanClicks captured X+N. Here's the N that ad-blockers and bot filtering hid from your existing stack."
+The monitor dashboard shows a live tracking-health status, consent and ad-blocker weakness flags, observed non-human request evidence, and a 30-day timeline. It does not compare your traffic against GA4 pageviews, so it will not hand you a side-by-side conversion gap number.
 
-If the gap is meaningful, move to Path B or Path C. If not, no harm done — your existing setup was already capturing most of your real traffic.
+If the monitor flags real breaks, move to Path B or Path C. If it stays healthy, your existing setup is holding up.
 
-**Setup:** Sign up at [cleanclicks.ai/audit](https://cleanclicks.ai/audit). Connect GA4. Add the CNAME. Wait 7 days. Read the report.
+**Setup:** Start your Free Monitor at [platform.cleanclicks.io/monitor/start](https://platform.cleanclicks.io/monitor/start). Add the CNAME shown on that page as a DNS-only (gray cloud) record. The monitor activates on its own once the record resolves.
 
 ### Path B: Parallel mode (keep both, disable our vendor dispatch)
 
@@ -75,13 +75,13 @@ You do NOT get conversion delivery — that's handled by your existing layer.
 **Setup:**
 
 1. Sign up and complete normal CleanClicks onboarding (install the WordPress plugin or Shopify Custom Pixel)
-2. In the cc-saas dashboard, go to **Configuration → Vendors** and confirm every vendor toggle is OFF
-3. In **Configuration → Ecommerce**, disable "GA4 Server-Side Events" (the default for WordPress and Shopify v2.1.0+ installs already does this)
+2. In the CleanClicks dashboard, go to **Configuration → Vendors** and confirm every vendor toggle is OFF
+3. Leave Google Analytics 4 unconnected in CleanClicks while you run in parallel. If you already saved a GA4 Measurement ID and API Secret, contact support so CleanClicks stops sending GA4 events. The GA4 vendor toggle alone does not stop them when GA4 First-Party Mode is on.
 4. Your existing setup keeps firing. CleanClicks captures the data but doesn't onward-send.
 
 ### Path C: Full migration (switch from your existing stack to CleanClicks)
 
-**Use this if** Path A's audit showed a meaningful gap AND you want to consolidate to one first-party layer.
+**Use this if** Path A's monitor showed real breaks AND you want to consolidate to one first-party layer.
 
 The key insight: Stape, Taggers, and Google Cloud Gateway are all SS-GTM destinations that your GTM Web container forwards to. They don't operate independently — they're downstream of GTM. Because they're downstream of GTM, your GTM Web container controls whether those destinations receive any traffic at all.
 
@@ -101,7 +101,7 @@ If you prefer to make the GTM changes yourself, log into Google Tag Manager and:
 ## Recommended decision flow
 
 1. **First-time prospect, no existing stack:** Sign up normally. Default install pattern is correct. Skip this guide.
-2. **First-time prospect with existing stack:** Start with Path A. Audit for 7 days. Decide based on the gap report.
+2. **First-time prospect with existing stack:** Start with Path A. Watch the Free Monitor, then decide from what it flags.
 3. **Existing CleanClicks customer who just added Stape/Taggers:** Move to Path B (disable our vendor dispatch) OR Path C (migrate off Stape/Taggers). Don't run both at full strength.
 4. **You're not sure what tracking you already have:** Ask your developer. Check your site source for `googletagmanager.com/gtm.js`. Check DNS for unusual subdomains like `sgtm.*`, `metric.*`, `tags.*`. If you find any, this guide applies.
 

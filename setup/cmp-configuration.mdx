@@ -43,15 +43,21 @@ Record the browser, timestamp, domain, consent state, event ID, order ID when ap
 
 ## WordPress
 
-The current CleanClicks plugin supports WP Consent API and may include additional CMP bridges. Verify the deployed plugin version and the specific bridge before relying on it. A bridge can carry a signal; it does not decide the customer's category or legal basis.
+The CleanClicks WordPress plugin integrates with the **WP Consent API** and ships a **OneTrust** bridge. It registers itself as a WP Consent API compliant plugin, so CMPs that warn about non-compliant plugins stop flagging it.
+
+The plugin asks at the service level first: it calls `wp_has_service_consent('cleanclicks')` where the site's CMP supports WP Consent API v2.0+, so a visitor can grant or deny the `cleanclicks` service on its own rather than through a shared `statistics` or `marketing` category. Where only v1.x is available it falls back to category-level `wp_has_consent()`. The plugin declares its own cookies and storage keys to the WP Consent API as **functional**.
+
+OneTrust does not integrate with the WP Consent API on its own, so the plugin bridges it: groups C0001, C0002 and C0004 map onto WP Consent API categories, synced once on load and again on `OneTrustGroupsUpdated` and `OneTrust.OnConsentChanged`. Separately, `cc.js` reads consent state directly from **CookieYes**, **OneTrust**, **Cookiebot** and **iubenda**, and treats Global Privacy Control as a denial.
+
+Those are plugin and tag behaviors. A bridge carries a signal; it does not decide the customer's category or legal basis.
 
 ### Practical CMP Checks
 
 1. Identify the CMP and its version in WordPress **Plugins** or the site's banner configuration. Record the deployed CleanClicks plugin version too.
 2. Confirm which category or service the customer's approved consent model assigns to CleanClicks. Do not change that category merely to make a test pass.
-3. In each row of the test matrix, inspect whether `cc-wp.js` loads and whether the CMP's consent signal reaches the plugin. The plugin can read `wp_has_consent` when WP Consent API exposes it; verify the category actually configured for this installation.
+3. In each row of the test matrix, inspect whether `cc-wp.js` loads and whether the CMP's consent signal reaches the plugin. The plugin reads `wp_has_service_consent('cleanclicks')` first and falls back to `wp_has_consent()`; check which of the two your CMP's WP Consent API version exposes.
 4. For Complianz, inspect script management and the `cleanclicks-wp` script handle. A blocked script cannot receive a later consent callback. Confirm its loading behavior matches the approved policy before changing a rule.
-5. For OneTrust, compare the selected banner groups with the observed CleanClicks consent state. Verify the deployed bridge instead of assuming every group mapping is supported.
+5. For OneTrust, compare the selected banner groups with the observed CleanClicks consent state. The bridge reads groups C0001, C0002 and C0004 only, so a group outside those three carries no signal to CleanClicks.
 6. For CookieYes, Cookiebot, Iubenda, or another CMP, review the current vendor configuration and test its callback and script-blocking behavior. Menu names and defaults can differ by version.
 
 Where Google Consent Mode settings such as `url_passthrough` or `ads_data_redaction` are part of the site's approved configuration, record their actual values and test their effect. These settings do not establish a consent category or guarantee attribution.
