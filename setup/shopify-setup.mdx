@@ -66,11 +66,15 @@ Use the Custom Pixel generated for your domain and record its version before tes
 3. In Shopify Admin, go to **Settings** > **Customer events**
 4. Click **Add custom pixel**
 5. Name it **CleanClicks**
-6. In the **Customer privacy** section, set Data sale to **Does not qualify as data sale** and Data collection to **Collected from this website or app**
-7. Paste the pixel code into the code editor
-8. Click **Save**, then click **Connect**
+6. In the **Customer privacy** section, set Permission to **Not required**
+7. Set Data sale to **Does not qualify as data sale**
+8. If Shopify shows a Data collection setting, set it to **Collected from this website or app**
+9. Paste the pixel code into the code editor
+10. Click **Save**, then click **Connect**
 
 > **Important:** You must click both **Save** and **Connect**. A saved but unconnected pixel won't fire.
+
+> **Why "Not required"?** The CleanClicks pixel runs for every visitor and applies the visitor's consent choice itself. When a visitor declines, it sends events as measurement-only and removes their hashed email. See [CCPA and opt-out behavior](/reference/data-privacy#ccpa-and-opt-out-behavior) for what each platform receives.
 
 > **Note:** If you've already installed an older version of the pixel, delete it and create a fresh one. Always use the latest code from the dashboard.
 
