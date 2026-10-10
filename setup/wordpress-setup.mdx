@@ -199,9 +199,9 @@ Update the plugin in place, over the version you have now:
 3. When WordPress shows that the plugin is already installed, click **Replace current with uploaded**
 4. On the **Plugins** screen, check that CleanClicks shows the new version number. Then open the **CleanClicks** settings page and check that your settings still hold their values.
 
-> **Warning:** Never deactivate or delete the plugin to update it. Deleting the plugin erases all of its settings, including your API key, and removes its WooCommerce webhook and its stored Usermaven credentials. Deactivating it also removes the webhook and the Usermaven credentials. If WordPress does not offer **Replace current with uploaded**, stop and contact support before you delete anything.
+> **Warning:** Never deactivate or delete the plugin to update it. Deleting the plugin erases all of its settings, including your API key, and its stored Usermaven credentials. Deactivating it removes the Usermaven credentials too. While WooCommerce is active, either one also removes the plugin's WooCommerce webhook. If WordPress does not offer **Replace current with uploaded**, stop and contact support before you delete anything.
 
-An in-place update keeps your existing settings. Smart defaults only apply on fresh installs (where no `cleanclicks_settings` option exists), so an update never overwrites a configuration you set by hand.
+An in-place update keeps your existing settings. Smart defaults only apply on fresh installs (where no `cleanclicks_settings` option exists), so an update does not reapply defaults over a configuration you set by hand.
 
 After updating, clear all cache layers in this order:
 
