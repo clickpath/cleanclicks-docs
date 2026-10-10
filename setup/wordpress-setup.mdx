@@ -192,16 +192,16 @@ Manual installation captures click IDs, attribution, and conversions on the stan
 
 ## Plugin Updates
 
-When updating the plugin:
+Update the plugin in place, over the version you have now:
 
-1. **Deactivate** the current version in WordPress Admin → Plugins
-2. **Delete** it
-3. **Upload** the new version via Plugins → Add New → Upload Plugin
-4. **Activate**
+1. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
+2. Choose the new plugin zip and click **Install Now**
+3. When WordPress shows that the plugin is already installed, click **Replace current with uploaded**
+4. On the **Plugins** screen, check that CleanClicks shows the new version number. Then open the **CleanClicks** settings page and check that your settings still hold their values.
 
-Don't use WordPress's "Replace current with uploaded" feature — it's unreliable. Always deactivate, delete, and re-upload.
+> **Warning:** Never deactivate or delete the plugin to update it. Deleting the plugin erases all of its settings, including your API key, and removes its WooCommerce webhook and its stored Usermaven credentials. Deactivating it also removes the webhook and the Usermaven credentials. If WordPress does not offer **Replace current with uploaded**, stop and contact support before you delete anything.
 
-Updates preserve your existing settings. Smart defaults only apply on fresh installs (where no `cleanclicks_settings` option exists). If you've configured the plugin manually, your configuration is sacred and never overwritten on update.
+An in-place update keeps your existing settings. Smart defaults only apply on fresh installs (where no `cleanclicks_settings` option exists), so an update never overwrites a configuration you set by hand.
 
 After updating, clear all cache layers in this order:
 
@@ -222,7 +222,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
 | Analytics proxies not loading | Verify GA4 or Usermaven is configured in CleanClicks → **Configuration** → **Vendors**. Then in WordPress Admin → **CleanClicks**, open **Advanced settings** and confirm the matching box is ticked under **Analytics Proxies** (**GA4 First-Party Proxy**, **Usermaven Proxy**, or **Plerdy Proxy**). Note: analytics proxies require **Signal** or **Clarity** plan. |
-| Site is on `www.example.com` and proxy origin looks wrong | The plugin strips the leading `www.` when it derives the origin, so `www.example.com` becomes `cleanclicks.example.com`. If the origin still looks wrong, download the current plugin from your dashboard and reinstall. |
+| Site is on `www.example.com` and proxy origin looks wrong | The plugin strips the leading `www.` when it derives the origin, so `www.example.com` becomes `cleanclicks.example.com`. If the origin still looks wrong, download the current plugin from your dashboard and update it in place (see **Plugin Updates** above). |
 | GA4 events show as "Unassigned" | Confirm you are looking at the GA4 property the plugin is configured against, and that **GA4 First-Party Proxy** is ticked so client-side events keep their traffic source. Installing the plugin is not on its own a reason to change the GA4 server-side setting. If GA4 shows duplicate purchases, contact support. See [GA4 Connections](/connections/ga4). |
 
 ---
