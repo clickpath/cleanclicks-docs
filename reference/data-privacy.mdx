@@ -37,8 +37,16 @@ By default, CleanClicks measures visitors in the United States only (a US-only g
 |---|---|
 | Order ID | Deduplication |
 | Order total / currency | Revenue reporting |
+| Order tax and shipping amounts | Purchase reporting in Google Analytics |
+| Coupon codes applied to a cart or an order (WooCommerce) | Purchase reporting in Google Analytics |
 | Product details | Product-level conversion tracking |
 | Customer email | Hashed for cross-platform matching |
+
+On a site with Google Analytics connected, and for a visitor who has not opted out, tax and shipping go to Google Analytics with the purchase event, and coupon codes with the checkout and purchase events. For a visitor who has opted out, CleanClicks still stores them, and whether they reach Google Analytics depends on the path. From CleanClicks's own conversion sending, an opted-out visitor's conversion goes to Google Analytics only if CleanClicks has set a measurement-only override for Google Analytics on your site's record; that is not a setting in your dashboard. Separately, where your site relays Google Analytics through your CleanClicks subdomain, an opted-out visitor's purchase can still reach Google Analytics in a stripped form that keeps the tax and shipping amounts and carries no coupon code. That stripped feed is on by default. It sends nothing for a browser that sends a Global Privacy Control signal, and only CleanClicks can switch it off for your site. CleanClicks's servers send them to no other platform. Where CleanClicks receives them in a conversion message, it stores them with the conversion record for 90 days: that is the case for the WooCommerce plugin, and for the Shopify Custom Pixel from version 2.8.0. With an earlier pixel version, tax and shipping can still reach Google Analytics through your CleanClicks subdomain, and CleanClicks does not store them. Of the CleanClicks integrations, only the WooCommerce plugin sends coupon codes.
+
+On a WooCommerce site with Usermaven switched on, the plugin can also send events from your own server straight to Usermaven, on two paths. Product, cart and checkout-start events carry the coupon codes applied to the cart, and the checkout start also carries the cart's tax, shipping and discount totals. This path stops for a visitor who has opted out, or whose consent, where the site requires it, has not been given or has been refused. Routing orders through CleanClicks does not stop it. Order events carry the order's totals for tax, shipping and discounts, the payment method, the billing and shipping state and country, and, for a new order, a completed order and an import of past orders, the coupons used. This second path stops where CleanClicks has routed your site's orders through its own servers, which is a setting CleanClicks makes on your site's record and not one in your dashboard, or when the order records a refusal.
+
+These are the main order fields. An order message from your store's server can contain more than this table lists.
 
 ## Data Retention
 

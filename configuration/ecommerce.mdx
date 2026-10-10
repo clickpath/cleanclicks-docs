@@ -74,10 +74,14 @@ Both Shopify and WooCommerce integrations capture:
 | Order ID | Your store's order identifier |
 | Order total | Revenue amount |
 | Currency | Transaction currency |
+| Tax and shipping | Order tax and shipping amounts, reported to Google Analytics. On Shopify: with pixel version 2.8.0 or later, or with an earlier version only when the pixel itself reports the purchase to Google Analytics |
+| Coupon codes | Codes applied to a cart or an order (WooCommerce only), reported to Google Analytics |
 | Products | Product names, IDs, quantities, prices |
 | Customer email | Hashed for privacy, used for cross-platform matching |
 | Click IDs | gclid, fbclid, etc. for attribution |
 | UTM parameters | Campaign attribution data |
+
+These are the main fields. An order message from your store's server can contain more than this table lists.
 
 Customer emails are SHA-256 hashed before being sent to ad platforms. The raw email is never shared with third parties.
 
