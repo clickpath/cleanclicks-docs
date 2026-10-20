@@ -83,7 +83,7 @@ Both Shopify and WooCommerce integrations capture:
 
 These are the main fields. An order message from your store's server can contain more than this table lists.
 
-Customer emails are SHA-256 hashed before being sent to ad platforms. The raw email is never shared with third parties.
+Customer emails are SHA-256 hashed before being sent to ad platforms. In what CleanClicks's servers build and send, only the SHA-256 hash is passed on, apart from an email address inside an advertising click-identifier value. The first-party analytics proxy does not screen the page addresses in your site's own Google tag requests, so an email address your site puts into a page address can reach Google that way.
 
 Beyond the purchase, the Shopify Custom Pixel and the WooCommerce plugin also capture the browsing funnel — `view_item`, `add_to_cart`, and `begin_checkout` — and pass those to GA4, Meta, and TikTok under each platform's standard event names.
 
@@ -96,7 +96,7 @@ A webhook order arrives with no browser session attached to it. CleanClicks look
 - The GA4 client ID and session ID
 - The Usermaven anonymous ID
 
-Recovery needs that visitor's hashed email to have been captured earlier in the visit. Without it there is nothing to match the order against, and the conversion goes out carrying only what the webhook itself brought. If the visitor opted out, the order is sent as measurement-only.
+Recovery needs that visitor's hashed email to have been captured earlier in the visit. Without it there is nothing to match the order against, and the conversion goes out carrying only what the webhook itself brought. CleanClicks does not transmit to advertising platforms a conversion from an order it can tie to an opt-out, and of the analytics events CleanClicks's servers build and send, nothing is sent for it unless a measurement-only setting has been switched on for that destination and the visitor's refusal is known not to cover analytics. An order that a Shopify store reports from its own servers does not carry a Global Privacy Control signal or the opt-out cookie from the visitor's browser. See the CleanClicks privacy policy (Section 4).
 
 Coverage also depends on capture timing, consent state, deduplication, webhook delivery, and whether the destination accepts the event.
 

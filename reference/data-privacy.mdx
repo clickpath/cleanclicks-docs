@@ -66,34 +66,35 @@ These are the main order fields. An order message from your store's server can c
 | Click IDs, campaign details, session ID, visit count and email hash in your site's browser storage | As described above; the visit count, and some of the others, have no time limit |
 | Session cookie (cc_sid) | 30 minutes |
 | Deduplication records | Up to 7 days (24 hours by default, 48 hours for order webhooks) |
-| Ad platform OAuth tokens | 30 days |
 
 After the retention period, data is automatically purged. Some records are kept longer on purpose: opt-out records are kept through a deletion request, so that the opt-out stays in force, and the record of a deletion request that was run and the record of a request to lift an opt-out are kept with no expiry, as evidence. This table lists the main records; the CleanClicks privacy policy (Section 5) lists more.
 
 ## Hashing and Encryption
 
-- **Customer emails** are SHA-256 hashed before being sent to any ad platform. The raw email is never shared with third parties.
-- **Ad platform credentials** (OAuth tokens, API keys) are encrypted at rest using AES-256-GCM with per-customer encryption keys.
-- **API keys** are stored as SHA-256 hashes. The raw key is shown once at creation and never stored.
+- **Customer emails** are SHA-256 hashed before being sent to any ad platform. In what CleanClicks's servers build and send, only the SHA-256 hash is passed on, apart from an email address inside an advertising click-identifier value. The first-party analytics proxy does not screen the page addresses in your site's own Google tag requests, so an email address your site puts into a page address can reach Google that way.
+- **All stored data** is encrypted at rest. The Google Analytics refresh token is encrypted at rest using AES-256 with a per-account key.
 
 ## CCPA and opt-out behavior
 
-When a visitor opts out (via Global Privacy Control, a CleanClicks opt-out cookie, or your consent platform's "reject" applied through the WordPress plugin's consent bridge), CleanClicks stops sending that visitor's data to advertising platforms:
+When a visitor opts out (via Global Privacy Control, a CleanClicks opt-out cookie, a refusal recorded against the visitor's hashed email address, or your consent platform's "reject" applied through the WordPress plugin's consent bridge), CleanClicks does not transmit to advertising platforms a conversion from a request or order it can tie to that opt-out. For such a request or order:
 
-- **Meta, TikTok, LinkedIn, and Microsoft Advertising receive nothing.**
-- **Google Ads** conversions are limited to privacy-preserving signals with the advertising click identifiers removed, so they cannot be tied to the visitor.
-- **First-party website analytics continue** as measurement only. Google Analytics receives the activity as first-party measurement, with the advertising signals (ad personalization and ad-user-data) set to denied.
-- **Personal identifiers are stripped** for every platform: hashed email, IP address, user agent, geo, and device type are removed from opted-out events.
+- **Meta, TikTok, and Microsoft Advertising receive nothing.**
+- **Google Ads.** No identifying conversion is sent. Advertising click identifiers are removed, and the server-side conversion upload is not made. On pages that load CleanClicks's own script, that script sets Google's consent signals for ad storage, ad user data, and ad personalization to denied for a browser that sends a Global Privacy Control signal or carries the opt-out cookie, unless your site's own cookie banner changes those settings. CleanClicks's Shopify pixel and the theme code CleanClicks provides for Shopify do not load that script, so on a Shopify store that uses only those, no CleanClicks code sets these signals.
+- **Google Analytics, through your site's first-party analytics proxy.** For a request that carries a Global Privacy Control signal, the proxy forwards no page visit, event, or purchase to Google Analytics. For another opt-out the proxy can see on the request, the proxy by default still forwards page visits, events, and purchases to Google Analytics with identifying details removed: no IP address, no user or visitor identifier, no advertising click identifier, no page title, and no session identifier; a new random client identifier is used on every hit; and ads personalization is marked off. CleanClicks can switch this feed off for your site.
+- **Analytics events CleanClicks's servers build and send (Google Analytics Measurement Protocol and Usermaven).** Nothing is sent, unless a measurement-only setting has been switched on for that destination for your site and the visitor's refusal is known not to cover analytics.
+- **Personal identifiers are stripped** where such a setting is on: the hashed email address, IP address, user agent, location, device type, campaign details (other than campaign tags in the page address), and advertising click identifiers are removed.
+
+For the limits on a Shopify store, see the CleanClicks privacy policy (Section 4).
 
 CleanClicks does not transmit Limited Data Use or limited-data-use flags. The previous LDU pathway was removed on 2026-05-29 so that opted-out visitors are dropped before dispatch rather than sent under a restriction flag.
 
 ## GPC (Global Privacy Control)
 
-CleanClicks honors GPC in real time, before any data is transmitted. The tracking script reads the browser's `navigator.globalPrivacyControl` signal, and the CleanClicks edge worker also honors the `Sec-GPC` request header and the CleanClicks opt-out cookie directly. A GPC signal is treated as a valid opt-out under California law. On WordPress, the plugin additionally integrates with the WP Consent API to detect GPC and consent-management platforms.
+CleanClicks acts on GPC for each request that carries it. On pages that load CleanClicks's own script, GPC is detected at both the browser and server level. The tracking script reads the browser's `navigator.globalPrivacyControl` signal, and the CleanClicks edge worker also honors the `Sec-GPC` request header and the CleanClicks opt-out cookie directly. A GPC signal is treated as a valid opt-out under California law. CleanClicks's Shopify pixel does not read the signal in the browser; whether the pixel's requests carry it depends on the browser and on Shopify. On WordPress, the plugin additionally integrates with the WP Consent API to detect consent-management platforms.
 
 ## GDPR
 
-GDPR-specific features (consent gates, TCF 2.2 integration, right-to-erasure) are on the roadmap but not yet available. For EU-focused businesses, consult your legal team about compliance requirements with the current feature set.
+CleanClicks markets the service exclusively to businesses in the United States and does not direct it to data subjects in the European Economic Area, the United Kingdom, or Switzerland. For EU-focused businesses, consult your legal team about compliance requirements with the current feature set.
 
 ## Data Residency
 
