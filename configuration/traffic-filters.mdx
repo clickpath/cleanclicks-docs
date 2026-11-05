@@ -17,7 +17,7 @@ Bot detection and country filtering run on every plan. Bot detection needs no co
 
 | Feature | Signal | Clarity |
 |---|---|---|
-| Bot score threshold | Yes | Yes |
+| Bot score threshold (no effect today) | Yes | Yes |
 | Custom user-agent patterns | Yes | Yes |
 | Market (metro-area) narrowing | Yes | Yes |
 | IP filtering | Yes | Yes |
@@ -26,7 +26,7 @@ A control your plan does not include shows an upgrade card in its place.
 
 ## Bot Filtering
 
-Bot detection runs on every plan and needs no configuration, so the Bot Filtering section carries an **Always On** badge. It blocks known bots, crawlers, and automated traffic from being counted as conversions. Bot score thresholds and custom user-agent patterns are the Signal+ add-ons layered on top.
+Bot detection runs on every plan and needs no configuration, so the Bot Filtering section carries an **Always On** badge. It blocks known bots, crawlers, and automated traffic from being counted as conversions. Signal+ adds custom user-agent patterns on top, plus a bot score threshold that has no effect today.
 
 ### Basic Bot Filtering
 
@@ -35,7 +35,7 @@ Bot detection runs on every plan and needs no configuration, so the Bot Filterin
 
 ### Advanced Bot Filtering (Signal+)
 
-- **Bot score threshold:** Set a value between 1 and 99. Each visitor gets a bot score where a *lower* score is more bot-like, so CleanClicks blocks visitors whose score falls **below** your threshold -- a **higher** threshold blocks more aggressively. There is no default; leave it unset to skip score-based filtering.
+- **Bot score threshold:** CleanClicks does not receive Cloudflare bot scores today, so this setting has no effect yet. Where Cloudflare gives a request a bot score, a *lower* score means the request is more likely a bot, and CleanClicks blocks a tracking request whose score falls **below** your threshold, so a **higher** threshold blocks more. A request without a score is not checked. Set a value from 0 to 99; 0 turns this filter off. On Signal+ plans, CleanClicks sets the threshold to 30 during setup if it is 0; that value has no effect today either.
 - **Custom blocked UA patterns:** Add your own user-agent patterns to block. Useful for filtering proprietary crawlers or monitoring tools that your analytics shouldn't count.
 
 ### Adding Custom UA Patterns
