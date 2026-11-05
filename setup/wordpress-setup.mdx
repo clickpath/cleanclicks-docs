@@ -37,7 +37,7 @@ The plugin does several things on first activation so you don't have to:
 - **WooCommerce webhook auto-create** — if WooCommerce is active, the plugin creates the `order.created` webhook for you, pointed at your CleanClicks proxy with the correct signing secret. No manual webhook setup required.
 - **Onboarding banner** — if you haven't entered your Inbound API Key yet, the plugin shows a banner on the settings page walking you through the one-step setup.
 
-Smart defaults are gated server-side and preserve customer choice on **updates** and **reactivations**. A plugin update does not reapply defaults over settings you set by hand.
+CleanClicks's server decides whether smart defaults apply, and the plugin applies them only on a fresh install. On a plugin **update** or **reactivation**, they do not overwrite settings you set by hand.
 
 ### Webhook Status Card
 
@@ -158,7 +158,7 @@ The other three are browser storage, not cookies:
 
 ### Service-Level Consent
 
-The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). Where CleanClicks treats consent as required for your site (by default once the plugin has reported the WP Consent API to it) and no consent API is present, the plugin blocks analytics dispatch rather than assuming a grant. The plugin's **Require Consent** setting adds a consent check only where the WP Consent API is loaded. With no consent API, that setting on its own does not block tracking, except while the plugin cannot load your CleanClicks settings.
+The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). By default, CleanClicks treats consent as required for your site once the plugin reports that the WP Consent API is loaded on your site. If CleanClicks treats consent as required and no consent API is loaded, the plugin blocks analytics dispatch rather than treating the visitor as consenting. The plugin's **Require Consent** setting adds a consent check only where the WP Consent API is loaded. With no consent API, that setting on its own does not block tracking, except while the plugin cannot load your CleanClicks settings.
 
 ### OneTrust Bridge
 
@@ -219,7 +219,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 |---|---|
 | Plugin won't activate | Verify PHP 7.4+. Check your error log for class-name collisions with other plugins (CleanClicks uses the `CLEANCLICKS_` prefix to avoid conflicts but a third-party plugin may use the same identifier). |
 | Events not firing | Verify your domain is **Active** in CleanClicks. Check browser DevTools → Network for `cleanclicks.yourdomain.com/__cc/cc.js` returning 200. Verify the `?ver=` parameter matches the installed plugin version (mismatch means cache is stale — clear all cache layers). |
-| The webhook card says the webhook was deleted outside the plugin | Click **Create Webhook Now** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
+| The webhook card says the webhook was deleted outside the plugin | Click **Create Webhook Now** on the card. The plugin re-creates the `order.created` webhook with the correct signing secret. |
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
