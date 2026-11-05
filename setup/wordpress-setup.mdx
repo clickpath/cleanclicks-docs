@@ -139,22 +139,46 @@ This section lists what the plugin stores and how it reads consent. It does not 
 
 ### Cookie and Storage Classification
 
-The plugin declares its own storage to the WP Consent API as `functional`. CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) read that classification.
+The plugin registers the cookies and browser storage below with the WP Consent API under the `cleanclicks` service. Each item is registered under its own category, `marketing`, `statistics`, or `functional`, shown in the **Category** column. CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) read that classification.
 
-Two of the five are cookies:
+The list covers what the plugin's own script (`cc-wp.js`) stores, what `cc.js` (the CleanClicks tracking script the plugin loads beside its own) stores, the cookie the plugin sets when CleanClicks reports an opt-out, and the cookies the CleanClicks service sets.
 
-| Name | Lifetime | What It Holds |
-|---|---|---|
-| `cc_pid` | 1 year | Anonymous visitor identifier, used for conversion deduplication |
-| `cc_ss_optout` | 1 year | The visitor-controlled privacy opt-out flag |
+These are cookies:
 
-The other three are browser storage, not cookies:
-
-| Name | Where | Lifetime | What It Holds |
+| Name | Category | Lifetime | What It Holds |
 |---|---|---|---|
-| `cc_click_ids` | localStorage | 90 days | Ad click identifiers captured from URL parameters |
-| `cc_attribution` | localStorage | 30 days | UTM parameters, referrer, and landing page |
-| `cc_session_id` | sessionStorage | Session | Groups page views within one visit |
+| `cc_pid` | `marketing` | 1 year | A random visitor identifier that links this browser's visits, advertising clicks, and purchases |
+| `cc_sid` | `statistics` | 30 minutes | A random session identifier that keeps one visit's page views together when Google Analytics is sent through your site's own domain. Set only where that feature is on. |
+| `cc_ss_optout` | `functional` | 1 year | The privacy opt-out flag. When it is set, the site limits what it sends to advertising and analytics services, as the site's privacy choices page describes. |
+| `cc_ss_optout_relay` | `functional` | 6 hours | The privacy opt-out flag, copied to your site from an opt-out made on the CleanClicks privacy page. It has the same effect as `cc_ss_optout`. |
+| `cc_optin_chal` | `functional` | 10 minutes | A security token for the step on the CleanClicks privacy page that allows sale or sharing again. Set only when a visitor starts that step. |
+
+The rest are browser storage, not cookies. The WP Consent API has no type for sessionStorage, so the plugin registers its sessionStorage items with the type `LOCALSTORAGE`. The **Where** column shows the store each item uses.
+
+Stored by the plugin's script (`cc-wp.js`):
+
+| Name | Where | Category | Lifetime | What It Holds |
+|---|---|---|---|---|
+| `cc_click_ids` | localStorage | `marketing` | 90 days for each identifier, by the device's clock | Advertising click identifiers captured from URL parameters (for example `gclid`, `fbclid`). Each one is removed on the next page view after its 90 days. A short code and the first-seen date stay for the latest identifier of each kind, to help keep it from being used again. |
+| `cc_attribution` | localStorage | `marketing` | Until a later visit replaces it | UTM campaign parameters, the referring page, and the landing page address, which can include an advertising click identifier |
+| `cc_wp_hashed_email` | localStorage | `marketing` | 90 days | A one-way hash (SHA-256) of the email address, and a short code that stands for the advertising click identifiers last sent with it. Kept so that a purchase can be matched to the visit that led to it. |
+| `cc_wp_identity_inflight` | sessionStorage | `marketing` | Session | A one-way hash (SHA-256) of the email address. Marks a hashed-email submission that is in progress, so that it is not sent twice. |
+| `cc_wp_identity_retry` | sessionStorage | `marketing` | Session | A one-way hash (SHA-256) of the email address. Counts the retries of a hashed-email submission that did not get through. |
+| `cc_session_id` | sessionStorage | `statistics` | Session | A session identifier that groups page views within one visit |
+| `cc_session_num` | localStorage | `statistics` | No expiry | A count of this browser's visits to the site |
+| `cc_wp_deduped` | localStorage | `statistics` | Each entry: 30 seconds while its event is being sent, then the site's deduplication window (24 hours by default) | The events already sent, so that none is counted twice: the event name with the order number, or with the page path and item identifiers. An entry past its time is removed the next time the plugin checks an event against this list. |
+
+Stored by `cc.js`:
+
+| Name | Where | Category | Lifetime | What It Holds |
+|---|---|---|---|---|
+| `_ci` | localStorage | `marketing` | 90 days | Advertising click identifiers captured from URL parameters (for example `gclid`, `fbclid`) |
+| `_cit` | localStorage | `marketing` | No expiry | Each advertising click identifier and the time it was first seen, so that one older than 90 days is no longer used |
+| `_fo` | localStorage | `marketing` | 90 days | The Meta click identifier (`fbclid`) and the time it was first seen |
+| `_at` | localStorage | `marketing` | Until a later visit replaces it | UTM campaign parameters, the referring page, and the landing page |
+| `_he` | localStorage, with a copy in sessionStorage | `marketing` | 90 days | A one-way hash (SHA-256) of the email address, kept so that a conversion can be matched to the visit that led to it |
+| `_si` | sessionStorage | `statistics` | Session | A session identifier that groups page views within one visit |
+| `_sn` | localStorage | `statistics` | No expiry | A count of this browser's visits to the site |
 
 ### Service-Level Consent
 
