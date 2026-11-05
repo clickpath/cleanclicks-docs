@@ -12,17 +12,17 @@ The CleanClicks WordPress plugin is the full integration. It auto-creates the Wo
 ### Download and Install
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
-2. Click **Download Plugin** to get the current plugin zip
+2. Under **WordPress Plugin**, click **Download WordPress Plugin (.zip)** to get the current plugin zip
 3. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
 4. Choose the zip and click **Install Now**
-5. Click **Activate**
+5. Click **Activate Plugin**
 
 ### Configure the Plugin
 
 After activation:
 
 1. In your WordPress Admin sidebar, click **CleanClicks**
-2. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Inbound keys** tab)
+2. Enter your **Inbound API Key**. To get one, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, enter a **Key Name**, and click **Create Key**. Copy the key before you close the dialog. CleanClicks shows it only once.
 3. Click **Save Changes**
 
 That's it. The plugin auto-detects your site domain from `home_url()` (stripping a leading `www.` for WP Engine and similar www-subdomain installs), fetches your CleanClicks configuration on activation, and begins tracking immediately.
@@ -37,22 +37,24 @@ The plugin does several things on first activation so you don't have to:
 - **WooCommerce webhook auto-create** — if WooCommerce is active, the plugin creates the `order.created` webhook for you, pointed at your CleanClicks proxy with the correct signing secret. No manual webhook setup required.
 - **Onboarding banner** — if you haven't entered your Inbound API Key yet, the plugin shows a banner on the settings page walking you through the one-step setup.
 
-Smart defaults are gated server-side and preserve customer choice on **updates** and **reactivations** — your existing settings are never overwritten by a plugin update.
+CleanClicks's server decides whether smart defaults apply, and the plugin applies them only on a fresh install. On a plugin **update** or **reactivation**, they do not overwrite settings you set by hand.
 
 ### Webhook Status Card
 
-The plugin settings page includes a live **Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
+When WooCommerce is active, the plugin settings page includes a live **WooCommerce Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
 
-| State | What It Means |
+| What the card shows | What It Means |
 |---|---|
-| Active | Webhook is created in WC, pointed at your CleanClicks proxy, signed with your Inbound API Key. Nothing to do. |
-| Missing — no API key | Enter your Inbound API Key in the settings above and save. The webhook will create on the next page load. |
-| Missing — WC not loaded | WooCommerce isn't active yet. Activate WooCommerce and the webhook will create on the next page load. |
-| Missing — pending creation | The plugin flagged the webhook for creation but WooCommerce hadn't loaded at activation time. It will create on the next request. |
-| Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Recreate** to restore it. |
-| Error | The plugin tried to create the webhook and WooCommerce returned an error. The card shows the last error message. |
+| **Status**: Active | The webhook exists in WooCommerce and is active. Nothing to do. |
+| **Status**: Paused or Disabled | The webhook exists but WooCommerce is not delivering it. Click **Recreate Webhook**. |
+| **Webhook not active**, "API key not configured" | Save your Inbound API Key in the settings below. Saving it creates the webhook. |
+| **Webhook not active**, "WooCommerce is not active" | Activate WooCommerce. |
+| **Webhook not active**, "Webhook creation pending" | The plugin creates the webhook on the next page load. |
+| **Webhook not active**, "Webhook was deleted outside this plugin" | Someone deleted it in WooCommerce → Settings → Advanced → Webhooks. Click **Create Webhook Now** to restore it. |
+| **Webhook not active**, "Webhook has not been created yet" | Click **Create Webhook Now**. |
+| **Last error:** followed by a message | The plugin's last attempt to create the webhook failed with that message. |
 
-If the webhook ever drifts (e.g., you delete it manually), click **Recreate Webhook** on the status card to restore it.
+If the webhook is missing (e.g., you deleted it manually), click **Create Webhook Now** on the status card to restore it. The button is turned off while the card asks for your API key: save the key first. If the webhook exists but is paused or misconfigured, click **Recreate Webhook**.
 
 ### What the Plugin Tracks
 
@@ -116,10 +118,10 @@ This catches custom thank-you pages that don't trigger the standard `woocommerce
 
 If your site uses a custom thank-you URL pattern (e.g., a checkout flow that redirects to `/platinum-thank-you/{order_id}/`), add it on the plugin settings page under **Custom Thank-You Paths**. One path per line, substring match.
 
-**Example: scm-platinum custom flow.** Sports Car Market's premium subscription flow redirects to URLs like `/scm-platinum-thanks/12345`. To capture those, set:
+**Example: a custom membership flow.** Say a membership checkout on `example.com` redirects to URLs like `https://example.com/membership-thanks/12345`. To capture those, set:
 
-- **Custom Thank-You Paths:** add `/scm-platinum-thanks/` on its own line
-- **Custom Thank-You Regex (advanced):** `^/scm-platinum-thanks/[0-9]+`
+- **Custom Thank-You Paths:** add `/membership-thanks/` on its own line
+- **Custom Path Regex:** `^/membership-thanks/[0-9]+`
 
 The regex is optional. Substring matching covers most cases; regex is for surgical patterns where substring would over-match.
 
@@ -137,26 +139,50 @@ This section lists what the plugin stores and how it reads consent. It does not 
 
 ### Cookie and Storage Classification
 
-The plugin declares its own storage to the WP Consent API as `functional`. CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) read that classification.
+The plugin registers the cookies and browser storage below with the WP Consent API under the `cleanclicks` service. Each item is registered under its own category, `marketing`, `statistics`, or `functional`, shown in the **Category** column. CMPs that integrate with the WP Consent API (CookieYes, Cookiebot, Complianz, iubenda, and others) read that classification.
 
-Two of the five are cookies:
+The list covers what the plugin's own script (`cc-wp.js`) stores, what `cc.js` (the CleanClicks tracking script the plugin loads beside its own) stores, the cookie the plugin sets when CleanClicks reports an opt-out, and the cookies the CleanClicks service sets.
 
-| Name | Lifetime | What It Holds |
-|---|---|---|
-| `cc_pid` | 1 year | Anonymous visitor identifier, used for conversion deduplication |
-| `cc_ss_optout` | 1 year | The visitor-controlled privacy opt-out flag |
+These are cookies:
 
-The other three are browser storage, not cookies:
-
-| Name | Where | Lifetime | What It Holds |
+| Name | Category | Lifetime | What It Holds |
 |---|---|---|---|
-| `cc_click_ids` | localStorage | 90 days | Ad click identifiers captured from URL parameters |
-| `cc_attribution` | localStorage | 30 days | UTM parameters, referrer, and landing page |
-| `cc_session_id` | sessionStorage | Session | Groups page views within one visit |
+| `cc_pid` | `marketing` | 1 year | A random visitor identifier that links this browser's visits, advertising clicks, and purchases |
+| `cc_sid` | `statistics` | 30 minutes | A random session identifier that keeps one visit's page views together when Google Analytics is sent through your site's own domain. Set only where that feature is on. |
+| `cc_ss_optout` | `functional` | 1 year | The privacy opt-out flag. When it is set, the site limits what it sends to advertising and analytics services, as the site's privacy choices page describes. |
+| `cc_ss_optout_relay` | `functional` | 6 hours | The privacy opt-out flag, copied to your site from an opt-out made on the CleanClicks privacy page. It has the same effect as `cc_ss_optout`. |
+| `cc_optin_chal` | `functional` | 10 minutes | A security token for the step on the CleanClicks privacy page that allows sale or sharing again. Set only when a visitor starts that step. |
+
+The rest are browser storage, not cookies. The WP Consent API has no type for sessionStorage, so the plugin registers its sessionStorage items with the type `LOCALSTORAGE`. The **Where** column shows the store each item uses.
+
+Stored by the plugin's script (`cc-wp.js`):
+
+| Name | Where | Category | Lifetime | What It Holds |
+|---|---|---|---|---|
+| `cc_click_ids` | localStorage | `marketing` | 90 days for each identifier, by the device's clock | Advertising click identifiers captured from URL parameters (for example `gclid`, `fbclid`). Each one is removed on the next page view after its 90 days. A short code and the first-seen date stay for the latest identifier of each kind, to help keep it from being used again. |
+| `cc_attribution` | localStorage | `marketing` | Until a later visit replaces it | UTM campaign parameters, the referring page, and the landing page address, which can include an advertising click identifier |
+| `cc_wp_hashed_email` | localStorage | `marketing` | 90 days | A one-way hash (SHA-256) of the email address, and a short code that stands for the advertising click identifiers last sent with it. Kept so that a purchase can be matched to the visit that led to it. |
+| `cc_wp_identity_inflight` | sessionStorage | `marketing` | Session | A one-way hash (SHA-256) of the email address. Marks a hashed-email submission that is in progress, so that it is not sent twice. |
+| `cc_wp_identity_retry` | sessionStorage | `marketing` | Session | A one-way hash (SHA-256) of the email address. Counts the retries of a hashed-email submission that did not get through. |
+| `cc_session_id` | sessionStorage | `statistics` | Session | A session identifier that groups page views within one visit |
+| `cc_session_num` | localStorage | `statistics` | No expiry | A count of this browser's visits to the site |
+| `cc_wp_deduped` | localStorage | `statistics` | Each entry: 30 seconds while its event is being sent, then the site's deduplication window (24 hours by default) | The events already sent, so that none is counted twice: the event name with the order number, or with the page path and item identifiers. An entry past its time is removed the next time the plugin checks an event against this list. |
+
+Stored by `cc.js`:
+
+| Name | Where | Category | Lifetime | What It Holds |
+|---|---|---|---|---|
+| `_ci` | localStorage | `marketing` | 90 days | Advertising click identifiers captured from URL parameters (for example `gclid`, `fbclid`) |
+| `_cit` | localStorage | `marketing` | No expiry | Each advertising click identifier and the time it was first seen, so that one older than 90 days is no longer used |
+| `_fo` | localStorage | `marketing` | 90 days | The Meta click identifier (`fbclid`) and the time it was first seen |
+| `_at` | localStorage | `marketing` | Until a later visit replaces it | UTM campaign parameters, the referring page, and the landing page |
+| `_he` | localStorage, with a copy in sessionStorage | `marketing` | 90 days | A one-way hash (SHA-256) of the email address, kept so that a conversion can be matched to the visit that led to it |
+| `_si` | sessionStorage | `statistics` | Session | A session identifier that groups page views within one visit |
+| `_sn` | localStorage | `statistics` | No expiry | A count of this browser's visits to the site |
 
 ### Service-Level Consent
 
-The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). When consent is required and no consent API is present at all, the plugin blocks analytics dispatch rather than assuming a grant.
+The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). By default, CleanClicks treats consent as required for your site once the plugin reports that the WP Consent API is loaded on your site. If CleanClicks treats consent as required and no consent API is loaded, the plugin blocks analytics dispatch rather than treating the visitor as consenting. The plugin's **Require Consent** setting adds a consent check only where the WP Consent API is loaded. With no consent API, that setting on its own does not block tracking, except while the plugin cannot load your CleanClicks settings.
 
 ### OneTrust Bridge
 
@@ -217,7 +243,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 |---|---|
 | Plugin won't activate | Verify PHP 7.4+. Check your error log for class-name collisions with other plugins (CleanClicks uses the `CLEANCLICKS_` prefix to avoid conflicts but a third-party plugin may use the same identifier). |
 | Events not firing | Verify your domain is **Active** in CleanClicks. Check browser DevTools → Network for `cleanclicks.yourdomain.com/__cc/cc.js` returning 200. Verify the `?ver=` parameter matches the installed plugin version (mismatch means cache is stale — clear all cache layers). |
-| Webhook Status card shows "Missing — deleted externally" | Click **Recreate Webhook** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
+| The webhook card says the webhook was deleted outside the plugin | Click **Create Webhook Now** on the card. The plugin re-creates the `order.created` webhook with the correct signing secret. |
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
