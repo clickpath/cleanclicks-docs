@@ -43,14 +43,16 @@ Smart defaults are gated server-side and preserve customer choice on **updates**
 
 When WooCommerce is active, the plugin settings page includes a live **WooCommerce Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
 
-| State | What It Means |
+| What the card shows | What It Means |
 |---|---|
-| Active | Webhook is created in WC, pointed at your CleanClicks proxy, signed with your Inbound API Key. Nothing to do. |
-| Missing — no API key | Enter your Inbound API Key in the settings above and save. The webhook will create on the next page load. |
-| Missing — WC not loaded | WooCommerce isn't active yet. Activate WooCommerce and the webhook will create on the next page load. |
-| Missing — pending creation | The plugin flagged the webhook for creation but WooCommerce hadn't loaded at activation time. It will create on the next request. |
-| Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Create Webhook Now** to restore it. |
-| Error | The plugin tried to create the webhook and WooCommerce returned an error. The card shows the last error message. |
+| **Status**: Active | The webhook exists in WooCommerce and is active. Nothing to do. |
+| **Status**: Paused or Disabled | The webhook exists but WooCommerce is not delivering it. Click **Recreate Webhook**. |
+| **Webhook not active**, "API key not configured" | Save your Inbound API Key in the settings below. Saving it creates the webhook. |
+| **Webhook not active**, "WooCommerce is not active" | Activate WooCommerce. |
+| **Webhook not active**, "Webhook creation pending" | The plugin creates the webhook on the next page load. |
+| **Webhook not active**, "Webhook was deleted outside this plugin" | Someone deleted it in WooCommerce → Settings → Advanced → Webhooks. Click **Create Webhook Now** to restore it. |
+| **Webhook not active**, "Webhook has not been created yet" | Click **Create Webhook Now**. |
+| **Last error:** followed by a message | The plugin's last attempt to create the webhook failed with that message. |
 
 If the webhook is missing (e.g., you deleted it manually), click **Create Webhook Now** on the status card to restore it. The button is turned off while the card asks for your API key: save the key first. If the webhook exists but is paused or misconfigured, click **Recreate Webhook**.
 
@@ -116,10 +118,10 @@ This catches custom thank-you pages that don't trigger the standard `woocommerce
 
 If your site uses a custom thank-you URL pattern (e.g., a checkout flow that redirects to `/platinum-thank-you/{order_id}/`), add it on the plugin settings page under **Custom Thank-You Paths**. One path per line, substring match.
 
-**Example: scm-platinum custom flow.** Sports Car Market's premium subscription flow redirects to URLs like `/scm-platinum-thanks/12345`. To capture those, set:
+**Example: a custom membership flow.** Say a membership checkout on `example.com` redirects to URLs like `https://example.com/membership-thanks/12345`. To capture those, set:
 
-- **Custom Thank-You Paths:** add `/scm-platinum-thanks/` on its own line
-- **Custom Path Regex:** `^/scm-platinum-thanks/[0-9]+`
+- **Custom Thank-You Paths:** add `/membership-thanks/` on its own line
+- **Custom Path Regex:** `^/membership-thanks/[0-9]+`
 
 The regex is optional. Substring matching covers most cases; regex is for surgical patterns where substring would over-match.
 
@@ -156,7 +158,7 @@ The other three are browser storage, not cookies:
 
 ### Service-Level Consent
 
-The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). When consent is required and no consent API is present at all, the plugin blocks analytics dispatch rather than assuming a grant.
+The plugin registers itself with the WP Consent API as the `cleanclicks` service. On WP Consent API v2.0 and later it checks service-level consent (`wp_has_service_consent("cleanclicks")`) ahead of the category check, so a visitor can grant or deny CleanClicks on its own in a Complianz, CookieYes, or iubenda service toggle without touching your other analytics tools. On v1.x it falls back to the category check (`statistics` by default). Where CleanClicks treats consent as required for your site (by default once the plugin has reported the WP Consent API to it) and no consent API is present, the plugin blocks analytics dispatch rather than assuming a grant. The plugin's **Require Consent** setting adds a consent check only where the WP Consent API is loaded. With no consent API, that setting on its own does not block tracking, except while the plugin cannot load your CleanClicks settings.
 
 ### OneTrust Bridge
 

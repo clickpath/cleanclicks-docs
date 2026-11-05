@@ -119,9 +119,9 @@ The webhook provides a server-side order path. Verify webhook delivery, event an
 9. Scroll to the bottom of the Webhooks page. Under the list, Shopify shows one line: "All your webhooks will be signed with" followed by a long code. That code is the signing secret. Copy it.
 10. Back on card 3, paste it under **Paste the signing secret from Shopify** and click **Save secret**. CleanClicks stores it encrypted and never shows it again.
 
-> **Important:** Do not use Shopify's **Send test** button to check purchase tracking. CleanClicks skips an order more than 48 hours old, and the test sample does not show that a paid order was processed. Use a paid test order.
+> **Important:** Do not use Shopify's **Send test** button to check purchase tracking. Its sample may be skipped as stale, and it does not show that a paid order was processed. Use a paid test order.
 
-> **Refunds and cancellations:** to reverse refunded value in your ad platforms, also subscribe Shopify's **Refund created** and **Order cancellation** events to the same webhook URL, then map the `refund` (and `cancellation`) event for each platform in **Configuration → Vendors**. Without that mapping the reversal is recorded but not uploaded, so a refund is never sent as a purchase.
+> **Refunds and cancellations:** if you also subscribe Shopify's **Refund created** and **Order cancellation** events to the same webhook URL, CleanClicks receives them as `refund` and `cancellation` events with a negative value. It sends them to a destination only when your site's record has a mapping for that event, which is not a setting in your dashboard.
 
 ## Testing
 
@@ -134,13 +134,13 @@ After setup, verify each component. On card 4, click **Continue** or **Skip for 
 4. Browse a product page — look for `view_item`
 
 ### Custom Pixel
-1. Load any page of your storefront. In the **Shopify setup** summary, click **Re-check**. The **Pixel** row reads verified, with the first event CleanClicks received.
+1. Load any page of your storefront. In the **Shopify setup** summary, click **Re-check**. Once CleanClicks has received a pixel event, the **Pixel** row reads verified and names the latest event it found.
 2. Browse products, add to cart, search
 3. Complete a test checkout. The order appears under **Recent conversions** on the **Dashboard**.
 
 ### Webhook
 1. Complete a real paid test order (not Shopify's **Send test**)
-2. In the **Shopify setup** summary on the **Ecommerce** tab, click **Re-check**. The **Webhook** row reads verified after CleanClicks processes the first paid order. If it says the order had no customer email, was more than 48 hours old, or could not be fully processed, a new paid order is needed to check again.
+2. In the **Shopify setup** summary on the **Ecommerce** tab, click **Re-check**. The **Webhook** row reads verified after CleanClicks processes the first paid order. If it says the order had no customer email, that the delivery was more than 48 hours old, or that the order could not be fully processed, a new paid order is needed to check again.
 3. Find the order under **Recent conversions** on the **Dashboard**. Its destination lights do not show delivery status yet. Check the conversion in each ad platform you send to.
 
 ## Testing with a Shopify Dev Store (optional)

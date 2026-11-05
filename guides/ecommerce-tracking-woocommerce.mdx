@@ -45,7 +45,7 @@ That's the entire setup. The plugin handles domain auto-detection, remote config
 
 Each event includes enhanced product data: SKU, brand, up to 5 category levels, and variant info for variable products.
 
-**Refunds and cancellations:** when a WooCommerce order is refunded or cancelled, the plugin sends a reversal event carrying the refunded value. To subtract that value from a connected ad platform, map the `refund` (and `cancellation`) event for that platform in **Configuration → Vendors** — without an explicit mapping the reversal is recorded in CleanClicks but not uploaded (this stops a refund from being sent as a purchase-shaped conversion).
+**Refunds and cancellations:** when a WooCommerce order is refunded or cancelled, the plugin sends CleanClicks a `refund` or `cancellation` event with a negative value. CleanClicks sends it to a destination only when your site's record has a mapping for that event, which is not a setting in your dashboard.
 
 ## Step 2: Server-Side Conversion Capture (Automatic)
 
