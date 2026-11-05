@@ -97,7 +97,7 @@ Supports individual IPs (e.g., `203.0.113.50`). Useful for filtering your own of
 
 ## Allowed Origins
 
-The **Allowed Origins** list controls which website origins get a CORS response header from your CleanClicks subdomain. It does not block or refuse any request.
+The **Allowed Origins** list controls which website origins get a CORS response header from your CleanClicks subdomain. It also controls which websites can send a visitor's request to allow sale or sharing again. Those requests go to `/__cc/optin` and `/__cc/optin-confirm`, and both refuse a request from a website that is not on the list with a 403 error. Pages on your CleanClicks subdomain itself are always accepted. No other request is refused because of this list.
 
 - With an empty list, the header goes to `https://yourdomain.com` and `https://www.yourdomain.com`.
 - Adding any origin replaces that default pair. To keep your own domain, add `https://yourdomain.com` and `https://www.yourdomain.com` along with the new origin, such as `https://app.yourdomain.com`.
