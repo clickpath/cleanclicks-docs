@@ -28,7 +28,7 @@ The previous version of this guide separated the WordPress plugin and the server
 4. Upload the zip and click **Install Now**
 5. Click **Activate Plugin**
 6. In your WordPress Admin sidebar, click **CleanClicks**
-7. Enter your **Inbound API Key** and click **Save Changes**. To get a key, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, and copy the key it shows. CleanClicks shows the key only once.
+7. Enter your **Inbound API Key** and click **Save Changes**. To get a key, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, enter a **Key Name**, and click **Create Key**. Copy the key before you close the dialog. CleanClicks shows it only once.
 
 That's the entire setup. The plugin handles domain auto-detection, remote config fetch, smart defaults, and webhook auto-creation. See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference.
 
@@ -74,7 +74,7 @@ If your store redirects somewhere else, add that path under **Custom Thank-You P
 
 ### Webhook Status
 
-The plugin page shows a live status card for the auto-created webhook. If the webhook ever goes missing, the card says why and gives you a **Create Webhook Now** button. While the webhook exists, the card gives you a **Recreate Webhook** button.
+When WooCommerce is active, the plugin page shows a live status card for the auto-created webhook. If the webhook ever goes missing, the card says why and gives you a **Create Webhook Now** button. If the card asks for your API key, save the key first. While the webhook exists, the card gives you a **Recreate Webhook** button.
 
 ## Step 3: Connect and Configure Platforms
 

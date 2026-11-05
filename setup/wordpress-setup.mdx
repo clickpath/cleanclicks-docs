@@ -22,7 +22,7 @@ The CleanClicks WordPress plugin is the full integration. It auto-creates the Wo
 After activation:
 
 1. In your WordPress Admin sidebar, click **CleanClicks**
-2. Enter your **Inbound API Key**. To get one, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, and copy the key it shows. CleanClicks shows the key only once.
+2. Enter your **Inbound API Key**. To get one, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, enter a **Key Name**, and click **Create Key**. Copy the key before you close the dialog. CleanClicks shows it only once.
 3. Click **Save Changes**
 
 That's it. The plugin auto-detects your site domain from `home_url()` (stripping a leading `www.` for WP Engine and similar www-subdomain installs), fetches your CleanClicks configuration on activation, and begins tracking immediately.
@@ -41,7 +41,7 @@ Smart defaults are gated server-side and preserve customer choice on **updates**
 
 ### Webhook Status Card
 
-The plugin settings page includes a live **WooCommerce Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
+When WooCommerce is active, the plugin settings page includes a live **WooCommerce Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
 
 | State | What It Means |
 |---|---|
@@ -52,7 +52,7 @@ The plugin settings page includes a live **WooCommerce Webhook Status** card sho
 | Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Create Webhook Now** to restore it. |
 | Error | The plugin tried to create the webhook and WooCommerce returned an error. The card shows the last error message. |
 
-If the webhook ever drifts (e.g., you delete it manually), click **Create Webhook Now** on the status card to restore it. While the webhook exists, the card offers **Recreate Webhook** instead.
+If the webhook is missing (e.g., you deleted it manually), click **Create Webhook Now** on the status card to restore it. The button is turned off while the card asks for your API key: save the key first. If the webhook exists but is paused or misconfigured, click **Recreate Webhook**.
 
 ### What the Plugin Tracks
 
@@ -217,7 +217,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 |---|---|
 | Plugin won't activate | Verify PHP 7.4+. Check your error log for class-name collisions with other plugins (CleanClicks uses the `CLEANCLICKS_` prefix to avoid conflicts but a third-party plugin may use the same identifier). |
 | Events not firing | Verify your domain is **Active** in CleanClicks. Check browser DevTools → Network for `cleanclicks.yourdomain.com/__cc/cc.js` returning 200. Verify the `?ver=` parameter matches the installed plugin version (mismatch means cache is stale — clear all cache layers). |
-| Webhook Status card shows "Missing — deleted externally" | Click **Create Webhook Now** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
+| The webhook card says the webhook was deleted outside the plugin | Click **Create Webhook Now** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
