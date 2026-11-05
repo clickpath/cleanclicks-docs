@@ -20,7 +20,7 @@ This guide walks through setting up end-to-end ecommerce tracking for a Shopify 
 
 ## Step 1: Install the Custom Pixel
 
-1. In CleanClicks, go to **Configuration** > **Ecommerce** tab and copy the pixel code
+1. In CleanClicks, go to **Configuration** > **Ecommerce** tab. In the guided Shopify setup, open card **2 · Add the CleanClicks pixel** and click **Copy** on the code box
 2. In Shopify Admin, go to **Settings** > **Customer events**
 3. Click **Add custom pixel**
 4. Name it **CleanClicks**
@@ -46,14 +46,17 @@ The pixel immediately starts capturing:
 
 The webhook provides a server-to-server backup for purchase events. If a customer closes their browser before the confirmation page loads, the webhook still captures the order.
 
-1. In CleanClicks, go to **Configuration** > **Ecommerce** tab
-2. Copy the **Webhook URL** and **Webhook Secret**
+1. In CleanClicks, go to **Configuration** > **Ecommerce** tab and open card **3 · Add the order webhook** of the guided Shopify setup
+2. Copy the **Webhook URL**
 3. In Shopify Admin, go to **Settings** > **Notifications** > **Webhooks**
-4. Click **Create Webhook**
+4. Click **Create webhook**
 5. Event: **Order payment**
 6. Format: **JSON**
 7. URL: paste the webhook URL
 8. Click **Save**
+9. Copy the signing secret Shopify shows at the bottom of the Webhooks page, paste it on card 3 under **Paste the signing secret from Shopify**, and click **Save secret**
+
+See [Shopify Setup](/setup/shopify-setup) for the full webhook steps, including the **Webhook API version** setting.
 
 ## Step 3: Connect Ad Platforms
 

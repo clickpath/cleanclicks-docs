@@ -12,17 +12,17 @@ The CleanClicks WordPress plugin is the full integration. It auto-creates the Wo
 ### Download and Install
 
 1. In your CleanClicks dashboard, go to **Configuration** → **Ecommerce** tab
-2. Click **Download Plugin** to get the current plugin zip
+2. Under **WordPress Plugin**, click **Download WordPress Plugin (.zip)** to get the current plugin zip
 3. In WordPress Admin, go to **Plugins** → **Add New** → **Upload Plugin**
 4. Choose the zip and click **Install Now**
-5. Click **Activate**
+5. Click **Activate Plugin**
 
 ### Configure the Plugin
 
 After activation:
 
 1. In your WordPress Admin sidebar, click **CleanClicks**
-2. Enter your **Inbound API Key** (copy it from CleanClicks → **Configuration** → **Inbound keys** tab)
+2. Enter your **Inbound API Key**. To get one, go to CleanClicks → **Configuration** → **Inbound keys** tab, click **Create Inbound Integration Key**, and copy the key it shows. CleanClicks shows the key only once.
 3. Click **Save Changes**
 
 That's it. The plugin auto-detects your site domain from `home_url()` (stripping a leading `www.` for WP Engine and similar www-subdomain installs), fetches your CleanClicks configuration on activation, and begins tracking immediately.
@@ -37,11 +37,11 @@ The plugin does several things on first activation so you don't have to:
 - **WooCommerce webhook auto-create** — if WooCommerce is active, the plugin creates the `order.created` webhook for you, pointed at your CleanClicks proxy with the correct signing secret. No manual webhook setup required.
 - **Onboarding banner** — if you haven't entered your Inbound API Key yet, the plugin shows a banner on the settings page walking you through the one-step setup.
 
-Smart defaults are gated server-side and preserve customer choice on **updates** and **reactivations** — your existing settings are never overwritten by a plugin update.
+Smart defaults are gated server-side and preserve customer choice on **updates** and **reactivations**. A plugin update does not reapply defaults over settings you set by hand.
 
 ### Webhook Status Card
 
-The plugin settings page includes a live **Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
+The plugin settings page includes a live **WooCommerce Webhook Status** card showing the current state of the auto-created WooCommerce webhook:
 
 | State | What It Means |
 |---|---|
@@ -49,10 +49,10 @@ The plugin settings page includes a live **Webhook Status** card showing the cur
 | Missing — no API key | Enter your Inbound API Key in the settings above and save. The webhook will create on the next page load. |
 | Missing — WC not loaded | WooCommerce isn't active yet. Activate WooCommerce and the webhook will create on the next page load. |
 | Missing — pending creation | The plugin flagged the webhook for creation but WooCommerce hadn't loaded at activation time. It will create on the next request. |
-| Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Recreate** to restore it. |
+| Missing — deleted externally | Someone manually deleted the webhook from WooCommerce → Settings → Advanced → Webhooks. Click **Create Webhook Now** to restore it. |
 | Error | The plugin tried to create the webhook and WooCommerce returned an error. The card shows the last error message. |
 
-If the webhook ever drifts (e.g., you delete it manually), click **Recreate Webhook** on the status card to restore it.
+If the webhook ever drifts (e.g., you delete it manually), click **Create Webhook Now** on the status card to restore it. While the webhook exists, the card offers **Recreate Webhook** instead.
 
 ### What the Plugin Tracks
 
@@ -119,7 +119,7 @@ If your site uses a custom thank-you URL pattern (e.g., a checkout flow that red
 **Example: scm-platinum custom flow.** Sports Car Market's premium subscription flow redirects to URLs like `/scm-platinum-thanks/12345`. To capture those, set:
 
 - **Custom Thank-You Paths:** add `/scm-platinum-thanks/` on its own line
-- **Custom Thank-You Regex (advanced):** `^/scm-platinum-thanks/[0-9]+`
+- **Custom Path Regex:** `^/scm-platinum-thanks/[0-9]+`
 
 The regex is optional. Substring matching covers most cases; regex is for surgical patterns where substring would over-match.
 
@@ -217,7 +217,7 @@ Verify by viewing page source and checking that the `?ver=` parameter on the Cle
 |---|---|
 | Plugin won't activate | Verify PHP 7.4+. Check your error log for class-name collisions with other plugins (CleanClicks uses the `CLEANCLICKS_` prefix to avoid conflicts but a third-party plugin may use the same identifier). |
 | Events not firing | Verify your domain is **Active** in CleanClicks. Check browser DevTools → Network for `cleanclicks.yourdomain.com/__cc/cc.js` returning 200. Verify the `?ver=` parameter matches the installed plugin version (mismatch means cache is stale — clear all cache layers). |
-| Webhook Status card shows "Missing — deleted externally" | Click **Recreate Webhook** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
+| Webhook Status card shows "Missing — deleted externally" | Click **Create Webhook Now** on the card. The plugin will re-create the `order.created` webhook with the correct signing secret. |
 | WooCommerce events missing | Confirm WooCommerce is active. Verify the plugin's WooCommerce integration loaded — the plugin settings page shows "WooCommerce: Active" when detected. |
 | Purchase events missing on custom thank-you pages | Add your custom URL pattern to **Custom Thank-You Paths** on the plugin settings page (see Layer 3 above). |
 | Stale JavaScript after update | Check the `?ver=` query string in page source. If it matches the old version, the version didn't bump — verify the new plugin version installed. If correct but content is stale, clear caching plugin + CDN + browser cache. |
