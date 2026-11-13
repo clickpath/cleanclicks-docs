@@ -150,6 +150,7 @@ These are cookies:
 | `cc_pid` | `marketing` | 1 year | A random visitor identifier that links this browser's visits, advertising clicks, and purchases |
 | `cc_sid` | `statistics` | 30 minutes | A random session identifier that keeps one visit's page views together when Google Analytics is sent through your site's own domain. Set only where that feature is on. |
 | `cc_ss_optout` | `functional` | 1 year | The privacy opt-out flag. When it is set, the site limits what it sends to advertising and analytics services, as the site's privacy choices page describes. |
+| `cc_ss_optout_m` | `functional` | 1 year | A copy of the privacy opt-out flag in `cc_ss_optout`, set by CleanClicks on your tracking subdomain (`cleanclicks.yourdomain.com`). It lets requests from the CleanClicks Shopify pixel carry the opt-out where the browser allows third-party cookies. It holds only an opt-out. |
 | `cc_ss_optout_relay` | `functional` | 6 hours | The privacy opt-out flag, copied to your site from an opt-out made on the CleanClicks privacy page. It has the same effect as `cc_ss_optout`. |
 | `cc_optin_chal` | `functional` | 10 minutes | A security token for the step on the CleanClicks privacy page that allows sale or sharing again. Set only when a visitor starts that step. |
 
