@@ -19,13 +19,13 @@ Ecommerce support is part of the current Signal and Clarity plans.
 
 CleanClicks uses a Shopify webhook as one server-side order path. Webhook delivery, identifiers, deduplication, destination configuration, and an accepted receipt still determine whether the purchase path is complete.
 
-The Ecommerce tab provides:
-- **Webhook URL** — copy this into Shopify
-- **Webhook Secret** — used for secure verification
+Card **3 · Add the order webhook** of the guided Shopify setup on the Ecommerce tab provides:
+- **Webhook URL**: copy this into Shopify
+- **Paste the signing secret from Shopify**: where you save the signing secret Shopify shows under your webhooks list. CleanClicks uses it to verify each delivery.
 
 To configure in Shopify:
 1. Go to Shopify Admin > **Settings** > **Notifications** > **Webhooks**
-2. Click **Create Webhook**
+2. Click **Create webhook**
 3. Event: **Order payment**
 4. Format: **JSON**
 5. URL: paste the webhook URL from CleanClicks
@@ -47,7 +47,7 @@ See [WordPress Setup](/setup/wordpress-setup) for the full plugin reference. Qui
 
 1. Download the plugin from this Ecommerce tab
 2. Upload + activate in WordPress
-3. Enter your Inbound API Key (from **Configuration** → **Inbound keys** tab) in **Settings** → **CleanClicks** → save
+3. Enter your Inbound API Key (from **Configuration** → **Inbound keys** tab) on the **CleanClicks** page in the WordPress Admin sidebar, then click **Save Changes**
 
 ### Server-Side Webhook (Automatic)
 
@@ -59,7 +59,7 @@ The plugin layers two additional server-side capture paths on top of the standar
 
 ### Webhook Status
 
-The plugin settings page shows a live Webhook Status card. If the auto-created webhook is ever missing or in an error state, the card surfaces the reason and offers a **Recreate Webhook** button.
+When WooCommerce is active, the plugin settings page shows a live WooCommerce Webhook Status card. If the auto-created webhook is ever missing, the card shows the reason (and the last error, if there is one) and offers a **Create Webhook Now** button. If the card asks for your API key, save the key first. While the webhook exists, the card offers a **Recreate Webhook** button.
 
 ## Plugin Download
 

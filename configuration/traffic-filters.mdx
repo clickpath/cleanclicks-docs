@@ -17,7 +17,7 @@ Bot detection and country filtering run on every plan. Bot detection needs no co
 
 | Feature | Signal | Clarity |
 |---|---|---|
-| Bot score threshold | Yes | Yes |
+| Bot score threshold (no effect today) | Yes | Yes |
 | Custom user-agent patterns | Yes | Yes |
 | Market (metro-area) narrowing | Yes | Yes |
 | IP filtering | Yes | Yes |
@@ -26,16 +26,16 @@ A control your plan does not include shows an upgrade card in its place.
 
 ## Bot Filtering
 
-Bot detection runs on every plan and needs no configuration, so the Bot Filtering section carries an **Always On** badge. It blocks known bots, crawlers, and automated traffic from being counted as conversions. Bot score thresholds and custom user-agent patterns are the Signal+ add-ons layered on top.
+Bot detection runs on every plan and needs no configuration, so the Bot Filtering section carries an **Always On** badge. It blocks known bots, crawlers, and automated traffic from being counted as conversions. Signal+ adds custom user-agent patterns on top, plus a bot score threshold that has no effect today.
 
 ### Basic Bot Filtering
 
-- **Known bot blocking:** Automatically filters traffic from recognized bots (Googlebot, Bingbot, etc.) using a database of 45+ known bot patterns
+- **Known bot blocking:** Automatically filters traffic from recognized bots and crawlers, such as Bingbot, using a maintained list of known bot user-agent patterns. Google's crawler and ad-review user agents, such as Googlebot and AdsBot-Google, skip this list and every other filter, because blocking them can get your ads disapproved. The one exception: a conversion they send to `/__cc/conv` is dropped and never counted.
 - This runs silently, no configuration needed
 
 ### Advanced Bot Filtering (Signal+)
 
-- **Bot score threshold:** Set a value between 1 and 99. Each visitor gets a bot score where a *lower* score is more bot-like, so CleanClicks blocks visitors whose score falls **below** your threshold -- a **higher** threshold blocks more aggressively. There is no default; leave it unset to skip score-based filtering.
+- **Bot score threshold:** CleanClicks does not receive Cloudflare bot scores today, so this setting has no effect yet. Where Cloudflare gives a request a bot score, a *lower* score means the request is more likely a bot, and CleanClicks blocks a tracking request whose score falls **below** your threshold, so a **higher** threshold blocks more. A request without a score is not checked. Set a value from 0 to 99; 0 turns this filter off. On Signal+ plans, CleanClicks sets the threshold to 30 during setup if it is 0; that value has no effect today either.
 - **Custom blocked UA patterns:** Add your own user-agent patterns to block. Useful for filtering proprietary crawlers or monitoring tools that your analytics shouldn't count.
 
 ### Adding Custom UA Patterns
@@ -79,7 +79,7 @@ Geographic filtering happens before conversion processing, so filtered traffic d
 
 ## IP Filtering
 
-Available on **Signal** plans and above. Filter specific IP addresses or ranges.
+Available on **Signal** plans and above. Filter exact IP addresses; ranges are not supported.
 
 ### Modes
 
@@ -90,16 +90,20 @@ Available on **Signal** plans and above. Filter specific IP addresses or ranges.
 
 1. Enable **IP Filtering** toggle
 2. Choose **Blocklist** or **Allowlist** mode
-3. Enter IP addresses (one per line)
+3. Enter one IP address and click **Add** (or press Enter); repeat for each address
 4. Save
 
 Supports individual IPs (e.g., `203.0.113.50`). Useful for filtering your own office traffic, known spam sources, or competitor IPs.
 
-## Origin Filtering
+## Allowed Origins
 
-Control which referrer origins are allowed to send data. This prevents unauthorized domains from sending events through your CleanClicks subdomain.
+The **Allowed Origins** list controls which website origins get a CORS response header from your CleanClicks subdomain. It also controls which websites can send a visitor's request to allow sale or sharing again. Those requests go to `/__cc/optin` and `/__cc/optin-confirm`, and both refuse a request from any website not on the list, returning a 403 error. Pages on your CleanClicks subdomain itself are always accepted. No other request is refused because of this list.
 
-Add allowed origins as full domain names. If you don't configure any, CleanClicks accepts events only from your own domain (`https://yourdomain.com` and `https://www.yourdomain.com`). Add an origin here to also accept events from a subdomain (e.g. `app.yourdomain.com`) or another trusted source.
+- With an empty list, the header goes to `https://yourdomain.com` and `https://www.yourdomain.com`.
+- Adding any origin replaces that default pair. To keep your own domain, add `https://yourdomain.com` and `https://www.yourdomain.com` along with the new origin, such as `https://app.yourdomain.com`.
+- Enter each origin with `https://` at the start.
+
+The tracking endpoints that receive conversions and events do not use this list and accept requests from any origin, so embedded pages such as Shopify's Custom Pixel sandbox can send data. Requests to `/__cc/conv` and `/__cc/identify` are checked another way: each must name your domain in its body, and that domain must match the CleanClicks subdomain the request was sent to (`cleanclicks.yourdomain.com`). A request that names a different domain is refused.
 
 ## How Filters Stack
 
@@ -108,7 +112,6 @@ Filters are applied in order. A request must pass all active filters to be proce
 1. **Bot filter** — known-bot and non-browser user agents are blocked first.
 2. **IP filter** — if you've set an IP allowlist/blocklist, it's checked next.
 3. **Geo filter** — the visitor's country is checked against your allowlist/blocklist (US-only by default).
-4. **Origin filter** — the request origin is checked at the endpoint.
 
 Traffic that's filtered out is not counted toward your session limit, not sent to ad platforms, and doesn't appear in your conversion data. Filtered requests are still logged in traffic analytics (on Signal+ plans) so you can see what's being blocked.
 
